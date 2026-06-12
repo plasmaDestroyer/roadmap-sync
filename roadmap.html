@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The DSA Field Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f1e6; --paper2:#efe8d8; --card:#fbf8f0; --ink:#191611; --ink2:#3d382e; --faint:#8a8273; --hair:#ddd3bd; --hair2:#cabfa4;
+  --verm:#d8401f; --verm-soft:#f6ddd4; --green:#1f7a48; --green-soft:#dcebe0; --amber:#b97b14; --amber-soft:#f3e6cc;
+  --lc:#a96a00; --gfg:#2e7d32; --ncs:#0e7490; --tuf:#be123c; --web:#6d28d9; --lld:#1d4ed8; --py:#92400e;
+  --rule:#191611; --glass:rgba(251,248,240,.92);
+  --serif:'Fraunces',serif; --mono:'IBM Plex Mono',monospace;
+}
+html[data-theme="dark"]{
+  --paper:#15120c; --paper2:#100d08; --card:#1c1812; --ink:#ece4d2; --ink2:#cdc4ae; --faint:#857c69; --hair:#332c1f; --hair2:#473e2c;
+  --verm:#ff6b45; --verm-soft:#3a2018; --green:#4cbd80; --green-soft:#16301f; --amber:#e2a83e; --amber-soft:#332817;
+  --lc:#ffb02e; --gfg:#6fcf73; --ncs:#4cc5f0; --tuf:#fb7185; --web:#b79bfc; --lld:#8db0ff; --py:#dca35e;
+  --rule:#4a4131; --glass:rgba(21,18,12,.92);
+}
+html[data-theme="dark"] body::before{opacity:.3;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.07' fill='white'/%3E%3C/svg%3E")}
+html[data-theme="dark"] ::selection{background:var(--verm);color:#15120c}
+html[data-theme="dark"] .band,html[data-theme="dark"] .toolbar{box-shadow:5px 5px 0 rgba(0,0,0,.45)}
+html[data-theme="dark"] .tcard:hover{box-shadow:3px 3px 0 rgba(0,0,0,.45)}
+html[data-theme="dark"] .lk:hover{box-shadow:2px 2px 0 rgba(0,0,0,.45)}
+html[data-theme="dark"] .ch-num{color:var(--paper);-webkit-text-stroke:1.5px var(--ink2)}
+.theme-anim,.theme-anim *{transition:background-color .25s ease,border-color .25s ease,color .25s ease,box-shadow .25s ease}
+.modebtn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--rule);background:var(--card);color:var(--ink);
+  cursor:pointer;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;
+  transition:.18s;flex-shrink:0}
+.modebtn:hover{transform:rotate(15deg) scale(1.08);background:var(--ink);color:var(--paper)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:13.5px;line-height:1.55}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")}
+::selection{background:var(--verm);color:var(--paper)}
+a{color:inherit}
+.wrap{max-width:1060px;margin:0 auto;padding:44px 28px 140px}
+
+/* ───────── masthead ───────── */
+.masthead{border-bottom:3px solid var(--rule);padding-bottom:26px;margin-bottom:30px;animation:fade .7s ease both}
+.kicker{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.kicker .stamp{border:2px solid var(--verm);color:var(--verm);padding:8px 16px;border-radius:5px;
+  font-weight:700;letter-spacing:.2em;transform:rotate(-2.5deg);
+  box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 4.5px var(--verm);opacity:.94;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='70'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 .5'/%3E%3C/filter%3E%3Crect width='220' height='70' filter='url(%23r)'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='70'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 .5'/%3E%3C/filter%3E%3Crect width='220' height='70' filter='url(%23r)'/%3E%3C/svg%3E");
+  -webkit-mask-size:cover;mask-size:cover}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,7vw,68px);line-height:.98;letter-spacing:-.02em}
+h1 .it{font-style:italic;font-weight:600;color:var(--verm)}
+.dek{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--ink2);margin-top:12px;max-width:560px;font-weight:400}
+
+/* ───────── dashboard band ───────── */
+.band{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;background:var(--card);
+  border:1.5px solid var(--rule);border-radius:14px;padding:26px 30px;margin-bottom:30px;
+  box-shadow:5px 5px 0 var(--hair2);animation:fade .7s .08s ease both}
+.bigring{position:relative;width:172px;height:172px;flex-shrink:0}
+.bigring svg{transform:rotate(-90deg)}
+.ringseg{fill:none;stroke-width:8;stroke-linecap:round}
+.ringseg.track{opacity:.16}
+.ringseg.fill{transition:stroke-dasharray .9s cubic-bezier(.22,1,.36,1)}
+.br-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.br-num{font-family:var(--serif);font-weight:900;font-size:42px;line-height:1;color:var(--ink)}
+.br-den{font-size:11px;color:var(--faint);margin-top:2px}
+.ringcol{display:flex;flex-direction:column;align-items:center;gap:12px}
+.br-legend{font-size:9px;letter-spacing:.22em;font-weight:600}
+.band-right{min-width:0}
+.meters{display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.meter .m-top{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;margin-bottom:6px}
+.meter .m-name{letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+.meter .m-val{color:var(--faint)}
+.meter .m-track{height:8px;background:var(--paper2);border-radius:99px;overflow:hidden;border:1px solid var(--hair)}
+.meter .m-fill{height:100%;border-radius:99px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.m-core .m-name{color:var(--verm)} .m-core .m-fill{background:var(--verm)}
+.m-stretch .m-name{color:var(--amber)} .m-stretch .m-fill{background:var(--amber)}
+.m-bonus .m-name{color:var(--web)} .m-bonus .m-fill{background:var(--web)}
+.band-foot{display:flex;gap:22px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--faint)}
+.band-foot .nextup b{color:var(--ink);font-weight:600}
+.tchip{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink)}
+.tchip b{color:var(--verm);font-style:normal;font-weight:700}
+
+/* ───────── topic index (TUF-style rings) ───────── */
+.idx-title{font-family:var(--serif);font-weight:700;font-size:20px;margin:6px 0 14px;display:flex;align-items:baseline;gap:12px}
+.idx-title small{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.idx{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:40px;animation:fade .7s .14s ease both}
+.tcard{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--hair2);border-radius:10px;
+  padding:10px 12px;text-decoration:none;transition:.18s;cursor:pointer}
+.tcard:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:3px 3px 0 var(--hair2)}
+.tring{position:relative;width:42px;height:42px;flex-shrink:0}
+.tring svg{transform:rotate(-90deg)}
+.tr-track{fill:none;stroke:var(--paper2);stroke-width:4.5}
+.tr-arc{fill:none;stroke:var(--amber);stroke-width:4.5;stroke-linecap:round;transition:stroke-dashoffset .7s ease,stroke .4s ease}
+.tr-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600;color:var(--ink2)}
+.tc-name{font-size:11px;font-weight:500;color:var(--ink);line-height:1.3}
+.tc-count{font-size:9.5px;color:var(--faint);margin-top:2px}
+
+/* ───────── toolbar ───────── */
+.toolbar{position:sticky;top:14px;z-index:60;display:flex;gap:9px;align-items:center;flex-wrap:wrap;
+  background:var(--glass);backdrop-filter:blur(10px);border:1.5px solid var(--rule);border-radius:12px;
+  padding:10px 12px;margin-bottom:34px;box-shadow:4px 4px 0 var(--hair2);animation:fade .7s .2s ease both}
+.search{flex:1;min-width:170px;display:flex;align-items:center;gap:8px;background:var(--paper);
+  border:1px solid var(--hair2);border-radius:8px;padding:8px 12px}
+.search input{background:none;border:none;outline:none;font-family:var(--mono);font-size:12.5px;color:var(--ink);width:100%}
+.search input::placeholder{color:var(--faint)}
+.ctl{display:flex;align-items:center;gap:8px}
+.ctl-lab{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.seg{display:inline-flex;border:1.5px solid var(--hair2);border-radius:9px;overflow:hidden;background:var(--paper)}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;
+  border:none;background:transparent;color:var(--faint);cursor:pointer;transition:.15s;font-weight:500}
+.chip+.chip{border-left:1px solid var(--hair2)}
+.chip:hover{color:var(--ink);background:var(--paper2)}
+.chip.on{background:var(--ink);color:var(--paper)}
+.chip.on.c-verm{background:var(--verm);color:#fff}
+.chip.on.c-amber{background:var(--amber);color:#fff}
+.chip.on.c-web{background:var(--web);color:#fff}
+.acts{margin-left:auto;display:flex;align-items:center;gap:4px;padding-left:12px;border-left:1.5px solid var(--hair2)}
+.act{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  background:none;border:none;color:var(--faint);cursor:pointer;padding:8px 9px;border-radius:7px;transition:.15s;white-space:nowrap}
+.act:hover{color:var(--ink);background:var(--paper2)}
+
+/* ───────── chapters ───────── */
+.chapter{margin-bottom:40px;animation:fade .6s ease both;scroll-margin-top:110px}
+.ch-head{display:flex;align-items:center;gap:16px;cursor:pointer;user-select:none;padding:6px 0;
+  border-bottom:2px solid var(--rule);margin-bottom:4px;list-style:none}
+.ch-head::-webkit-details-marker{display:none}
+.ch-num{font-family:var(--serif);font-weight:900;font-size:46px;line-height:1;color:var(--paper);
+  -webkit-text-stroke:1.5px var(--ink);letter-spacing:-.02em;flex-shrink:0;min-width:58px}
+.ch-mid{flex:1;min-width:0}
+.ch-title{font-family:var(--serif);font-weight:700;font-size:clamp(20px,3vw,27px);letter-spacing:-.01em;line-height:1.1}
+.ch-sub{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+.ch-sub .now{color:var(--verm);font-weight:700}
+.ch-sub .load-light{color:var(--ncs)} .ch-sub .load-heavy{color:var(--tuf)} .ch-sub .load-boss{color:var(--amber)} .ch-sub .load-bonus{color:var(--web)}
+.ch-ring{position:relative;width:54px;height:54px;flex-shrink:0}
+.ch-ring svg{transform:rotate(-90deg)}
+.chr-track{fill:none;stroke:var(--paper2);stroke-width:5}
+.chr-arc{fill:none;stroke:var(--verm);stroke-linecap:round;stroke-width:5;transition:stroke-dashoffset .7s ease}
+.chr-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--ink2)}
+.ch-chev{font-size:13px;color:var(--faint);transition:transform .25s}
+details[open] .ch-chev{transform:rotate(180deg)}
+.ch-body{padding-top:10px}
+
+/* topics + rows */
+.tp{margin:22px 0 4px;display:flex;align-items:center;gap:12px;scroll-margin-top:110px}
+.tp-name{font-family:var(--serif);font-weight:600;font-size:18px;font-style:italic}
+.tp-line{flex:1;height:1px;background:var(--hair2)}
+.tp-mini{font-size:10px;color:var(--faint)}
+.tierlab{font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:12px 0 4px;display:flex;align-items:center;gap:8px}
+.tierlab.core{color:var(--verm)} .tierlab.stretch{color:var(--amber)}
+.tierlab .tl-note{color:var(--faint);font-weight:400;letter-spacing:.05em;text-transform:none}
+.row{display:flex;align-items:flex-start;gap:12px;padding:9px 10px;border-radius:9px;cursor:pointer;
+  border:1px solid transparent;transition:.15s}
+.row:hover{background:var(--card);border-color:var(--hair2)}
+.cir{width:19px;height:19px;border:1.7px solid var(--hair2);border-radius:50%;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;transition:.18s;background:var(--paper)}
+.row:hover .cir{border-color:var(--ink2)}
+.row.stretch .cir{border-style:dashed}
+.row.ck .cir{background:var(--green);border-color:var(--green)}
+.row.ck.stretch .cir{background:var(--amber);border-color:var(--amber);border-style:solid}
+.row.ck.bonus .cir{background:var(--web);border-color:var(--web)}
+.row.ck .cir::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.row.ck .pname{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--hair2)}
+.pmain{flex:1;min-width:0}
+.pname{font-size:13px;color:var(--ink);font-weight:500}
+.pnote{color:var(--faint);font-size:11.5px;font-style:italic;font-family:var(--serif)}
+.pbadges{display:inline-flex;gap:5px;margin-left:8px;vertical-align:1px}
+.bdg{font-size:8.5px;font-weight:600;letter-spacing:.1em;padding:1.5px 6px;border-radius:999px;border:1px solid}
+.b-NC{color:var(--ncs);border-color:var(--ncs)} .b-ST{color:var(--web);border-color:var(--web)}
+.b-LC{color:var(--lc);border-color:var(--lc)} .b-LLD{color:var(--lld);border-color:var(--lld)} .b-PY{color:var(--py);border-color:var(--py)}
+.b-fire{color:var(--tuf);border-color:var(--tuf)} .b-lock{color:var(--ncs);border-color:var(--ncs);border-style:dashed}
+.plinks{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:230px}
+.lk{font-size:10px;font-weight:600;letter-spacing:.08em;text-decoration:none;padding:4px 10px;border-radius:999px;
+  border:1.3px solid;transition:.15s;white-space:nowrap;background:var(--paper)}
+.lk:hover{transform:translateY(-1.5px);box-shadow:2px 2px 0 var(--hair2)}
+.lk-LC{color:var(--lc);border-color:var(--lc)} .lk-GFG{color:var(--gfg);border-color:var(--gfg)}
+.lk-NC{color:var(--ncs);border-color:var(--ncs)} .lk-TUF{color:var(--tuf);border-color:var(--tuf)}
+.lk-WEB{color:var(--web);border-color:var(--web)}
+.hidden{display:none!important}
+
+/* legend + footnote */
+.legend{font-size:11px;color:var(--ink2);background:var(--paper2);border-radius:10px;padding:13px 16px;margin-bottom:26px;line-height:2;animation:fade .7s .26s ease both}
+.legend b{font-weight:700}
+.footnote{margin-top:46px;border-top:3px double var(--hair2);padding-top:24px}
+.footnote h3{font-family:var(--serif);font-style:italic;font-weight:600;font-size:19px;margin-bottom:10px}
+.footnote p{font-family:var(--serif);font-size:14.5px;line-height:1.8;color:var(--ink2);margin-bottom:9px;max-width:640px}
+.footnote strong{color:var(--ink)} .footnote .v{color:var(--verm)}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+@media (max-width:760px){
+  .wrap{padding:26px 16px 110px}
+  .band{grid-template-columns:1fr;justify-items:center;text-align:center;gap:20px;padding:22px 16px}
+  .band-right{width:100%}
+  .meter .m-top{font-size:10px}
+  .band-foot{justify-content:center}
+  .ch-num{font-size:32px;min-width:42px}
+  .ch-ring{width:46px;height:46px}
+  .row{flex-wrap:wrap}
+  .plinks{width:100%;justify-content:flex-start;margin-left:31px;max-width:none}
+  .toolbar{position:static;box-shadow:none}
+  .acts{margin-left:0;border-left:none;padding-left:0;width:100%;justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="kicker">
+    <span>Vol. 1 · Summer 2026 · Go primary / Python fallback</span>
+    <span style="display:inline-flex;align-items:center;gap:10px">
+      <span class="stamp" id="tmStamp">T–… TO OA WINDOW</span>
+      <button class="modebtn" id="modeBtn" title="toggle dark mode" aria-label="toggle dark mode">☾</button>
+    </span>
+  </div>
+  <h1>The DSA<br><span class="it">Field Manual</span></h1>
+  <p class="dek">Two hundred twenty-eight problems. Six weeks. One rule — clear a topic's Core before touching its Stretch, fifteen minutes a problem, every single day.</p>
+</header>
+
+<section class="band">
+  <div class="ringcol">
+  <div class="bigring">
+    <svg width="172" height="172" viewBox="0 0 172 172">
+      <g id="ringSegs"></g>
+    </svg>
+    <div class="br-center">
+      <div class="br-num" id="brNum">0</div>
+      <div class="br-den" id="brDen">of 0 solved</div>
+    </div>
+  </div>
+  <div class="br-legend"><span style="color:var(--verm)">CORE</span> · <span style="color:var(--amber)">STRETCH</span> · <span style="color:var(--web)">BONUS</span></div>
+  </div>
+  <div class="band-right">
+    <div class="meters">
+      <div class="meter m-core"><div class="m-top"><span class="m-name">Core</span><span class="m-val" id="mCore">0 / 0</span></div><div class="m-track"><div class="m-fill" id="fCore" style="width:0%"></div></div></div>
+      <div class="meter m-stretch"><div class="m-top"><span class="m-name">Stretch</span><span class="m-val" id="mStr">0 / 0</span></div><div class="m-track"><div class="m-fill" id="fStr" style="width:0%"></div></div></div>
+      <div class="meter m-bonus"><div class="m-top"><span class="m-name">Bonus</span><span class="m-val" id="mBon">0 / 0</span></div><div class="m-track"><div class="m-fill" id="fBon" style="width:0%"></div></div></div>
+    </div>
+    <div class="band-foot">
+      <span class="tchip">Next up — <b id="nextUp">…</b></span>
+    </div>
+  </div>
+</section>
+
+<div class="idx-title">Topic Index <small>tap a ring to jump</small></div>
+<nav class="idx" id="idx"></nav>
+
+<div class="legend">
+  Pills open the problem: <b style="color:var(--lc)">LC</b> LeetCode · <b style="color:var(--gfg)">GFG</b> GeeksforGeeks · <b style="color:var(--ncs)">NC</b> neetcode.io <i>(free even when LeetCode-premium 🔒)</i> · <b style="color:var(--tuf)">TUF</b> takeuforward — 
+  badges mark the source list (<b style="color:var(--ncs)">NC</b> NeetCode 150 / <b style="color:var(--web)">ST</b> Striver A2Z / <b style="color:var(--lc)">LC</b> direct) · 🔥 hard · solid circles are <b style="color:var(--verm)">Core</b>, dashed are <b style="color:var(--amber)">Stretch</b>
+</div>
+
+<div class="toolbar">
+  <div class="search">⌕<input id="q" type="text" placeholder="search problems or topics…"></div>
+  <div class="ctl"><span class="ctl-lab">Tier</span>
+    <div class="seg" id="tierChips">
+      <button class="chip on" data-tier="all">All</button>
+      <button class="chip c-verm" data-tier="core">Core</button>
+      <button class="chip c-amber" data-tier="stretch">Stretch</button>
+      <button class="chip c-web" data-tier="bonus">Bonus</button>
+    </div>
+  </div>
+  <div class="ctl"><span class="ctl-lab">Status</span>
+    <div class="seg" id="statusChips">
+      <button class="chip on" data-st="all">All</button>
+      <button class="chip" data-st="todo">Left</button>
+      <button class="chip" data-st="done">Done</button>
+    </div>
+  </div>
+  <div class="acts">
+    <button class="act" id="toggleAll" title="collapse / expand all chapters">⊟ Collapse</button>
+    <button class="act" id="copyMd" title="copy concise progress text (for AI chats)">⧉ Copy</button>
+    <button class="act" id="exportMd" title="download progress as .md">↓ Export</button>
+  </div>
+</div>
+
+<div id="chapters"></div>
+
+<div class="footnote">
+  <h3>A note for the bad days</h3>
+  <p>You're <strong>not behind — you're over-prepared in the wrong currency.</strong> Thirteen merged PRs in a Rust Foundation linker. A published MoE framework. Real systems depth. For you, DSA is the <span class="v">one missing key to a door you've already built the house behind.</span></p>
+  <p>This isn't a betrayal of being a builder. It's a <strong>toll.</strong> Pay it fast, pay it ugly, in a language you can stand — then get back to the work that's actually yours.</p>
+</div>
+
+</div>
+
+<script>
+const DATA = {"sprints": [{"id": "s1", "week": "WK 1", "dates": "Jun 1–7", "title": "Foundations", "load": "normal", "topics": [["Arrays & Hashing", [{"id": "ppdone1", "title": "Contains Duplicate", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/contains-duplicate/"]], "note": null, "fire": false, "lock": false}, {"id": "ppdone2", "title": "Valid Anagram", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/valid-anagram/"]], "note": null, "fire": false, "lock": false}, {"id": "ppdone3", "title": "Two Sum", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/two-sum/"]], "note": null, "fire": false, "lock": false}, {"id": "ppdone4", "title": "Group Anagrams", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/group-anagrams/"]], "note": null, "fire": false, "lock": false}, {"id": "pp5", "title": "Top K Frequent Elements", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/top-k-frequent-elements/"]], "note": null, "fire": false, "lock": false}, {"id": "pp6", "title": "Product of Array Except Self", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/product-of-array-except-self/"]], "note": null, "fire": false, "lock": false}, {"id": "pp7", "title": "Longest Consecutive Sequence", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/longest-consecutive-sequence/"]], "note": null, "fire": false, "lock": false}, {"id": "pp8", "title": "Kadane's / Maximum Subarray", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/maximum-subarray/"]], "note": null, "fire": false, "lock": false}, {"id": "pp9", "title": "Next Permutation", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/next-permutation/"]], "note": null, "fire": false, "lock": false}, {"id": "pp10", "title": "Set Matrix Zeroes", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/set-matrix-zeroes/"]], "note": null, "fire": false, "lock": false}, {"id": "pp11", "title": "Merge Overlapping Intervals", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/merge-intervals/"]], "note": null, "fire": false, "lock": false}, {"id": "pp12", "title": "Rotate Matrix 90°", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/rotate-image/"]], "note": null, "fire": false, "lock": false}, {"id": "pp13", "title": "Encode and Decode Strings", "src": "NC", "tier": "stretch", "links": [["NC", "https://neetcode.io/problems/string-encode-and-decode"]], "note": null, "fire": false, "lock": true}, {"id": "pp14", "title": "Valid Sudoku", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/valid-sudoku/"]], "note": null, "fire": false, "lock": false}, {"id": "pp15", "title": "Majority Element II", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/majority-element-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp16", "title": "Pascal's Triangle", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/pascals-triangle/"]], "note": null, "fire": false, "lock": false}, {"id": "pp17", "title": "Merge Two Sorted Arrays w/o extra space", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/merge-two-sorted-arrays-1587115620/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp18", "title": "Repeat and Missing Number", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/find-missing-and-repeating2512/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp19", "title": "Count Inversions (merge sort)", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp20", "title": "Maximum Product Subarray", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/maximum-product-subarray/"]], "note": null, "fire": false, "lock": false}]], ["Prefix Sum", [{"id": "ppfx1", "title": "Subarray Sum Equals K", "src": "LC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/subarray-sum-equals-k/"]], "note": "prefix sum + hashmap, the key trick", "fire": false, "lock": false}, {"id": "ppfx2", "title": "Find Pivot Index", "src": "LC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/find-pivot-index/"]], "note": null, "fire": false, "lock": false}, {"id": "ppfx3", "title": "Contiguous Array", "src": "LC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/contiguous-array/"]], "note": null, "fire": false, "lock": false}, {"id": "ppfx4", "title": "Subarray Sums Divisible by K", "src": "LC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/subarray-sums-divisible-by-k/"]], "note": null, "fire": false, "lock": false}, {"id": "ppfx5", "title": "Shortest Subarray with Sum at Least K", "src": "LC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/"]], "note": null, "fire": true, "lock": false}, {"id": "ppfx6", "title": "Count of Range Sum", "src": "LC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/count-of-range-sum/"]], "note": null, "fire": true, "lock": false}]], ["Two Pointers", [{"id": "ppdone21", "title": "Valid Palindrome", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/valid-palindrome/"]], "note": null, "fire": false, "lock": false}, {"id": "pp22", "title": "Two Sum II", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"]], "note": null, "fire": false, "lock": false}, {"id": "pp23", "title": "3Sum", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/3sum/"]], "note": null, "fire": false, "lock": false}, {"id": "pp24", "title": "Container With Most Water", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/container-with-most-water/"]], "note": null, "fire": false, "lock": false}, {"id": "pp25", "title": "Sort Colors (Dutch flag)", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/sort-colors/"]], "note": null, "fire": false, "lock": false}, {"id": "pp26", "title": "Remove Duplicates from Sorted Array", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/remove-duplicates-from-sorted-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pp27", "title": "4Sum", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/4sum/"]], "note": null, "fire": false, "lock": false}, {"id": "pp28", "title": "3Sum Closest", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/3sum-closest/"]], "note": null, "fire": false, "lock": false}, {"id": "pp29", "title": "Trapping Rain Water", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/trapping-rain-water/"]], "note": null, "fire": true, "lock": false}]], ["Sliding Window", [{"id": "pp30", "title": "Best Time to Buy/Sell Stock", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"]], "note": null, "fire": false, "lock": false}, {"id": "pp31", "title": "Longest Substring Without Repeating", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/longest-substring-without-repeating-characters/"]], "note": null, "fire": false, "lock": false}, {"id": "pp32", "title": "Longest Repeating Character Replacement", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/longest-repeating-character-replacement/"]], "note": null, "fire": false, "lock": false}, {"id": "pp33", "title": "Permutation in String", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/permutation-in-string/"]], "note": null, "fire": false, "lock": false}, {"id": "pp34", "title": "Max Consecutive Ones III", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/max-consecutive-ones-iii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp35", "title": "Fruit Into Baskets", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/fruit-into-baskets/"]], "note": null, "fire": false, "lock": false}, {"id": "pp36", "title": "Longest Substring with K Distinct", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/longest-k-unique-characters-substring0853/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp37", "title": "Substrings Containing All Three Chars", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/"]], "note": null, "fire": false, "lock": false}, {"id": "pp38", "title": "Minimum Window Substring", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/minimum-window-substring/"]], "note": null, "fire": true, "lock": false}, {"id": "pp39", "title": "Sliding Window Maximum", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/sliding-window-maximum/"]], "note": null, "fire": true, "lock": false}]], ["Stack", [{"id": "ppdone40", "title": "Valid Parentheses", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/valid-parentheses/"]], "note": null, "fire": false, "lock": false}, {"id": "pp41", "title": "Min Stack", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/min-stack/"]], "note": null, "fire": false, "lock": false}, {"id": "pp42", "title": "Evaluate RPN", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/evaluate-reverse-polish-notation/"]], "note": null, "fire": false, "lock": false}, {"id": "pp44", "title": "Daily Temperatures", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/daily-temperatures/"]], "note": "monotonic stack", "fire": false, "lock": false}, {"id": "pp45", "title": "Next Greater Element I & II", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/next-greater-element-i/"], ["LC", "https://leetcode.com/problems/next-greater-element-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp46", "title": "Car Fleet", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/car-fleet/"]], "note": null, "fire": false, "lock": false}, {"id": "pp47", "title": "Stock Span", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/online-stock-span/"]], "note": null, "fire": false, "lock": false}, {"id": "pp48", "title": "Asteroid Collision", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/asteroid-collision/"]], "note": null, "fire": false, "lock": false}, {"id": "pp49", "title": "Sum of Subarray Minimums", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/sum-of-subarray-minimums/"]], "note": null, "fire": false, "lock": false}, {"id": "pp50", "title": "Remove K Digits", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/remove-k-digits/"]], "note": null, "fire": false, "lock": false}, {"id": "pp51", "title": "Largest Rectangle in Histogram", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/largest-rectangle-in-histogram/"]], "note": null, "fire": true, "lock": false}]]]}, {"id": "s2", "week": "WK 2", "dates": "Jun 8–14", "title": "Binary Search + Linked Lists", "load": "light", "topics": [["Binary Search", [{"id": "pp52", "title": "Binary Search", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/binary-search/"]], "note": null, "fire": false, "lock": false}, {"id": "pp53", "title": "Search a 2D Matrix", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/search-a-2d-matrix/"]], "note": null, "fire": false, "lock": false}, {"id": "pp54", "title": "Koko Eating Bananas", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/koko-eating-bananas/"]], "note": "BS-on-answer", "fire": false, "lock": false}, {"id": "pp55", "title": "Find Minimum in Rotated Sorted", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pp56", "title": "Search in Rotated Sorted", "src": "NC", "tier": "done", "links": [["LC", "https://leetcode.com/problems/search-in-rotated-sorted-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pptkv", "title": "Time Based Key-Value Store", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/time-based-key-value-store/"]], "note": "BS on timestamps", "fire": false, "lock": false}, {"id": "pp57", "title": "Floor / Ceil in Sorted Array", "src": "ST", "tier": "core", "links": [["GFG", "https://www.geeksforgeeks.org/problems/floor-in-a-sorted-array-1587115620/1"], ["GFG", "https://www.geeksforgeeks.org/problems/ceil-in-a-sorted-array/1"]], "note": "no LeetCode version", "fire": false, "lock": false}, {"id": "pp58", "title": "First & Last Occurrence", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pp59", "title": "Find Peak Element", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/find-peak-element/"]], "note": null, "fire": false, "lock": false}, {"id": "pp60", "title": "Aggressive Cows", "src": "ST", "tier": "core", "links": [["GFG", "https://www.geeksforgeeks.org/problems/aggressive-cows/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp61", "title": "Allocate Books", "src": "ST", "tier": "core", "links": [["GFG", "https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp62", "title": "Single Element in Sorted Array", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/single-element-in-a-sorted-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pp63", "title": "Min in Rotated II (dups)", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp64", "title": "Painter's Partition", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp65", "title": "Capacity to Ship Packages in D Days", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/"]], "note": null, "fire": false, "lock": false}, {"id": "pp66", "title": "Nth Root", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/find-nth-root-of-m5843/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp67", "title": "Kth Element of 2 Sorted Arrays", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array1317/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp68", "title": "Median in Row-wise Sorted Matrix", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/median-in-a-row-wise-sorted-matrix1527/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp69", "title": "Median of Two Sorted Arrays", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/median-of-two-sorted-arrays/"]], "note": null, "fire": true, "lock": false}]], ["Linked Lists", [{"id": "pp70", "title": "Reverse Linked List", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/reverse-linked-list/"]], "note": "primitive", "fire": false, "lock": false}, {"id": "pp71", "title": "Merge Two Sorted Lists", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/merge-two-sorted-lists/"]], "note": null, "fire": false, "lock": false}, {"id": "pp72", "title": "Middle of LL", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/middle-of-the-linked-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp73", "title": "Detect & Remove Cycle", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/linked-list-cycle/"], ["LC", "https://leetcode.com/problems/linked-list-cycle-ii/"]], "note": "fast/slow + cycle start", "fire": false, "lock": false}, {"id": "pp74", "title": "Reorder List", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/reorder-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp75", "title": "Remove Nth Node From End", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp76", "title": "Add Two Numbers", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/add-two-numbers/"]], "note": null, "fire": false, "lock": false}, {"id": "pp77", "title": "Intersection of Two LLs", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/intersection-of-two-linked-lists/"]], "note": null, "fire": false, "lock": false}, {"id": "pp78", "title": "Palindrome LL", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/palindrome-linked-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp79", "title": "Copy List w/ Random Pointer", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/copy-list-with-random-pointer/"]], "note": null, "fire": false, "lock": false}, {"id": "pp80", "title": "Find the Duplicate Number", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/find-the-duplicate-number/"]], "note": null, "fire": false, "lock": false}, {"id": "pp81", "title": "Flatten a LL", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/flattening-a-linked-list/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp82", "title": "Sort a LL", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/sort-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp83", "title": "Add 1 to LL", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/add-1-to-a-number-represented-as-linked-list/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp84", "title": "Rotate LL", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/rotate-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp85", "title": "Segregate odd/even", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/odd-even-linked-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp86", "title": "LRU Cache", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/lru-cache/"]], "note": null, "fire": true, "lock": false}, {"id": "pp87", "title": "Merge K Sorted Lists", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/merge-k-sorted-lists/"]], "note": null, "fire": true, "lock": false}, {"id": "pp88", "title": "Reverse Nodes in K-Group", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/reverse-nodes-in-k-group/"]], "note": null, "fire": true, "lock": false}]], ["OOP / LLD", [{"id": "pp89", "title": "SOLID + 6 GoF patterns + Go composition", "src": "LLD", "tier": "core", "links": [["WEB", "https://refactoring.guru/design-patterns"]], "note": null, "fire": false, "lock": false}]]]}, {"id": "s3", "week": "WK 3", "dates": "Jun 15–21", "title": "Trees + BST", "load": "normal", "topics": [["Trees & BST", [{"id": "pp90", "title": "Invert Binary Tree", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/invert-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp91", "title": "Maximum Depth", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/maximum-depth-of-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp92", "title": "Diameter of Binary Tree", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/diameter-of-binary-tree/"]], "note": "return up vs global", "fire": false, "lock": false}, {"id": "pp93", "title": "Balanced Binary Tree", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/balanced-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp94", "title": "Same Tree", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/same-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp95", "title": "Subtree of Another Tree", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/subtree-of-another-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp96", "title": "Level Order Traversal", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/binary-tree-level-order-traversal/"]], "note": "BFS w/ queue", "fire": false, "lock": false}, {"id": "pp97", "title": "Right Side View", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/binary-tree-right-side-view/"]], "note": null, "fire": false, "lock": false}, {"id": "pp98", "title": "LCA of Binary Tree", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp99", "title": "Validate BST", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/validate-binary-search-tree/"]], "note": "min/max bounds", "fire": false, "lock": false}, {"id": "pp100", "title": "Kth Smallest in BST", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"]], "note": null, "fire": false, "lock": false}, {"id": "pp101", "title": "Construct from Preorder + Inorder", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"]], "note": null, "fire": false, "lock": false}, {"id": "pp102", "title": "Zigzag Traversal", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/"]], "note": null, "fire": false, "lock": false}, {"id": "pp103", "title": "Top / Bottom View", "src": "ST", "tier": "core", "links": [["GFG", "https://www.geeksforgeeks.org/problems/top-view-of-binary-tree/1"], ["GFG", "https://www.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp104", "title": "Count Good Nodes", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/count-good-nodes-in-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp105", "title": "Boundary Traversal", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp106", "title": "Vertical Order Traversal", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp107", "title": "Morris Inorder Traversal", "src": "ST", "tier": "stretch", "links": [["TUF", "https://takeuforward.org/data-structure/morris-inorder-traversal-of-a-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp108", "title": "Max Width of Tree", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/maximum-width-of-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp109", "title": "Children Sum Property", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/children-sum-parent/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp110", "title": "All Nodes Distance K", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp111", "title": "Flatten Tree to LL", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/"]], "note": null, "fire": false, "lock": false}, {"id": "pp112", "title": "Ceil / Floor in BST", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/implementing-ceil-in-bst/1"], ["GFG", "https://www.geeksforgeeks.org/problems/floor-in-bst/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp113", "title": "Recover BST", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/recover-binary-search-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp114", "title": "Binary Tree Max Path Sum", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/binary-tree-maximum-path-sum/"]], "note": null, "fire": true, "lock": false}, {"id": "pp115", "title": "Serialize / Deserialize", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"]], "note": null, "fire": true, "lock": false}]]]}, {"id": "s4", "week": "WK 4", "dates": "Jun 22–28", "title": "Backtracking + Heaps", "load": "normal", "topics": [["Backtracking", [{"id": "pp116", "title": "Subsets", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/subsets/"]], "note": null, "fire": false, "lock": false}, {"id": "pp117", "title": "Combination Sum", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/combination-sum/"]], "note": null, "fire": false, "lock": false}, {"id": "pp118", "title": "Combination Sum II", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/combination-sum-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp119", "title": "Permutations", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/permutations/"]], "note": null, "fire": false, "lock": false}, {"id": "pp120", "title": "Subsets II", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/subsets-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp121", "title": "Word Search", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/word-search/"]], "note": "grid backtracking", "fire": false, "lock": false}, {"id": "pp122", "title": "Palindrome Partitioning", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/palindrome-partitioning/"]], "note": null, "fire": false, "lock": false}, {"id": "pp123", "title": "Letter Combinations of Phone", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/letter-combinations-of-a-phone-number/"]], "note": null, "fire": false, "lock": false}, {"id": "pp43", "title": "Generate Parentheses", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/generate-parentheses/"]], "note": null, "fire": false, "lock": false}, {"id": "pp124", "title": "Rat in a Maze", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/rat-in-a-maze-problem/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp125", "title": "Kth Permutation Sequence", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/permutation-sequence/"]], "note": null, "fire": false, "lock": false}, {"id": "pp126", "title": "M-Coloring", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp127", "title": "N-Queens", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/n-queens/"]], "note": null, "fire": true, "lock": false}, {"id": "pp128", "title": "Sudoku Solver", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/sudoku-solver/"]], "note": null, "fire": true, "lock": false}]], ["Heaps / Priority Queues", [{"id": "pp129", "title": "Kth Largest Element in a Stream", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/kth-largest-element-in-a-stream/"]], "note": null, "fire": false, "lock": false}, {"id": "pp130", "title": "Last Stone Weight", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/last-stone-weight/"]], "note": null, "fire": false, "lock": false}, {"id": "pp131", "title": "K Closest Points to Origin", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/k-closest-points-to-origin/"]], "note": null, "fire": false, "lock": false}, {"id": "pp132", "title": "Kth Largest Element in an Array", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/kth-largest-element-in-an-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pp133", "title": "Task Scheduler", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/task-scheduler/"]], "note": null, "fire": false, "lock": false}, {"id": "pp134", "title": "Design Twitter", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/design-twitter/"]], "note": null, "fire": false, "lock": false}, {"id": "pp135", "title": "Maximum Sum Combination", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/maximum-sum-combination/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp136", "title": "Merge K Sorted Arrays", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/merge-k-sorted-arrays/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp137", "title": "Replace each element by rank", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/replace-each-element-by-its-rank-in-the-given-array/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp138", "title": "Find Median from Data Stream", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/find-median-from-data-stream/"]], "note": null, "fire": true, "lock": false}]]]}, {"id": "s5", "week": "WK 5", "dates": "Jun 29–Jul 5", "title": "Graphs + Disjoint Set", "load": "heavy", "topics": [["Graphs", [{"id": "pp139", "title": "Number of Islands", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/number-of-islands/"]], "note": null, "fire": false, "lock": false}, {"id": "pp140", "title": "Max Area of Island", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/max-area-of-island/"]], "note": null, "fire": false, "lock": false}, {"id": "pp141", "title": "Clone Graph", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/clone-graph/"]], "note": null, "fire": false, "lock": false}, {"id": "pp142", "title": "Rotting Oranges", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/rotting-oranges/"]], "note": "multi-source BFS", "fire": false, "lock": false}, {"id": "pp143", "title": "Pacific Atlantic Water Flow", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/pacific-atlantic-water-flow/"]], "note": null, "fire": false, "lock": false}, {"id": "pp144", "title": "Surrounded Regions", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/surrounded-regions/"]], "note": null, "fire": false, "lock": false}, {"id": "pp145", "title": "Course Schedule", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/course-schedule/"]], "note": null, "fire": false, "lock": false}, {"id": "pp146", "title": "Course Schedule II", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/course-schedule-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp147", "title": "Topological Sort (Kahn's + DFS)", "src": "ST", "tier": "core", "links": [["GFG", "https://www.geeksforgeeks.org/problems/topological-sort/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp148", "title": "Number of Connected Components", "src": "NC", "tier": "core", "links": [["NC", "https://neetcode.io/problems/count-connected-components"]], "note": null, "fire": false, "lock": true}, {"id": "pp149", "title": "Cycle Detection (dir + undir)", "src": "ST", "tier": "core", "links": [["GFG", "https://www.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1"], ["GFG", "https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp150", "title": "Bipartite Check", "src": "ST", "tier": "core", "links": [["LC", "https://leetcode.com/problems/is-graph-bipartite/"]], "note": null, "fire": false, "lock": false}, {"id": "pp151", "title": "Walls and Gates", "src": "NC", "tier": "stretch", "links": [["NC", "https://neetcode.io/problems/islands-and-treasure"]], "note": null, "fire": false, "lock": true}, {"id": "pp152", "title": "Graph Valid Tree", "src": "NC", "tier": "stretch", "links": [["NC", "https://neetcode.io/problems/valid-tree"]], "note": null, "fire": false, "lock": true}, {"id": "pp153", "title": "Redundant Connection", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/redundant-connection/"]], "note": "Union-Find", "fire": false, "lock": false}, {"id": "pp154", "title": "Number of Provinces", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/number-of-provinces/"]], "note": null, "fire": false, "lock": false}, {"id": "pp155", "title": "Number of Distinct Islands", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/number-of-distinct-islands/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp156", "title": "Dijkstra", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1"], ["LC", "https://leetcode.com/problems/network-delay-time/"]], "note": null, "fire": false, "lock": false}, {"id": "pp157", "title": "Bellman-Ford", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp158", "title": "Floyd-Warshall", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/implementing-floyd-warshall2042/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp159", "title": "MST (Prim's + Kruskal's)", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/minimum-spanning-tree/1"], ["LC", "https://leetcode.com/problems/min-cost-to-connect-all-points/"]], "note": null, "fire": false, "lock": false}, {"id": "pp160", "title": "Disjoint Set (rank + path compression)", "src": "ST", "tier": "stretch", "links": [["TUF", "https://takeuforward.org/data-structure/disjoint-set-union-by-rank-union-by-size-path-compression-g-46/"]], "note": null, "fire": false, "lock": false}, {"id": "pp161", "title": "Shortest Path in DAG", "src": "ST", "tier": "stretch", "links": [["TUF", "https://takeuforward.org/data-structure/shortest-path-in-directed-acyclic-graph-topological-sort-g-27/"]], "note": null, "fire": false, "lock": false}, {"id": "pp162", "title": "Word Ladder", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/word-ladder/"]], "note": null, "fire": true, "lock": false}, {"id": "pp163", "title": "Kosaraju's SCC", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1"]], "note": null, "fire": true, "lock": false}]]]}, {"id": "s6", "week": "WK 6", "dates": "Jul 6–12", "title": "DP + Bits + Cleanup + Port", "load": "boss", "topics": [["Dynamic Programming", [{"id": "pp164", "title": "Climbing Stairs", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/climbing-stairs/"]], "note": null, "fire": false, "lock": false}, {"id": "pp165", "title": "House Robber", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/house-robber/"]], "note": null, "fire": false, "lock": false}, {"id": "pp166", "title": "House Robber II", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/house-robber-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp167", "title": "Coin Change", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/coin-change/"]], "note": null, "fire": false, "lock": false}, {"id": "pp168", "title": "Coin Change II", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/coin-change-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp169", "title": "Longest Increasing Subsequence", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/longest-increasing-subsequence/"]], "note": null, "fire": false, "lock": false}, {"id": "pp170", "title": "Word Break", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/word-break/"]], "note": null, "fire": false, "lock": false}, {"id": "pp171", "title": "Maximum Product Subarray", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/maximum-product-subarray/"]], "note": null, "fire": false, "lock": false}, {"id": "pp172", "title": "Partition Equal Subset Sum", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/partition-equal-subset-sum/"]], "note": "0/1 knapsack", "fire": false, "lock": false}, {"id": "pp173", "title": "Unique Paths", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/unique-paths/"]], "note": null, "fire": false, "lock": false}, {"id": "pp174", "title": "Longest Common Subsequence", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/longest-common-subsequence/"]], "note": null, "fire": false, "lock": false}, {"id": "pp175", "title": "Edit Distance", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/edit-distance/"]], "note": null, "fire": false, "lock": false}, {"id": "pp176", "title": "Target Sum", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/target-sum/"]], "note": null, "fire": false, "lock": false}, {"id": "pp177", "title": "Decode Ways", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/decode-ways/"]], "note": null, "fire": false, "lock": false}, {"id": "pp178", "title": "Longest Palindromic Substring", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/longest-palindromic-substring/"]], "note": null, "fire": false, "lock": false}, {"id": "pp179", "title": "Striver Stocks set (6 variants)", "src": "ST", "tier": "stretch", "links": [["TUF", "https://takeuforward.org/dynamic-programming/strivers-dp-series-dynamic-programming-problems/"]], "note": null, "fire": false, "lock": false}, {"id": "pp180", "title": "MCM / Partition DP", "src": "ST", "tier": "stretch", "links": [["TUF", "https://takeuforward.org/dynamic-programming/strivers-dp-series-dynamic-programming-problems/"]], "note": null, "fire": false, "lock": false}, {"id": "pp181", "title": "Burst Balloons", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/burst-balloons/"]], "note": null, "fire": true, "lock": false}, {"id": "pp182", "title": "DP on Squares", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/maximal-square/"]], "note": null, "fire": false, "lock": false}, {"id": "pp183", "title": "DP-on-strings full set (SCS, distinct subseq)", "src": "ST", "tier": "stretch", "links": [["TUF", "https://takeuforward.org/dynamic-programming/strivers-dp-series-dynamic-programming-problems/"]], "note": null, "fire": false, "lock": false}]], ["Bit Manipulation", [{"id": "pp184", "title": "Single Number", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/single-number/"]], "note": "XOR trick", "fire": false, "lock": false}, {"id": "pp185", "title": "Number of 1 Bits", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/number-of-1-bits/"]], "note": null, "fire": false, "lock": false}, {"id": "pp186", "title": "Counting Bits", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/counting-bits/"]], "note": "dp[i]=dp[i>>1]+(i&1)", "fire": false, "lock": false}, {"id": "pp187", "title": "Missing Number", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/missing-number/"]], "note": null, "fire": false, "lock": false}, {"id": "pp188", "title": "Reverse Bits", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/reverse-bits/"]], "note": null, "fire": false, "lock": false}, {"id": "pp189", "title": "Sum of Two Integers", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/sum-of-two-integers/"]], "note": null, "fire": false, "lock": false}, {"id": "pp190", "title": "Single Number II & III", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/single-number-ii/"], ["LC", "https://leetcode.com/problems/single-number-iii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp191", "title": "XOR of a range", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/find-xor-of-numbers-from-l-to-r/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp192", "title": "Divide without operators", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/divide-two-integers/"]], "note": null, "fire": false, "lock": false}]], ["Tries", [{"id": "pp193", "title": "Implement Trie", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/implement-trie-prefix-tree/"]], "note": null, "fire": false, "lock": false}, {"id": "pp194", "title": "Add and Search Words", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/design-add-and-search-words-data-structure/"]], "note": null, "fire": false, "lock": false}, {"id": "pp195", "title": "Word Search II", "src": "NC", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/word-search-ii/"]], "note": null, "fire": true, "lock": false}, {"id": "pp196", "title": "Maximum XOR of Two Numbers", "src": "ST", "tier": "stretch", "links": [["LC", "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/"]], "note": null, "fire": false, "lock": false}, {"id": "pp197", "title": "Count Distinct Substrings", "src": "ST", "tier": "stretch", "links": [["GFG", "https://www.geeksforgeeks.org/problems/count-of-distinct-substrings/1"]], "note": null, "fire": false, "lock": false}]], ["Intervals", [{"id": "pp198", "title": "Insert Interval", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/insert-interval/"]], "note": null, "fire": false, "lock": false}, {"id": "pp199", "title": "Merge Intervals", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/merge-intervals/"]], "note": null, "fire": false, "lock": false}, {"id": "pp200", "title": "Non-overlapping Intervals", "src": "NC", "tier": "core", "links": [["LC", "https://leetcode.com/problems/non-overlapping-intervals/"]], "note": null, "fire": false, "lock": false}, {"id": "pp201", "title": "Meeting Rooms I & II", "src": "NC", "tier": "core", "links": [["NC", "https://neetcode.io/problems/meeting-schedule"], ["NC", "https://neetcode.io/problems/meeting-schedule-ii"]], "note": null, "fire": false, "lock": true}]], ["Finish Line", [{"id": "pp202", "title": "Python port of ~15 starred problems", "src": "PY", "tier": "core", "links": [], "note": null, "fire": false, "lock": false}, {"id": "pp203", "title": "2× timed mock OAs in Go", "src": "PY", "tier": "core", "links": [["WEB", "https://app.codesignal.com/"]], "note": null, "fire": false, "lock": false}]]]}, {"id": "pb", "week": "BONUS", "dates": "only if ahead", "title": "Bonus Track", "load": "bonus", "topics": [["Greedy", [{"id": "pp204", "title": "Jump Game", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/jump-game/"]], "note": null, "fire": false, "lock": false}, {"id": "pp205", "title": "Jump Game II", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/jump-game-ii/"]], "note": null, "fire": false, "lock": false}, {"id": "pp206", "title": "Gas Station", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/gas-station/"]], "note": null, "fire": false, "lock": false}, {"id": "pp207", "title": "Hand of Straights", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/hand-of-straights/"]], "note": null, "fire": false, "lock": false}, {"id": "pp208", "title": "Merge Triplets to Form Target", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/merge-triplets-to-form-target-triplet/"]], "note": null, "fire": false, "lock": false}, {"id": "pp209", "title": "Partition Labels", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/partition-labels/"]], "note": null, "fire": false, "lock": false}, {"id": "pp210", "title": "Valid Parenthesis String", "src": "ST", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/valid-parenthesis-string/"]], "note": null, "fire": false, "lock": false}, {"id": "pp211", "title": "Candy", "src": "ST", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/candy/"]], "note": null, "fire": true, "lock": false}, {"id": "pp212", "title": "Job Sequencing", "src": "ST", "tier": "bonus", "links": [["GFG", "https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1"]], "note": null, "fire": false, "lock": false}, {"id": "pp213", "title": "Fractional Knapsack", "src": "ST", "tier": "bonus", "links": [["GFG", "https://www.geeksforgeeks.org/problems/fractional-knapsack-1587115620/1"]], "note": null, "fire": false, "lock": false}]], ["Math & Geometry", [{"id": "pp214", "title": "Rotate Image", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/rotate-image/"]], "note": null, "fire": false, "lock": false}, {"id": "pp215", "title": "Spiral Matrix", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/spiral-matrix/"]], "note": null, "fire": false, "lock": false}, {"id": "pp216", "title": "Happy Number", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/happy-number/"]], "note": null, "fire": false, "lock": false}, {"id": "pp217", "title": "Plus One", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/plus-one/"]], "note": null, "fire": false, "lock": false}, {"id": "pp218", "title": "Pow(x, n)", "src": "NC", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/powx-n/"]], "note": null, "fire": false, "lock": false}, {"id": "pp219", "title": "Multiply Strings", "src": "ST", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/multiply-strings/"]], "note": null, "fire": false, "lock": false}, {"id": "pp220", "title": "Sqrt using BS", "src": "ST", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/sqrtx/"]], "note": null, "fire": false, "lock": false}, {"id": "pp221", "title": "Count Primes (Sieve)", "src": "ST", "tier": "bonus", "links": [["LC", "https://leetcode.com/problems/count-primes/"]], "note": null, "fire": false, "lock": false}]]]}], "seed": ["ppdone1", "ppdone2", "ppdone3", "ppdone4", "pp5", "pp6", "pp7", "pp8", "pp9", "pp10", "pp11", "pp12", "ppfx1", "ppfx2", "ppfx3", "ppfx4", "ppdone21", "pp22", "pp23", "pp24", "pp25", "pp30", "pp31", "pp32", "pp33", "ppdone40", "pp41", "pp42", "pp44", "pp45", "pp52", "pp53", "pp54", "pp55", "pp56"]};
+const STORAGE_KEY='dsasprint2026_checks';
+const load=()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch{return{}}};
+const save=c=>localStorage.setItem(STORAGE_KEY,JSON.stringify(c));
+(function(){const F='dsasprint2026_seed_v2';if(localStorage.getItem(F))return;
+ const c=load();DATA.seed.forEach(id=>c[id]=true);save(c);localStorage.setItem(F,'1');})();
+
+const tierOf=p=>p.tier==='done'?'core':p.tier;
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+/* build chapters + topic index */
+const chWrap=document.getElementById('chapters'), idx=document.getElementById('idx');
+const ROMAN=['I','II','III','IV','V','VI','✦'];
+DATA.sprints.forEach((sp,si)=>{
+  const d=document.createElement('details');
+  d.className='chapter'; d.id='sec-'+sp.id; d.open = sp.load!=='bonus';
+  d.style.animationDelay=(0.28+si*0.05)+'s';
+  let body='';
+  sp.topics.forEach(([tname,probs])=>{
+    const tid=sp.id+'-'+slug(tname);
+    body+=`<div class="tp" id="tp-${tid}"><span class="tp-name">${esc(tname)}</span><span class="tp-line"></span><span class="tp-mini" data-tpmini="${tid}">0/0</span></div>`;
+    [['core','Core',null],['stretch','Stretch','— if ahead'],['bonus',null,null]].forEach(([tier,label,note])=>{
+      const items=probs.filter(p=>tierOf(p)===tier);
+      if(!items.length)return;
+      if(label) body+=`<div class="tierlab ${tier}">${label}${note?`<span class="tl-note">${note}</span>`:''}</div>`;
+      items.forEach(p=>{
+        const badges=[`<span class="bdg b-${p.src}">${p.src}</span>`];
+        if(p.fire)badges.push('<span class="bdg b-fire">🔥</span>');
+        if(p.lock)badges.push('<span class="bdg b-lock">🔒</span>');
+        const links=p.links.map(([t,u])=>`<a class="lk lk-${t}" href="${u}" target="_blank" rel="noopener">${t}</a>`).join('');
+        body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
+          <div class="cir"></div>
+          <div class="pmain"><span class="pname">${esc(p.title)}</span>${p.note?` <span class="pnote">${esc(p.note)}</span>`:''}<span class="pbadges">${badges.join('')}</span></div>
+          <div class="plinks">${links}</div></div>`;
+      });
+    });
+    /* topic index card */
+    idx.insertAdjacentHTML('beforeend',
+     `<a class="tcard" href="#tp-${tid}">
+        <span class="tring" data-tring="${tid}"><svg width="42" height="42" viewBox="0 0 42 42">
+          <circle class="tr-track" cx="21" cy="21" r="17"/>
+          <circle class="tr-arc" data-trarc="${tid}" cx="21" cy="21" r="17" stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+        </svg><span class="tr-pct" data-trpct="${tid}">0%</span></span>
+        <span><span class="tc-name">${esc(tname)}</span><br><span class="tc-count" data-trcount="${tid}">0 / 0</span></span>
+      </a>`);
+  });
+  d.innerHTML=`<summary class="ch-head">
+    <span class="ch-num">${ROMAN[si]||si+1}</span>
+    <div class="ch-mid">
+      <div class="ch-title">${esc(sp.title)}</div>
+      <div class="ch-sub"><span>${sp.week} · ${sp.dates}</span>${si===0?'<span class="now">● active</span>':''}<span class="load-${sp.load}">${sp.load==='bonus'?'optional':sp.load+' load'}</span></div>
+    </div>
+    <span class="ch-ring"><svg width="54" height="54" viewBox="0 0 54 54">
+      <circle class="chr-track" cx="27" cy="27" r="22"/>
+      <circle class="chr-arc" id="chr-${sp.id}" cx="27" cy="27" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+    </svg><span class="chr-txt" id="chrtxt-${sp.id}">0%</span></span>
+    <span class="ch-chev">▾</span>
+  </summary><div class="ch-body">${body}</div>`;
+  chWrap.appendChild(d);
+});
+
+/* toggling */
+function toggle(id){
+  const c=load(); const was=!!c[id];
+  if(was)delete c[id]; else c[id]=true; save(c);
+  document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.toggle('ck',!was));
+  refresh();
+}
+document.querySelectorAll('.row').forEach(r=>r.addEventListener('click',e=>{
+  if(e.target.closest('a'))return; toggle(r.dataset.id);
+}));
+
+/* segmented hero ring — one circle, three proportional arcs */
+const RING={R:74,CX:86,CY:86,GAP:10,COLORS:['var(--verm)','var(--amber)','var(--web)']};
+let ringFills=[];
+function buildRing(totals){
+  const C=2*Math.PI*RING.R, T=totals.reduce((a,b)=>a+b,0), g=document.getElementById('ringSegs');
+  let angle=0; ringFills=[];
+  totals.forEach((n,i)=>{
+    const segDeg=360*n/T, arcLen=C*(segDeg-RING.GAP)/360;
+    const mk=cls=>{
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',RING.CX);c.setAttribute('cy',RING.CY);c.setAttribute('r',RING.R);
+      c.setAttribute('class','ringseg '+cls);c.setAttribute('stroke',RING.COLORS[i]);
+      c.setAttribute('transform',`rotate(${angle-90} ${RING.CX} ${RING.CY})`);
+      g.appendChild(c);return c;};
+    const tr=mk('track'); tr.setAttribute('stroke-dasharray',`${arcLen} ${C-arcLen}`);
+    const fl=mk('fill');  fl.setAttribute('stroke-dasharray',`0 ${C}`); fl.style.display='none';
+    ringFills.push({el:fl,arcLen,C});
+    angle+=segDeg;
+  });
+}
+function updateRing(pairs){
+  pairs.forEach(([d,t],i)=>{
+    const f=ringFills[i]; if(!f)return;
+    const p=t?d/t:0, len=f.arcLen*p;
+    if(p<=0){f.el.style.display='none';return;}
+    f.el.style.display='';
+    f.el.setAttribute('stroke-dasharray',`${len} ${f.C-len}`);
+  });
+}
+(function(){
+  let ct=0,st=0,bt=0;
+  DATA.sprints.forEach(sp=>sp.topics.forEach(([_,probs])=>probs.forEach(p=>{
+    const t=tierOf(p); if(t==='core')ct++; else if(t==='stretch')st++; else bt++;
+  })));
+  buildRing([ct,st,bt]);
+})();
+
+/* progress */
+function refresh(){
+  const c=load(); let cd=0,ct=0,sd=0,st=0,bd=0,bt=0; let next=null;
+  const tp={};
+  DATA.sprints.forEach(sp=>{
+    let d=0,t=0;
+    sp.topics.forEach(([tname,probs])=>{
+      const tid=sp.id+'-'+slug(tname);
+      tp[tid]=tp[tid]||{d:0,t:0,cd:0,ctt:0};
+      probs.forEach(p=>{
+        const tier=tierOf(p),done=!!c[p.id]; t++; tp[tid].t++;
+        if(done){d++;tp[tid].d++;}
+        if(tier==='core'){tp[tid].ctt++;if(done)tp[tid].cd++;}
+        if(tier==='core'){ct++;if(done)cd++;else if(!next)next=p.title;}
+        else if(tier==='stretch'){st++;if(done)sd++;}
+        else{bt++;if(done)bd++;}
+      });
+    });
+    const arc=document.getElementById('chr-'+sp.id),txt=document.getElementById('chrtxt-'+sp.id);
+    if(arc){arc.style.strokeDashoffset=138.2*(1-(t?d/t:0));}
+    if(txt){txt.textContent=Math.round(t?100*d/t:0)+'%';}
+  });
+  for(const [tid,o] of Object.entries(tp)){
+    const {d,t,cd:tcd,ctt}=o;
+    /* state color: amber → <20% · vermillion → >20% · green → core clear · purple → everything clear */
+    let col='var(--amber)';
+    if(t>0&&d===t)col='var(--web)';
+    else if(ctt>0&&tcd===ctt)col='var(--green)';
+    else if(t>0&&d/t>0.2)col='var(--verm)';
+    const arc=document.querySelector(`[data-trarc="${tid}"]`);
+    if(arc){arc.style.strokeDashoffset=106.8*(1-(t?d/t:0));arc.style.stroke=col;}
+    const pct=document.querySelector(`[data-trpct="${tid}"]`); if(pct)pct.textContent=Math.round(t?100*d/t:0)+'%';
+    const cnt=document.querySelector(`[data-trcount="${tid}"]`); if(cnt)cnt.textContent=d+' / '+t;
+    const mini=document.querySelector(`[data-tpmini="${tid}"]`); if(mini)mini.textContent=d+'/'+t;
+  }
+  document.getElementById('brNum').textContent=cd+sd+bd;
+  document.getElementById('brDen').textContent='of '+(ct+st+bt)+' solved';
+  updateRing([[cd,ct],[sd,st],[bd,bt]]);
+  document.getElementById('mCore').textContent=cd+' / '+ct;
+  document.getElementById('fCore').style.width=(ct?100*cd/ct:0)+'%';
+  document.getElementById('mStr').textContent=sd+' / '+st;
+  document.getElementById('fStr').style.width=(st?100*sd/st:0)+'%';
+  document.getElementById('mBon').textContent=bd+' / '+bt;
+  document.getElementById('fBon').style.width=(bt?100*bd/bt:0)+'%';
+  document.getElementById('nextUp').textContent=next||'all Core clear ✦';
+}
+(function(){const c=load();document.querySelectorAll('.row').forEach(r=>{if(c[r.dataset.id])r.classList.add('ck');});refresh();})();
+
+/* countdown stamp */
+function tick(){
+  const d=Math.ceil((new Date('2026-07-13')-new Date())/86400000);
+  document.getElementById('tmStamp').textContent=d>0?`T–${d} DAYS TO OA WINDOW`:'OA WINDOW LIVE';
+}
+tick();setInterval(tick,60000);
+
+/* dark mode */
+const THEME_KEY='dsasprint2026_theme';
+const modeBtn=document.getElementById('modeBtn');
+function applyTheme(t,anim){
+  if(anim){document.documentElement.classList.add('theme-anim');
+    setTimeout(()=>document.documentElement.classList.remove('theme-anim'),400);}
+  document.documentElement.dataset.theme=t;
+  modeBtn.textContent=t==='dark'?'☀':'☾';
+}
+applyTheme(localStorage.getItem(THEME_KEY)||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),false);
+modeBtn.addEventListener('click',()=>{
+  const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  localStorage.setItem(THEME_KEY,t);applyTheme(t,true);
+});
+
+/* filters */
+let tier='all',status='all',q='';
+function applyFilters(){
+  document.querySelectorAll('.row').forEach(r=>{
+    const okT=tier==='all'||r.dataset.tier===tier;
+    const done=r.classList.contains('ck');
+    const okS=status==='all'||(status==='done'?done:!done);
+    const okQ=!q||r.dataset.q.includes(q);
+    r.classList.toggle('hidden',!(okT&&okS&&okQ));
+  });
+  document.querySelectorAll('.ch-body').forEach(b=>{
+    b.querySelectorAll('.tierlab').forEach(tt=>{
+      let n=tt.nextElementSibling,any=false;
+      while(n&&n.classList.contains('row')){if(!n.classList.contains('hidden'))any=true;n=n.nextElementSibling;}
+      tt.classList.toggle('hidden',!any);
+    });
+    b.querySelectorAll('.tp').forEach(t1=>{
+      let n=t1.nextElementSibling,any=false;
+      while(n&&!n.classList.contains('tp')){if(n.classList.contains('row')&&!n.classList.contains('hidden'))any=true;n=n.nextElementSibling;}
+      t1.classList.toggle('hidden',!any);
+    });
+  });
+}
+document.getElementById('q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();applyFilters();});
+document.getElementById('tierChips').addEventListener('click',e=>{
+  const b=e.target.closest('.chip');if(!b)return;
+  document.querySelectorAll('#tierChips .chip').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');tier=b.dataset.tier;applyFilters();
+  if(tier==='bonus')document.getElementById('sec-pb').open=true;
+});
+document.getElementById('statusChips').addEventListener('click',e=>{
+  const b=e.target.closest('.chip');if(!b)return;
+  document.querySelectorAll('#statusChips .chip').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');status=b.dataset.st;applyFilters();
+});
+let allOpen=true;
+document.getElementById('toggleAll').addEventListener('click',e=>{
+  allOpen=!allOpen;
+  document.querySelectorAll('details.chapter').forEach(d=>d.open=allOpen);
+  e.target.textContent=allOpen?'Collapse':'Expand';
+});
+
+/* ── Markdown export (concise, for pasting to an AI) ── */
+function buildMarkdown(){
+  const c=load();
+  let cd=0,ct=0,sd=0,st=0,bd=0,bt=0;
+  DATA.sprints.forEach(sp=>sp.topics.forEach(([_,probs])=>probs.forEach(p=>{
+    const tier=tierOf(p),done=!!c[p.id];
+    if(tier==='core'){ct++;if(done)cd++;}
+    else if(tier==='stretch'){st++;if(done)sd++;}
+    else{bt++;if(done)bd++;}
+  })));
+  const today=new Date().toISOString().slice(0,10);
+  const lines=[
+    `DSA sprint progress (${today}) — Core ${cd}/${ct}, Stretch ${sd}/${st}, Bonus ${bd}/${bt}. Go primary, Python fallback. (* = stretch tier)`,''
+  ];
+  DATA.sprints.forEach(sp=>{
+    lines.push(`${sp.week} ${sp.title}`);
+    sp.topics.forEach(([tname,probs])=>{
+      const done=[],left=[];
+      let d=0;
+      probs.forEach(p=>{
+        const star=tierOf(p)==='stretch'?'*':'';
+        if(c[p.id]){done.push(p.title+star);d++;}
+        else left.push(p.title+star);
+      });
+      let s=`- ${tname} [${d}/${probs.length}]`;
+      if(done.length)s+=` done: ${done.join(', ')}`;
+      if(done.length&&left.length)s+=' |';
+      if(left.length)s+=` left: ${left.join(', ')}`;
+      lines.push(s);
+    });
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+function flash(btn,txt){
+  const old=btn.textContent;btn.textContent=txt;
+  setTimeout(()=>btn.textContent=old,1400);
+}
+document.getElementById('copyMd').addEventListener('click',async e=>{
+  const md=buildMarkdown();
+  try{await navigator.clipboard.writeText(md);flash(e.target,'Copied ✓');}
+  catch{ /* clipboard API blocked — fallback */
+    const ta=document.createElement('textarea');ta.value=md;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');ta.remove();flash(e.target,'Copied ✓');
+  }
+});
+document.getElementById('exportMd').addEventListener('click',e=>{
+  const blob=new Blob([buildMarkdown()],{type:'text/markdown'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='dsa-roadmap-'+new Date().toISOString().slice(0,10)+'.md';
+  a.click();URL.revokeObjectURL(a.href);
+  flash(e.target,'Saved ✓');
+});
+</script>
+</body>
+</html>
