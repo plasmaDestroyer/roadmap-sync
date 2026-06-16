@@ -60,7 +60,10 @@ func main() {
 				http.Error(w, "bad request body", http.StatusBadRequest)
 				return
 			}
-			// TODO: Insert/Delete to the DB.
+
+			if err := saveChecks(db, userID, checks); err != nil {
+				log.Println("saving progress: ", err)
+			}
 
 		default:
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -86,4 +89,22 @@ func getChecks(db *sql.DB, userID string) (map[string]bool, error) {
 		checks[id] = true
 	}
 	return checks, rows.Err()
+}
+
+func saveChecks(db *sql.DB, userID string, checks map[string]bool) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.Exec(`DELETE FROM checks WHERE user_id = ?`, userID); err != nil {
+		return err
+	}
+	for id := range checks {
+		if _, err := tx.Exec(`INSERT INTO checks(user_id, problem_id) VALUES (?, ?)`, userID, id); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
 }
