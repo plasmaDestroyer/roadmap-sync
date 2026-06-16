@@ -12,6 +12,9 @@ import (
 func main() {
 	log.Println("Starting Server...")
 
+	// Placeholder userID
+	userID := "me"
+
 	db, err := sql.Open("sqlite", "roadmap.db")
 	if err != nil {
 		log.Fatal(err)
@@ -37,13 +40,36 @@ func main() {
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
 		// Write a json response to w for progress
-		w.Header().Set("Content-Type", "application/json")
+		checks, err := getChecks(db, userID)
+		if err != nil {
+			http.Error(w, "could not load progress", http.StatusInternalServerError)
+			log.Println("getChecks:", err)
+			return
+		}
 
-		checks := map[string]bool{"pp5": true, "ppfx1": true}
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(checks); err != nil {
-			log.Println("encode progress: ", err)
+			log.Println("encode progress:", err)
 		}
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func getChecks(db *sql.DB, userID string) (map[string]bool, error) {
+	rows, err := db.Query("SELECT problem_id FROM checks WHERE user_id = ?", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	checks := make(map[string]bool)
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		checks[id] = true
+	}
+	return checks, rows.Err()
 }
