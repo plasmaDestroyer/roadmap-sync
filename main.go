@@ -1,13 +1,25 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
-	"encoding/json"
+
+	_ "modernc.org/sqlite"
 )
 
 func main() {
 	log.Println("Starting Server...")
+
+	db, err := sql.Open("sqlite", "roadmap.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Write a response to w on every request to "/"
