@@ -34,22 +34,36 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Write a response to w on every request to "/"
+		// Serve to w on every request to "/"
 		http.ServeFile(w, r, "roadmap.html")
 	})
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
 		// Write a json response to w for progress
-		checks, err := getChecks(db, userID)
-		if err != nil {
-			http.Error(w, "could not load progress", http.StatusInternalServerError)
-			log.Println("getChecks:", err)
-			return
-		}
+		switch r.Method {
+		case http.MethodGet:
+			checks, err := getChecks(db, userID)
+			if err != nil {
+				http.Error(w, "could not load progress", http.StatusInternalServerError)
+				log.Println("getChecks:", err)
+				return
+			}
 
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(checks); err != nil {
-			log.Println("encode progress:", err)
+			w.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(w).Encode(checks); err != nil {
+				log.Println("encode progress:", err)
+			}
+
+		case http.MethodPost:
+			var checks map[string]bool
+			if err := json.NewDecoder(r.Body).Decode(&checks); err != nil {
+				http.Error(w, "bad request body", http.StatusBadRequest)
+				return
+			}
+			// TODO: Insert/Delete to the DB.
+
+		default:
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 
