@@ -21,6 +21,15 @@ func main() {
 	}
 	defer db.Close()
 
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS checks (
+    user_id    TEXT NOT NULL,
+    problem_id TEXT NOT NULL,
+    PRIMARY KEY (user_id, problem_id)
+)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Write a response to w on every request to "/"
 		http.ServeFile(w, r, "roadmap.html")
