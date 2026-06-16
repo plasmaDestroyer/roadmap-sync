@@ -70,7 +70,7 @@ func main() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":42069", nil))
 }
 
 func getChecks(db *sql.DB, userID string) (map[string]bool, error) {
