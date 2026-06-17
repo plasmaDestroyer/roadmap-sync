@@ -219,9 +219,9 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .pmain{flex:1;min-width:0}
 .pname{font-size:13px;color:var(--ink);font-weight:500}
 .hint-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:6px;
-  border-radius:50%;border:1.3px solid var(--hair2);color:var(--faint);font-size:10px;line-height:1;font-weight:600;
+  border-radius:50%;border:1.3px solid var(--hair2);color:var(--faint);
   cursor:pointer;user-select:none;vertical-align:1px;transition:.15s}
-.hint-mark>span{display:block;transform:translateY(.5px)} /* optical-center the ✦ fallback glyph */
+.hint-mark .spark{width:9px;height:9px;display:block;fill:currentColor} /* SVG sparkle — geometrically centred, no font metrics */
 .hint-mark:hover{border-color:var(--verm);color:var(--verm)}
 .hint-mark.on{border-color:var(--verm);color:#fff;background:var(--verm)}
 .hint-note{font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--ink2);padding-left:13px;
@@ -271,4 +271,9 @@ details[open] .ch-chev{transform:rotate(180deg)}
   .plinks{width:100%;justify-content:flex-start;margin-left:31px;max-width:none}
   .toolbar{position:static;box-shadow:none}
   .acts{margin-left:0;border-left:none;padding-left:0;width:100%;justify-content:flex-end}
+}
+
+/* ── large screens (≈1440p/1600p): widen the column so it isn't a narrow strip; type stays original ── */
+@media (min-width:1500px){
+  .wrap{max-width:1330px}
 }

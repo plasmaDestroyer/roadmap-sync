@@ -58,6 +58,7 @@ const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 let LAYOUT={};
 const TIERS=['core','stretch','bonus'];
 const HANDLE='<span class="drag-handle" aria-hidden="true"><span class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>';
+const SPARK='<svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2Q12 12 22 12Q12 12 12 22Q12 12 2 12Q12 12 12 2Z"/></svg>';
 async function loadLayout(){ try{const r=await fetch('/layout');if(r.ok)return await r.json();}catch{} return {}; }
 function saveLayout(){ fetch('/layout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LAYOUT)}).catch(err=>console.warn('layout sync failed',err)); }
 /* reorder + retier each saved topic in DATA; problems missing from a saved order keep their place at the end */
@@ -95,7 +96,7 @@ DATA.sprints.forEach((sp,si)=>{
         body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
           ${HANDLE}
           <div class="cir"></div>
-          <div class="pmain"><span class="pname">${esc(p.title)}</span>${p.note?`<span class="hint-mark"><span>✦</span></span>`:''}<span class="pbadges">${badges.join('')}</span>${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div>
+          <div class="pmain"><span class="pname">${esc(p.title)}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}<span class="pbadges">${badges.join('')}</span>${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div>
           <div class="plinks">${links}</div></div>`;
       });
     });
