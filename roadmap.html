@@ -559,12 +559,13 @@ function toggle(id){
   document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.toggle('ck',!was));
   refresh();
 }
-document.querySelectorAll('.row').forEach(r=>r.addEventListener('click',e=>{
-  if(e.target.closest('a'))return;
+chWrap.addEventListener('click',e=>{
+  const r=e.target.closest('.row');
+  if(!r||e.target.closest('a'))return;
   const m=e.target.closest('.hint-mark');
   if(m){ m.classList.toggle('on'); r.querySelector('.hint-note').classList.toggle('on'); return; }
   toggle(r.dataset.id);
-}));
+});
 
 /* segmented hero ring — one circle, three proportional arcs */
 const RING={R:74,CX:86,CY:86,GAP:10,COLORS:['var(--verm)','var(--amber)','var(--web)']};
