@@ -34,8 +34,18 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Serve the UI to w on every request to "/"
+		// Serve the HTML to w on every request to "/"
 		http.ServeFile(w, r, "roadmap.html")
+	})
+
+	http.HandleFunc("/styles.css", func(w http.ResponseWriter, r *http.Request) {
+		// Serve the CSS to w
+		http.ServeFile(w, r, "styles.css")
+	})
+
+	http.HandleFunc("/app.js", func(w http.ResponseWriter, r *http.Request) {
+		// Serve the JS to w
+		http.ServeFile(w, r, "app.js")
 	})
 
 	http.HandleFunc("/data.json", func(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +85,7 @@ func main() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":42069", nil))
+	log.Fatal(http.ListenAndServe(":8069", nil))
 }
 
 func getChecks(db *sql.DB, userID string) (map[string]bool, error) {
