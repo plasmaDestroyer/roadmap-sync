@@ -33,25 +33,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Serve the HTML to w on every request to "/"
-		http.ServeFile(w, r, "roadmap.html")
-	})
-
-	http.HandleFunc("/styles.css", func(w http.ResponseWriter, r *http.Request) {
-		// Serve the CSS to w
-		http.ServeFile(w, r, "styles.css")
-	})
-
-	http.HandleFunc("/app.js", func(w http.ResponseWriter, r *http.Request) {
-		// Serve the JS to w
-		http.ServeFile(w, r, "app.js")
-	})
-
-	http.HandleFunc("/data.json", func(w http.ResponseWriter, r *http.Request) {
-		// Serve the json data file
-		http.ServeFile(w, r, "data.json")
-	})
+	http.Handle("/", http.FileServer(http.Dir("static")))
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
 		// Write a json response to w for progress
