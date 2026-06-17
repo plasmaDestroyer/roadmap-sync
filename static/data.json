@@ -1731,6 +1731,36 @@
               "lock": false
             },
             {
+              "id": "pp222",
+              "title": "Insert into BST",
+              "src": "NC+",
+              "tier": "core",
+              "links": [
+                [
+                  "LC",
+                  "https://leetcode.com/problems/insert-into-a-binary-search-tree/"
+                ]
+              ],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "pp223",
+              "title": "Delete Node in BST",
+              "src": "NC+",
+              "tier": "core",
+              "links": [
+                [
+                  "LC",
+                  "https://leetcode.com/problems/delete-node-in-a-bst/"
+                ]
+              ],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
               "id": "pp104",
               "title": "Count Good Nodes",
               "src": "ST",
@@ -1912,6 +1942,29 @@
               ],
               "note": null,
               "fire": true,
+              "lock": false
+            },
+            {
+              "id": "pp224",
+              "title": "Iterative DFS trio",
+              "src": "NC+",
+              "tier": "stretch",
+              "links": [
+                [
+                  "LC",
+                  "https://leetcode.com/problems/binary-search-tree-iterator/"
+                ],
+                [
+                  "LC",
+                  "https://leetcode.com/problems/binary-tree-preorder-traversal/"
+                ],
+                [
+                  "LC",
+                  "https://leetcode.com/problems/binary-tree-postorder-traversal/"
+                ]
+              ],
+              "note": null,
+              "fire": false,
               "lock": false
             }
           ]
