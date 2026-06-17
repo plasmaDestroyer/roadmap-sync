@@ -9,6 +9,16 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+// noCache forces browsers to revalidate static assets each load instead of
+// serving stale copies from heuristic cache (FileServer sends Last-Modified
+// but no Cache-Control). Revalidation still returns a cheap 304 when unchanged.
+func noCache(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache")
+		h.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	log.Println("Starting Server...")
 
@@ -33,7 +43,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.Handle("/", http.FileServer(http.Dir("static")))
+	http.Handle("/", noCache(http.FileServer(http.Dir("static"))))
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
 		// Write a json response to w for progress
