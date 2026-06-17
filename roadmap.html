@@ -471,11 +471,28 @@ async function syncFromServer(){
   }catch{}
 }
 async function boot(){
-  DATA=await(await fetch('/data.json')).json();
-  buildChapters();
-  buildHeroRing();
-  paint();
-  syncFromServer();
+  try{
+    const res=await fetch('/data.json');
+    if(!res.ok) throw new Error('data.json: '+res.status);
+    DATA=await res.json();
+    buildChapters();
+    buildHeroRing();
+    paint();
+    syncFromServer();
+  }catch(e){
+    console.error('boot failed:',e);
+    chWrap.innerHTML=`
+      <div style="max-width:520px;margin:64px auto;padding:32px 28px;text-align:center;
+                  background:var(--card);border:1px solid var(--hair2);border-radius:14px">
+        <div style="font-family:var(--serif);font-size:22px;color:var(--verm);margin-bottom:10px">
+          Couldn't load the roadmap
+        </div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--faint)">
+          The server didn't return the roadmap data.<br>
+          Check that it's running, then reload the page.
+        </div>
+      </div>`;
+  }
 }
 
 const tierOf=p=>p.tier==='done'?'core':p.tier;
