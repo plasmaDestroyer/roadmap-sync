@@ -34,8 +34,13 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Serve to w on every request to "/"
+		// Serve the UI to w on every request to "/"
 		http.ServeFile(w, r, "roadmap.html")
+	})
+
+	http.HandleFunc("/data.json", func(w http.ResponseWriter, r *http.Request) {
+		// Serve the json data file
+		http.ServeFile(w, r, "data.json")
 	})
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
