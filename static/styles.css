@@ -240,6 +240,14 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .lk-LC{color:var(--lc);border-color:var(--lc)} .lk-GFG{color:var(--gfg);border-color:var(--gfg)}
 .lk-NC{color:var(--ncs);border-color:var(--ncs)} .lk-TUF{color:var(--tuf);border-color:var(--tuf)}
 .lk-WEB{color:var(--web);border-color:var(--web)}
+/* ── drag-to-reorder handle (6-dot, right side, always available) ── */
+.drag-handle{display:inline-flex;align-items:center;justify-content:center;width:18px;align-self:center;flex-shrink:0;
+  order:10;margin-left:6px;color:var(--faint);cursor:grab;user-select:none;transition:color .15s}
+.drag-handle:active{cursor:grabbing}
+.row:hover .drag-handle{color:var(--ink2)}
+.dotgrid{display:grid;grid-template-columns:repeat(2,2px);grid-template-rows:repeat(3,2px);gap:3px}
+.dotgrid i{width:2px;height:2px;border-radius:50%;background:currentColor;display:block}
+.row.dragging{opacity:.4;background:var(--paper2);border:1px dashed var(--hair2);box-shadow:none}
 .hidden{display:none!important}
 
 /* legend + footnote */

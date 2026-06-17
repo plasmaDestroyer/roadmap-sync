@@ -26,9 +26,10 @@ async function syncFromServer(){
 }
 async function boot(){
   try{
-    const res=await fetch('/data.json');
+    const [res,layout]=await Promise.all([fetch('/data.json'),loadLayout()]);
     if(!res.ok) throw new Error('data.json: '+res.status);
     DATA=await res.json();
+    LAYOUT=layout; applyLayout();
     buildChapters();
     buildHeroRing();
     paint();
@@ -53,6 +54,23 @@ const tierOf=p=>p.tier==='done'?'core':p.tier;
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 
+/* ── reorder edit mode: layout overlay + persistence ── */
+let LAYOUT={};
+const TIERS=['core','stretch','bonus'];
+const HANDLE='<span class="drag-handle" aria-hidden="true"><span class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>';
+async function loadLayout(){ try{const r=await fetch('/layout');if(r.ok)return await r.json();}catch{} return {}; }
+function saveLayout(){ fetch('/layout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LAYOUT)}).catch(err=>console.warn('layout sync failed',err)); }
+/* reorder + retier each saved topic in DATA; problems missing from a saved order keep their place at the end */
+function applyLayout(){
+  DATA.sprints.forEach(sp=>sp.topics.forEach(t=>{
+    const saved=LAYOUT[sp.id+'-'+slug(t[0])]; if(!saved||!saved.length)return;
+    const byId=new Map(t[1].map(p=>[p.id,p])), ordered=[];
+    saved.forEach(({id,tier})=>{const p=byId.get(id);if(p){if(tier)p.tier=tier;ordered.push(p);byId.delete(id);}});
+    t[1].forEach(p=>{if(byId.has(p.id))ordered.push(p);});
+    t[1]=ordered;
+  }));
+}
+
 /* build chapters + topic index */
 const chWrap=document.getElementById('chapters'), idx=document.getElementById('idx');
 const ROMAN=['I','II','III','IV','V','VI','✦'];
@@ -75,6 +93,7 @@ DATA.sprints.forEach((sp,si)=>{
         if(p.lock)badges.push('<span class="bdg b-lock">🔒</span>');
         const links=p.links.map(([t,u])=>`<a class="lk lk-${t}" href="${u}" target="_blank" rel="noopener">${t}</a>`).join('');
         body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
+          ${HANDLE}
           <div class="cir"></div>
           <div class="pmain"><span class="pname">${esc(p.title)}</span>${p.note?`<span class="hint-mark"><span>✦</span></span>`:''}<span class="pbadges">${badges.join('')}</span>${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div>
           <div class="plinks">${links}</div></div>`;
@@ -115,17 +134,89 @@ function toggle(id){
 }
 chWrap.addEventListener('click',e=>{
   const r=e.target.closest('.row');
-  if(!r||e.target.closest('a'))return;
+  if(!r||e.target.closest('a')||e.target.closest('.drag-handle'))return;
   const m=e.target.closest('.hint-mark');
   if(m){ m.classList.toggle('on'); r.querySelector('.hint-note').classList.toggle('on'); return; }
   toggle(r.dataset.id);
 });
+
+/* ── drag-to-reorder (native DnD + FLIP), scoped within a topic ── */
+let dragged=null, lastAfter;
+function rowAfter(tp,y){
+  let closest=null, co=-Infinity;
+  for(const row of chWrap.querySelectorAll(`.row[data-tp="${tp}"]:not(.dragging):not(.hidden)`)){
+    const b=row.getBoundingClientRect(), off=y-b.top-b.height/2;
+    if(off<0 && off>co){ co=off; closest=row; }
+  }
+  return closest;
+}
+function flip(reorder){
+  const tp=dragged.dataset.tp, rows=[...chWrap.querySelectorAll(`.row[data-tp="${tp}"]`)];
+  const tops=rows.map(r=>r.getBoundingClientRect().top);
+  reorder();
+  rows.forEach((r,i)=>{ if(r===dragged)return; const dy=tops[i]-r.getBoundingClientRect().top;
+    if(dy) r.animate([{transform:`translateY(${dy}px)`},{transform:'none'}],{duration:180,easing:'cubic-bezier(.2,.8,.2,1)'}); });
+}
+function reclassRow(r){
+  let n=r.previousElementSibling, found=null;
+  while(n){ if(n.classList.contains('tierlab')){ found=TIERS.find(t=>n.classList.contains(t)); break; } n=n.previousElementSibling; }
+  const tier=found||r.dataset.tier||'core';
+  TIERS.forEach(t=>r.classList.toggle(t, t===tier)); r.dataset.tier=tier;
+}
+chWrap.addEventListener('mousedown',e=>{
+  const h=e.target.closest('.drag-handle'); if(h) h.closest('.row').setAttribute('draggable','true');
+});
+chWrap.addEventListener('mouseup',e=>{
+  if(dragged)return; const r=e.target.closest('.row[draggable="true"]'); if(r) r.removeAttribute('draggable');
+});
+chWrap.addEventListener('dragstart',e=>{
+  const r=e.target.closest('.row'); if(!r)return;
+  dragged=r; lastAfter=undefined; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain','');
+  requestAnimationFrame(()=>r.classList.add('dragging'));   // defer so the drag-image stays solid
+});
+chWrap.addEventListener('dragover',e=>{
+  if(!dragged)return; e.preventDefault();
+  const tp=dragged.dataset.tp, after=rowAfter(tp,e.clientY);
+  if(after===lastAfter)return; lastAfter=after;
+  flip(()=>{
+    if(after) after.parentNode.insertBefore(dragged,after);
+    else { const rows=chWrap.querySelectorAll(`.row[data-tp="${tp}"]:not(.dragging):not(.hidden)`); if(rows.length) rows[rows.length-1].after(dragged); }
+  });
+  reclassRow(dragged);
+});
+chWrap.addEventListener('dragend',()=>{
+  if(!dragged)return; const r=dragged;
+  r.classList.remove('dragging'); r.removeAttribute('draggable'); reclassRow(r);
+  r.animate([{transform:'scale(1.012)'},{transform:'none'}],{duration:200,easing:'ease-out'});   // settle
+  persistTopic(r.dataset.tp); dragged=null; lastAfter=undefined;
+});
+function topicTierMap(tp){
+  const m=new Map();
+  for(const sp of DATA.sprints) for(const t of sp.topics) if(sp.id+'-'+slug(t[0])===tp) t[1].forEach(p=>m.set(p.id,tierOf(p)));
+  return m;
+}
+function syncDataTopic(tp,order){
+  for(const sp of DATA.sprints) for(const t of sp.topics){
+    if(sp.id+'-'+slug(t[0])!==tp) continue;
+    const byId=new Map(t[1].map(p=>[p.id,p])), arr=[];
+    order.forEach(({id,tier})=>{const p=byId.get(id);if(p){p.tier=tier;arr.push(p);byId.delete(id);}});
+    t[1].forEach(p=>{if(byId.has(p.id))arr.push(p);}); t[1]=arr; return;
+  }
+}
+function persistTopic(tp){
+  const order=[...chWrap.querySelectorAll(`.row[data-tp="${tp}"]`)].map(r=>({id:r.dataset.id,tier:r.dataset.tier}));
+  const prev=topicTierMap(tp), tierChanged=order.some(o=>prev.get(o.id)!==o.tier);
+  LAYOUT[tp]=order; syncDataTopic(tp,order); saveLayout();
+  if(tierChanged) buildHeroRing();
+  refresh();
+}
 
 /* segmented hero ring — one circle, three proportional arcs */
 const RING={R:74,CX:86,CY:86,GAP:10,COLORS:['var(--verm)','var(--amber)','var(--web)']};
 let ringFills=[];
 function buildRing(totals){
   const C=2*Math.PI*RING.R, T=totals.reduce((a,b)=>a+b,0), g=document.getElementById('ringSegs');
+  g.replaceChildren();
   let angle=0; ringFills=[];
   totals.forEach((n,i)=>{
     const segDeg=360*n/T, arcLen=C*(segDeg-RING.GAP)/360;
