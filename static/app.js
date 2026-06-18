@@ -59,6 +59,10 @@ let LAYOUT={};
 const TIERS=['core','stretch','bonus'];
 const HANDLE='<span class="drag-handle" aria-hidden="true"><span class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>';
 const SPARK='<svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2Q12 12 22 12Q12 12 12 22Q12 12 2 12Q12 12 12 2Z"/></svg>';
+// link destinations: [colour var, kind] — j=judge (tinted ↗), a=article (lined "read" glyph)
+const DEST={LC:['--lc','j'],GFG:['--gfg','j'],NC:['--ncs','j'],TUF:['--tuf','a'],WEB:['--web','a']};
+const READ='<svg class="readi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 11h14M5 16h9" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>';
+const arrowFor=(t,u)=>{const d=DEST[t]||['--faint','j'];return `<a class="arr" style="color:var(${d[0]})" href="${u}" target="_blank" rel="noopener" title="${t}">${d[1]==='j'?'↗':READ}</a>`;};
 async function loadLayout(){ try{const r=await fetch('/layout');if(r.ok)return await r.json();}catch{} return {}; }
 function saveLayout(){ fetch('/layout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LAYOUT)}).catch(err=>console.warn('layout sync failed',err)); }
 /* reorder + retier each saved topic in DATA; problems missing from a saved order keep their place at the end */
@@ -89,10 +93,12 @@ DATA.sprints.forEach((sp,si)=>{
       if(!items.length)return;
       if(label) body+=`<div class="tierlab ${tier}">${label}${note?`<span class="tl-note">${note}</span>`:''}</div>`;
       items.forEach(p=>{
-        const badges=[`<span class="bdg b-${p.src}">${p.src}</span>`];
+        const badges=p.srcs.map(s=>`<span class="bdg b-${s}">${s}</span>`);
+        if(p.lc) badges.push(`<span class="bdg b-LCnum">LC ${p.lc}</span>`);
+        else { const h=p.links[0]&&p.links[0][0]; if(h&&!p.srcs.includes(h)) badges.push(`<span class="bdg b-${h}">${h}</span>`); }
         if(p.fire)badges.push('<span class="bdg b-fire">🔥</span>');
         if(p.lock)badges.push('<span class="bdg b-lock">🔒</span>');
-        const links=p.links.map(([t,u])=>`<a class="lk lk-${t}" href="${u}" target="_blank" rel="noopener">${t}</a>`).join('');
+        const links=p.links.map(([t,u])=>arrowFor(t,u)).join('');
         body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
           ${HANDLE}
           <div class="cir"></div>
@@ -396,8 +402,10 @@ function buildMarkdown(){
       let d=0;
       probs.forEach(p=>{
         const star=tierOf(p)==='stretch'?'*':'';
-        if(c[p.id]){done.push(p.title+star);d++;}
-        else left.push(p.title+star);
+        const tags=[p.srcs.join('/'), p.lc?`LC${p.lc}`:''].filter(Boolean).join(' ');
+        const label=`${p.title}${tags?` (${tags})`:''}${star}`;
+        if(c[p.id]){done.push(label);d++;}
+        else left.push(label);
       });
       let s=`- ${tname} [${d}/${probs.length}]`;
       if(done.length)s+=` done: ${done.join(', ')}`;

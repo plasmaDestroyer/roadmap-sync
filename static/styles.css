@@ -232,17 +232,17 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .b-NC{color:var(--ncs);border-color:var(--ncs)} .b-ST{color:var(--web);border-color:var(--web)}
 .b-NC\+{color:var(--ncs);border-color:var(--ncs)} /* NeetCode bonus (beyond NC150) */
 .b-LC{color:var(--lc);border-color:var(--lc)} .b-LLD{color:var(--lld);border-color:var(--lld)} .b-PY{color:var(--py);border-color:var(--py)}
+.b-LCnum{color:var(--lc);border-color:var(--lc)}
+.b-GFG{color:var(--gfg);border-color:var(--gfg)} .b-TUF{color:var(--tuf);border-color:var(--tuf)} .b-WEB{color:var(--web);border-color:var(--web)}
 .b-fire{color:var(--tuf);border-color:var(--tuf)} .b-lock{color:var(--ncs);border-color:var(--ncs);border-style:dashed}
-.plinks{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:230px}
-.lk{font-size:10px;font-weight:600;letter-spacing:.08em;text-decoration:none;padding:4px 10px;border-radius:999px;
-  border:1.3px solid;transition:.15s;white-space:nowrap;background:var(--paper)}
-.lk:hover{transform:translateY(-1.5px);box-shadow:2px 2px 0 var(--hair2)}
-.lk-LC{color:var(--lc);border-color:var(--lc)} .lk-GFG{color:var(--gfg);border-color:var(--gfg)}
-.lk-NC{color:var(--ncs);border-color:var(--ncs)} .lk-TUF{color:var(--tuf);border-color:var(--tuf)}
-.lk-WEB{color:var(--web);border-color:var(--web)}
+.plinks{display:flex;gap:4px;flex-shrink:0;justify-content:flex-end}
+/* link arrow: tinted ↗ for judges, lined "read" glyph for articles (colour set inline per destination) */
+.arr{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;line-height:1;font-size:16px;width:24px;height:22px;flex-shrink:0;transition:transform .15s}
+.arr:hover{transform:translateY(-1.5px)}
+.readi{width:14px;height:14px;display:block}
 /* ── drag-to-reorder handle (6-dot, right side, always available) ── */
 .drag-handle{display:inline-flex;align-items:center;justify-content:center;width:18px;align-self:center;flex-shrink:0;
-  order:10;margin-left:6px;color:var(--faint);cursor:grab;user-select:none;transition:color .15s}
+  order:-1;margin-right:6px;color:var(--faint);cursor:grab;user-select:none;transition:color .15s}
 .drag-handle:active{cursor:grabbing}
 .row:hover .drag-handle{color:var(--ink2)}
 .dotgrid{display:grid;grid-template-columns:repeat(2,2px);grid-template-rows:repeat(3,2px);gap:3px}
