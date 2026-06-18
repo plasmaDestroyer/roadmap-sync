@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	_ "modernc.org/sqlite"
 )
@@ -47,6 +48,26 @@ func main() {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS layout (
     user_id TEXT PRIMARY KEY,
     json    TEXT NOT NULL
+)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS events (
+    user_id    TEXT NOT NULL,
+    problem_id TEXT NOT NULL,
+    ts         INTEGER NOT NULL
+)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS companies (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    name      TEXT,
+    oa_format TEXT,
+    rounds    TEXT,
+    notes     TEXT
 )`)
 	if err != nil {
 		log.Fatal(err)
@@ -115,6 +136,53 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/streak", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		current, today, err := getStreak(db, userID)
+		if err != nil {
+			http.Error(w, "could not load streak", http.StatusInternalServerError)
+			log.Println("getStreak:", err)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]int{"current": current, "today": today})
+	})
+
+	http.HandleFunc("/companies", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			list, err := getCompanies(db)
+			if err != nil {
+				http.Error(w, "could not load companies", http.StatusInternalServerError)
+				log.Println("getCompanies:", err)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(list)
+
+		case http.MethodPost:
+			var c Company
+			if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+				http.Error(w, "bad request body", http.StatusBadRequest)
+				return
+			}
+			if err := upsertCompany(db, c); err != nil {
+				log.Println("upsertCompany:", err)
+			}
+
+		case http.MethodDelete:
+			if _, err := db.Exec(`DELETE FROM companies WHERE id = ?`, r.URL.Query().Get("id")); err != nil {
+				log.Println("deleteCompany:", err)
+			}
+
+		default:
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
 	log.Fatal(http.ListenAndServe(":8069", nil))
 }
 
@@ -142,6 +210,33 @@ func saveChecks(db *sql.DB, userID string, checks map[string]bool) error {
 		return err
 	}
 	defer tx.Rollback()
+
+	// append an event for each newly-checked problem (id present now but not stored before)
+	existing := map[string]bool{}
+	rows, err := tx.Query(`SELECT problem_id FROM checks WHERE user_id = ?`, userID)
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return err
+		}
+		existing[id] = true
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	now := time.Now().Unix()
+	for id := range checks {
+		if !existing[id] {
+			if _, err := tx.Exec(`INSERT INTO events(user_id, problem_id, ts) VALUES (?, ?, ?)`, userID, id, now); err != nil {
+				return err
+			}
+		}
+	}
 
 	if _, err := tx.Exec(`DELETE FROM checks WHERE user_id = ?`, userID); err != nil {
 		return err
@@ -171,5 +266,77 @@ func saveLayout(db *sql.DB, userID string, raw []byte) error {
 		`INSERT INTO layout(user_id, json) VALUES (?, ?)
 		 ON CONFLICT(user_id) DO UPDATE SET json = excluded.json`,
 		userID, string(raw))
+	return err
+}
+
+// getStreak returns the run of consecutive days up to today with >=1 event, and
+// today's event count. Dates use the server's local timezone.
+func getStreak(db *sql.DB, userID string) (int, int, error) {
+	rows, err := db.Query(`SELECT ts FROM events WHERE user_id = ?`, userID)
+	if err != nil {
+		return 0, 0, err
+	}
+	defer rows.Close()
+
+	days := map[string]bool{}
+	todayStr := time.Now().Format("2006-01-02")
+	today := 0
+	for rows.Next() {
+		var ts int64
+		if err := rows.Scan(&ts); err != nil {
+			return 0, 0, err
+		}
+		d := time.Unix(ts, 0).Format("2006-01-02")
+		days[d] = true
+		if d == todayStr {
+			today++
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return 0, 0, err
+	}
+
+	current := 0
+	for day := time.Now(); days[day.Format("2006-01-02")]; day = day.AddDate(0, 0, -1) {
+		current++
+	}
+	return current, today, nil
+}
+
+type Company struct {
+	ID       int64  `json:"id"`
+	Name     string `json:"name"`
+	OAFormat string `json:"oa_format"`
+	Rounds   string `json:"rounds"`
+	Notes    string `json:"notes"`
+}
+
+func getCompanies(db *sql.DB) ([]Company, error) {
+	rows, err := db.Query(`SELECT id, COALESCE(name,''), COALESCE(oa_format,''), COALESCE(rounds,''), COALESCE(notes,'') FROM companies ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	list := []Company{}
+	for rows.Next() {
+		var c Company
+		if err := rows.Scan(&c.ID, &c.Name, &c.OAFormat, &c.Rounds, &c.Notes); err != nil {
+			return nil, err
+		}
+		list = append(list, c)
+	}
+	return list, rows.Err()
+}
+
+// upsertCompany inserts when ID == 0, otherwise updates by id.
+func upsertCompany(db *sql.DB, c Company) error {
+	if c.ID == 0 {
+		_, err := db.Exec(`INSERT INTO companies(name, oa_format, rounds, notes) VALUES (?, ?, ?, ?)`,
+			c.Name, c.OAFormat, c.Rounds, c.Notes)
+		return err
+	}
+	_, err := db.Exec(`UPDATE companies SET name = ?, oa_format = ?, rounds = ?, notes = ? WHERE id = ?`,
+		c.Name, c.OAFormat, c.Rounds, c.Notes, c.ID)
 	return err
 }

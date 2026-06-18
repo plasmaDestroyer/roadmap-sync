@@ -4357,6 +4357,140 @@
       ]
     },
     {
+      "id": "prep",
+      "week": "PREP",
+      "dates": "Jul 13 -> ",
+      "title": "Interview Track",
+      "load": "normal",
+      "topics": [
+        [
+          "ML Interview",
+          [
+            {
+              "id": "mli1",
+              "title": "ML/DL Fundamentals Q&A",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "mli2",
+              "title": "ML Coding from Scratch (kmeans, logreg, training loop)",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "mli3",
+              "title": "DL_MoE Deep-Dive Prep",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            }
+          ]
+        ],
+        [
+          "Behavioral",
+          [
+            {
+              "id": "beh1",
+              "title": "DL_MoE — STAR + defense",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "beh2",
+              "title": "ferrograd — STAR + defense",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "beh3",
+              "title": "Wild Linker — STAR + defense",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "beh4",
+              "title": "Boa JS Engine — STAR + defense",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "beh5",
+              "title": "tack CLI — STAR + defense",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            }
+          ]
+        ],
+        [
+          "Mocks",
+          [
+            {
+              "id": "mk1",
+              "title": "DSA Live Mock (Pramp / interviewing.io)",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "mk2",
+              "title": "ML Mock",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            },
+            {
+              "id": "mk3",
+              "title": "Behavioral Mock",
+              "srcs": [],
+              "tier": "core",
+              "links": [],
+              "note": null,
+              "fire": false,
+              "lock": false
+            }
+          ]
+        ]
+      ]
+    },
+    {
       "id": "pb",
       "week": "BONUS",
       "dates": "only if ahead",

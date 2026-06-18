@@ -301,8 +301,19 @@ function refresh(){
   document.getElementById('mBon').textContent=bd+' / '+bt;
   document.getElementById('fBon').style.width=(bt?100*bd/bt:0)+'%';
   document.getElementById('nextUp').textContent=next||'all Core clear ✦';
+  const total=ct+st+bt;                                    // drive the hardcoded counts off real data
+  document.getElementById('dekCount').textContent=total+' problems';
+  document.getElementById('tabCount').textContent=total;
+  const dl=Math.ceil((new Date('2026-07-13')-new Date())/86400000);   // same OA date tick() uses
+  document.getElementById('paceChip').innerHTML = dl<=0 ? 'OA window live'
+    : `Pace — <b>${((ct-cd)/Math.max(dl,1)).toFixed(1)}</b> Core/day to OA`;
 }
 boot();
+
+/* streak — additive, read from the server events log */
+fetch('/streak').then(r=>r.ok?r.json():null).then(s=>{
+  if(s&&(s.current||s.today)) document.getElementById('streakChip').textContent=` · ${s.current}-day streak · ${s.today} today`;
+}).catch(()=>{});
 
 /* countdown stamp */
 function tick(){
@@ -374,12 +385,36 @@ function setView(v){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
   document.getElementById('view-probs').classList.toggle('on',v==='probs');
   document.getElementById('view-theory').classList.toggle('on',v==='theory');
+  document.getElementById('view-companies').classList.toggle('on',v==='companies');
   document.querySelector('.toolbar').style.display = v==='probs' ? '' : 'none';
+  if(v==='companies') refreshCompanies();
   localStorage.setItem(VIEW_KEY,v);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>setView(t.dataset.view)));
-if(localStorage.getItem(VIEW_KEY)==='theory') setView('theory');
+{const sv=localStorage.getItem(VIEW_KEY); if(sv==='theory'||sv==='companies') setView(sv);}
+
+/* ── companies tab (additive; backed by /companies) ── */
+async function loadCompanies(){ try{const r=await fetch('/companies');return r.ok?await r.json():[];}catch{return[];} }
+function renderCompanies(list){
+  document.getElementById('cmpRows').innerHTML = list.length
+    ? list.map(c=>`<tr data-id="${c.id}"><td>${esc(c.name)}</td><td>${esc(c.oa_format||'')}</td><td>${esc(c.rounds||'')}</td><td>${esc(c.notes||'')}</td><td><button class="cmp-del" title="remove">✕</button></td></tr>`).join('')
+    : `<tr><td colspan="5" class="cmp-empty">No companies yet — add one below.</td></tr>`;
+  document.getElementById('cmpCount').textContent=list.length;
+}
+async function refreshCompanies(){ renderCompanies(await loadCompanies()); }
+document.getElementById('cAdd').addEventListener('click',async()=>{
+  const name=document.getElementById('cName').value.trim(); if(!name)return;
+  await fetch('/companies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    name, oa_format:document.getElementById('cOA').value.trim(), rounds:document.getElementById('cRounds').value.trim(), notes:document.getElementById('cNotes').value.trim()})});
+  ['cName','cOA','cRounds','cNotes'].forEach(id=>document.getElementById(id).value='');
+  refreshCompanies();
+});
+document.getElementById('cmpRows').addEventListener('click',async e=>{
+  if(!e.target.closest('.cmp-del'))return;
+  await fetch('/companies?id='+e.target.closest('tr').dataset.id,{method:'DELETE'});
+  refreshCompanies();
+});
 
 /* ── Markdown export (concise, for pasting to an AI) ── */
 function buildMarkdown(){

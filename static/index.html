@@ -13,19 +13,20 @@
 
 <header class="masthead">
   <div class="kicker">
-    <span>Vol. 1 · Summer 2026 · Go primary / Python fallback</span>
+    <span>Vol. 1 · Summer 2026 · Go primary / Python fallback<span id="streakChip"></span></span>
     <span style="display:inline-flex;align-items:center;gap:10px">
       <span class="stamp" id="tmStamp">T–… TO OA WINDOW</span>
       <button class="modebtn" id="modeBtn" title="toggle dark mode" aria-label="toggle dark mode">☾</button>
     </span>
   </div>
   <h1>The DSA<br><span class="it">Field Manual</span></h1>
-  <p class="dek">The complete placement campaign — <b>252 problems</b> across six weeks, the CS-theory subjects that decide the interview, and the resources to drill each. One rule on the problems: clear a topic's Core before its Stretch, fifteen minutes a problem, every single day.</p>
+  <p class="dek">The complete placement campaign — <b id="dekCount">252 problems</b> across six weeks, the CS-theory subjects that decide the interview, and the resources to drill each. One rule on the problems: clear a topic's Core before its Stretch, fifteen minutes a problem, every single day.</p>
 </header>
 
 <nav class="tabs">
-  <button class="tab on" data-view="probs">The Problems <span class="tcount">252</span></button>
+  <button class="tab on" data-view="probs">The Problems <span class="tcount" id="tabCount">252</span></button>
   <button class="tab" data-view="theory">CS Theory <span class="tcount">7 subjects</span></button>
+  <button class="tab" data-view="companies">Companies <span class="tcount" id="cmpCount">0</span></button>
 </nav>
 
 <div class="view on" id="view-probs">
@@ -50,6 +51,7 @@
     </div>
     <div class="band-foot">
       <span class="tchip">Next up — <b id="nextUp">…</b></span>
+      <span class="tchip" id="paceChip"></span>
     </div>
   </div>
 </section>
@@ -191,6 +193,20 @@
   </div>
 </div>
 
+<div class="view" id="view-companies">
+  <p class="th-intro">Companies you're targeting — OA format, rounds, and notes. Saved to the server.</p>
+  <table class="cmp-table">
+    <thead><tr><th>Company</th><th>OA format</th><th>Rounds</th><th>Notes</th><th></th></tr></thead>
+    <tbody id="cmpRows"></tbody>
+  </table>
+  <div class="cmp-add">
+    <input id="cName" placeholder="Company">
+    <input id="cOA" placeholder="OA format">
+    <input id="cRounds" placeholder="Rounds">
+    <input id="cNotes" placeholder="Notes">
+    <button class="act" id="cAdd">+ Add</button>
+  </div>
+</div>
 </div>
 
 <script src="app.js"></script>

@@ -185,6 +185,19 @@ h1 .it{font-style:italic;font-weight:600;color:var(--verm)}
   background:none;border:none;color:var(--ink2);cursor:pointer;padding:9px 12px;white-space:nowrap}
 .menu-pop button+button{border-top:1px solid var(--hair)}
 .menu-pop button:hover{background:var(--paper2);color:var(--ink)}
+/* ── companies tab ── */
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px;margin:18px 0 24px}
+.cmp-table th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:700;padding:0 12px 9px;border-bottom:2px solid var(--rule)}
+.cmp-table td{padding:11px 12px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink)}
+.cmp-table tr:hover td{background:var(--card)}
+.cmp-empty{color:var(--faint);font-style:italic;font-family:var(--serif)}
+.cmp-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:13px;transition:color .15s}
+.cmp-del:hover{color:var(--verm)}
+.cmp-add{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--card);border:1.5px solid var(--rule);border-radius:12px;padding:12px 14px;box-shadow:4px 4px 0 var(--hair2)}
+.cmp-add input{font-family:var(--mono);font-size:12.5px;background:var(--paper);border:1px solid var(--hair2);border-radius:8px;padding:8px 10px;color:var(--ink);flex:1;min-width:130px}
+.cmp-add input::placeholder{color:var(--faint)}
+.cmp-add input:focus{outline:none;border-color:var(--verm)}
+.cmp-add .act{flex-shrink:0;border:1.5px solid var(--rule);background:var(--paper)}
 
 /* ───────── chapters ───────── */
 .chapter{margin-bottom:40px;animation:fade .6s ease both;scroll-margin-top:110px}
