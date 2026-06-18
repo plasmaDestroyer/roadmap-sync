@@ -174,6 +174,17 @@ h1 .it{font-style:italic;font-weight:600;color:var(--verm)}
 .act{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
   background:none;border:none;color:var(--faint);cursor:pointer;padding:8px 9px;border-radius:7px;transition:.15s;white-space:nowrap}
 .act:hover{color:var(--ink);background:var(--paper2)}
+/* copy/export dropdowns — native <details>; summary styled as an .act button */
+.menu{position:relative}
+.menu>summary{list-style:none}
+.menu>summary::-webkit-details-marker{display:none}
+.menu[open]>summary{color:var(--ink);background:var(--paper2)}
+.menu-pop{position:absolute;right:0;top:calc(100% + 5px);z-index:70;display:flex;flex-direction:column;min-width:128px;
+  background:var(--card);border:1.5px solid var(--rule);border-radius:9px;box-shadow:3px 3px 0 var(--hair2);overflow:hidden;animation:fade .15s ease both}
+.menu-pop button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;text-align:left;
+  background:none;border:none;color:var(--ink2);cursor:pointer;padding:9px 12px;white-space:nowrap}
+.menu-pop button+button{border-top:1px solid var(--hair)}
+.menu-pop button:hover{background:var(--paper2);color:var(--ink)}
 
 /* ───────── chapters ───────── */
 .chapter{margin-bottom:40px;animation:fade .6s ease both;scroll-margin-top:110px}

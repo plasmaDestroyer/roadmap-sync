@@ -417,23 +417,53 @@ function buildMarkdown(){
   });
   return lines.join('\n');
 }
+// serialise the (static) CS-theory view straight from its DOM — no separate data to keep in sync
+function buildTheoryMd(){
+  const out=['## CS Theory',''];
+  document.querySelectorAll('#view-theory .subj').forEach(s=>{
+    const name=s.querySelector('.subj-name')?.textContent.trim()||'';
+    const tier=s.querySelector('.tierpill')?.textContent.trim()||'';
+    const tag=s.querySelector('.subj-tag')?.textContent.trim()||'';
+    out.push(`### ${name}${tier?` — ${tier}`:''}`);
+    if(tag) out.push(`_${tag}_`);
+    out.push('');
+    s.querySelectorAll('.blk').forEach(b=>{
+      const h=b.querySelector('.blk-h')?.textContent.trim()||'';
+      if(h) out.push(`**${h}**`);
+      const res=b.querySelector('.reslist');
+      if(res) res.querySelectorAll('.resitem').forEach(a=>{
+        const star=a.querySelector('.r-star')?'★ ':'';
+        const rn=a.querySelector('.r-name')?.textContent.trim()||a.href;
+        const note=a.querySelector('.r-note')?.textContent.trim()||'';
+        out.push(`- ${star}[${rn}](${a.href})${note?` — ${note}`:''}`);
+      });
+      else b.querySelectorAll('li').forEach(li=>out.push(`- ${li.textContent.replace(/\s+/g,' ').trim()}`));
+      out.push('');
+    });
+  });
+  return out.join('\n');
+}
+const buildExport=()=>buildMarkdown()+'\n\n'+buildTheoryMd();
+
 function flash(btn,txt){
   const old=btn.textContent;btn.textContent=txt;
   setTimeout(()=>btn.textContent=old,1400);
 }
-document.getElementById('copyMd').addEventListener('click',async e=>{
-  const md=buildMarkdown();
-  try{await navigator.clipboard.writeText(md);flash(e.target,'Copied ✓');}
-  catch{ /* clipboard API blocked — fallback */
-    const ta=document.createElement('textarea');ta.value=md;document.body.appendChild(ta);
-    ta.select();document.execCommand('copy');ta.remove();flash(e.target,'Copied ✓');
-  }
-});
-document.getElementById('exportMd').addEventListener('click',e=>{
-  const blob=new Blob([buildMarkdown()],{type:'text/markdown'});
+async function copyText(t,btn){
+  try{await navigator.clipboard.writeText(t);flash(btn,'Copied ✓');}
+  catch{ const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();flash(btn,'Copied ✓'); }
+}
+function downloadText(t,btn){
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
+  a.href=URL.createObjectURL(new Blob([t],{type:'text/markdown'}));
   a.download='dsa-roadmap-'+new Date().toISOString().slice(0,10)+'.md';
-  a.click();URL.revokeObjectURL(a.href);
-  flash(e.target,'Saved ✓');
-});
+  a.click();URL.revokeObjectURL(a.href);flash(btn,'Saved ✓');
+}
+// dropdown options: "This view" = current tab (problems / theory), "Everything" = combined doc
+document.querySelectorAll('.menu [data-act]').forEach(b=>b.addEventListener('click',()=>{
+  const theory=document.getElementById('view-theory').classList.contains('on');
+  const text=b.dataset.scope==='all'?buildExport():(theory?buildTheoryMd():buildMarkdown());
+  const menu=b.closest('details.menu'); menu.removeAttribute('open');
+  (b.dataset.act==='copy'?copyText:downloadText)(text,menu.querySelector('summary'));
+}));
+document.addEventListener('click',e=>{ if(!e.target.closest('details.menu')) document.querySelectorAll('details.menu[open]').forEach(d=>d.removeAttribute('open')); });
