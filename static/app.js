@@ -78,7 +78,7 @@ function applyLayout(){
 
 /* build chapters + topic index */
 const chWrap=document.getElementById('chapters'), idx=document.getElementById('idx');
-const ROMAN=['I','II','III','IV','V','VI','✦'];
+const ROMAN=['I','II','III','IV','V','VI','VII','✦'];
 function buildChapters(){
 DATA.sprints.forEach((sp,si)=>{
   const d=document.createElement('details');
@@ -304,9 +304,12 @@ function refresh(){
   const total=ct+st+bt;                                    // drive the hardcoded counts off real data
   document.getElementById('dekCount').textContent=total+' problems';
   document.getElementById('tabCount').textContent=total;
+  let pct=0,pcd=0;                                          // pace excludes the post-OA prep track
+  DATA.sprints.forEach(sp=>{ if(sp.id==='prep')return;
+    sp.topics.forEach(([_,ps])=>ps.forEach(p=>{ if(tierOf(p)==='core'){pct++; if(c[p.id])pcd++;} })); });
   const dl=Math.ceil((new Date('2026-07-13')-new Date())/86400000);   // same OA date tick() uses
   document.getElementById('paceChip').innerHTML = dl<=0 ? 'OA window live'
-    : `Pace — <b>${((ct-cd)/Math.max(dl,1)).toFixed(1)}</b> Core/day to OA`;
+    : `Pace — <b>${((pct-pcd)/Math.max(dl,1)).toFixed(1)}</b> Core/day to OA`;
 }
 boot();
 
