@@ -27,21 +27,9 @@ function paint(){
 }
 async function syncFromServer(){
   try{
-  const res=await fetch('/progress');
-  if(!res.ok) return;
-  const server=await res.json();
-  const merged={...load(),...server};
-  save(merged);
-  paint();
-  }catch{}
-}
-async function syncBookmarks(){
-  try{
-  const res=await fetch('/bookmarks');
-  if(!res.ok) return;
-  const server=await res.json();
-  const merged={...loadBookmarks(),...server};
-  saveBookmarks(merged);
+  const [pr,bm]=await Promise.all([fetch('/progress'),fetch('/bookmarks')]);   // one round-trip, one repaint
+  if(pr.ok) save({...load(),...await pr.json()});
+  if(bm.ok) saveBookmarks({...loadBookmarks(),...await bm.json()});
   paint();
   }catch{}
 }
@@ -55,7 +43,6 @@ async function boot(){
     buildHeroRing();
     paint();
     syncFromServer();
-    syncBookmarks();
   }catch(e){
     console.error('boot failed:',e);
     chWrap.innerHTML=`
