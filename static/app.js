@@ -9,9 +9,20 @@ const save=c=>{
     body: JSON.stringify(c),
     }).catch(err=>console.warn('sync failed', err));
 };
+/* bookmarks — orthogonal to checks (revisit flag, not "done"); same client shape */
+const BMARK_KEY='dsasprint2026_bookmarks';
+const loadBookmarks=()=>{try{return JSON.parse(localStorage.getItem(BMARK_KEY))||{}}catch{return{}}};
+const SECT_KEY='dsasprint2026_sections';
+const loadSect=()=>{try{return JSON.parse(localStorage.getItem(SECT_KEY))||{}}catch{return{}}};
+const saveBookmarks=b=>{
+  localStorage.setItem(BMARK_KEY,JSON.stringify(b));
+  fetch('/bookmarks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(err=>console.warn('bookmark sync failed',err));
+};
+const STAR='<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.86L14.02 10.08L20.56 10.08L15.27 13.92L17.29 20.14L12 16.3L6.71 20.14L8.73 13.92L3.44 10.08L9.98 10.08Z"/></svg>';
+const BMARK=`<span class="bmark" title="bookmark / revisit">${STAR}</span>`;
 function paint(){
-  const c=load();
-  document.querySelectorAll('.row').forEach(r=>{if(c[r.dataset.id])r.classList.add('ck');});
+  const c=load(),b=loadBookmarks();
+  document.querySelectorAll('.row').forEach(r=>{if(c[r.dataset.id])r.classList.add('ck');if(b[r.dataset.id])r.classList.add('bm');});
   refresh();
 }
 async function syncFromServer(){
@@ -21,6 +32,16 @@ async function syncFromServer(){
   const server=await res.json();
   const merged={...load(),...server};
   save(merged);
+  paint();
+  }catch{}
+}
+async function syncBookmarks(){
+  try{
+  const res=await fetch('/bookmarks');
+  if(!res.ok) return;
+  const server=await res.json();
+  const merged={...loadBookmarks(),...server};
+  saveBookmarks(merged);
   paint();
   }catch{}
 }
@@ -34,6 +55,7 @@ async function boot(){
     buildHeroRing();
     paint();
     syncFromServer();
+    syncBookmarks();
   }catch(e){
     console.error('boot failed:',e);
     chWrap.innerHTML=`
@@ -82,7 +104,9 @@ const ROMAN=['I','II','III','IV','V','VI','VII','✦'];
 function buildChapters(){
 DATA.sprints.forEach((sp,si)=>{
   const d=document.createElement('details');
-  d.className='chapter'; d.id='sec-'+sp.id; d.open = sp.load!=='bonus';
+  d.className='chapter'; d.id='sec-'+sp.id;
+  const op=loadSect(); d.open = sp.id in op ? op[sp.id] : sp.load!=='bonus';
+  d.addEventListener('toggle',()=>{const o=loadSect();o[sp.id]=d.open;localStorage.setItem(SECT_KEY,JSON.stringify(o));});
   d.style.animationDelay=(0.28+si*0.05)+'s';
   let body='';
   sp.topics.forEach(([tname,probs])=>{
@@ -102,7 +126,7 @@ DATA.sprints.forEach((sp,si)=>{
         body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
           ${HANDLE}
           <div class="cir"></div>
-          <div class="pmain"><span class="pname">${esc(p.title)}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}<span class="pbadges">${badges.join('')}</span>${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div>
+          <div class="pmain"><span class="pname">${esc(p.title)}</span><span class="pbadges">${badges.join('')}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}${BMARK}${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div>
           <div class="plinks">${links}</div></div>`;
       });
     });
@@ -139,9 +163,16 @@ function toggle(id){
   document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.toggle('ck',!was));
   refresh();
 }
+function toggleBookmark(id){
+  const b=loadBookmarks(); const was=!!b[id];
+  if(was)delete b[id]; else b[id]=true; saveBookmarks(b);
+  document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.toggle('bm',!was));
+  applyFilters();
+}
 chWrap.addEventListener('click',e=>{
   const r=e.target.closest('.row');
   if(!r||e.target.closest('a')||e.target.closest('.drag-handle'))return;
+  if(e.target.closest('.bmark')){ toggleBookmark(r.dataset.id); return; }
   const m=e.target.closest('.hint-mark');
   if(m){ m.classList.toggle('on'); r.querySelector('.hint-note').classList.toggle('on'); return; }
   toggle(r.dataset.id);
@@ -346,7 +377,7 @@ function applyFilters(){
   document.querySelectorAll('.row').forEach(r=>{
     const okT=tier==='all'||r.dataset.tier===tier;
     const done=r.classList.contains('ck');
-    const okS=status==='all'||(status==='done'?done:!done);
+    const okS=status==='all'?true:status==='saved'?r.classList.contains('bm'):status==='done'?done:!done;
     const okQ=!q||r.dataset.q.includes(q);
     r.classList.toggle('hidden',!(okT&&okS&&okQ));
   });
@@ -364,6 +395,7 @@ function applyFilters(){
   });
 }
 document.getElementById('q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();applyFilters();});
+document.getElementById('qClear').addEventListener('click',()=>{const i=document.getElementById('q');i.value='';q='';applyFilters();i.focus();});
 document.getElementById('tierChips').addEventListener('click',e=>{
   const b=e.target.closest('.chip');if(!b)return;
   document.querySelectorAll('#tierChips .chip').forEach(x=>x.classList.remove('on'));
@@ -379,7 +411,7 @@ let allOpen=true;
 document.getElementById('toggleAll').addEventListener('click',e=>{
   allOpen=!allOpen;
   document.querySelectorAll('details.chapter').forEach(d=>d.open=allOpen);
-  e.target.textContent=allOpen?'⊟ Collapse':'⊞ Expand';
+  e.target.innerHTML=allOpen?'<span class="ic">⊟</span> Collapse':'<span class="ic">⊞</span> Expand';
 });
 
 /* ── view tabs (Problems / Theory) ── */
@@ -484,8 +516,8 @@ function buildTheoryMd(){
 const buildExport=()=>buildMarkdown()+'\n\n'+buildTheoryMd();
 
 function flash(btn,txt){
-  const old=btn.textContent;btn.textContent=txt;
-  setTimeout(()=>btn.textContent=old,1400);
+  const old=btn.innerHTML;btn.textContent=txt;
+  setTimeout(()=>btn.innerHTML=old,1400);
 }
 async function copyText(t,btn){
   try{await navigator.clipboard.writeText(t);flash(btn,'Copied ✓');}

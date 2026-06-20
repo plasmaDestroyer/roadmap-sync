@@ -65,7 +65,7 @@
 </div>
 
 <div class="toolbar">
-  <div class="search">⌕<input id="q" type="text" placeholder="search problems or topics…"></div>
+  <div class="search">⌕<input id="q" type="text" placeholder="search problems or topics…"><button id="qClear" class="qclear" aria-label="clear search">✕</button></div>
   <div class="ctl"><span class="ctl-lab">Tier</span>
     <div class="seg" id="tierChips">
       <button class="chip on" data-tier="all">All</button>
@@ -79,15 +79,16 @@
       <button class="chip on" data-st="all">All</button>
       <button class="chip" data-st="todo">Left</button>
       <button class="chip" data-st="done">Done</button>
+      <button class="chip" data-st="saved">Saved</button>
     </div>
   </div>
   <div class="acts">
-    <button class="act" id="toggleAll" title="collapse / expand all chapters">⊟ Collapse</button>
-    <details class="menu" name="xpt"><summary class="act" title="copy as markdown">⧉ Copy ▾</summary><div class="menu-pop">
+    <button class="act" id="toggleAll" title="collapse / expand all chapters"><span class="ic">⊟</span> Collapse</button>
+    <details class="menu" name="xpt"><summary class="act" title="copy as markdown"><span class="ic">⧉</span> Copy ▾</summary><div class="menu-pop">
       <button data-act="copy" data-scope="view">This view</button>
       <button data-act="copy" data-scope="all">Everything</button>
     </div></details>
-    <details class="menu" name="xpt"><summary class="act" title="download as .md">↓ Export ▾</summary><div class="menu-pop">
+    <details class="menu" name="xpt"><summary class="act" title="download as .md"><span class="ic">↓</span> Export ▾</summary><div class="menu-pop">
       <button data-act="export" data-scope="view">This view</button>
       <button data-act="export" data-scope="all">Everything</button>
     </div></details>
@@ -107,11 +108,11 @@
   <p class="th-intro"><strong>DSA gets you past the OA. CS fundamentals get you through the interview.</strong> OAs are ~90% DSA plus a few MCQs; these subjects decide the <span class="v">technical rounds after</span>. So this is a <strong>second-phase priority</strong> — heavy from Jul 13 onward, not competing with the sprint now. The only fundamentals to touch before then are the OOP/LLD day already in Sprint 2.</p>
   <div class="th-callout"><b>Tiers:</b> &nbsp;<b style="color:var(--verm)">CORE</b> asked in almost every interview regardless of role — non-negotiable. &nbsp;·&nbsp; <b style="color:var(--lld)">ROLE</b> matters specifically for ML/AI or systems/AppSec — your differentiation. &nbsp;·&nbsp; <span style="color:var(--faint);font-weight:700">THIN</span> occasional MCQs — know headlines, don't go deep.</div>
   <div class="acts" style="margin:0 0 24px;border-left:none;padding-left:0">
-    <details class="menu" name="xpt"><summary class="act" title="copy as markdown">⧉ Copy ▾</summary><div class="menu-pop">
+    <details class="menu" name="xpt"><summary class="act" title="copy as markdown"><span class="ic">⧉</span> Copy ▾</summary><div class="menu-pop">
       <button data-act="copy" data-scope="view">This view</button>
       <button data-act="copy" data-scope="all">Everything</button>
     </div></details>
-    <details class="menu" name="xpt"><summary class="act" title="download as .md">↓ Export ▾</summary><div class="menu-pop">
+    <details class="menu" name="xpt"><summary class="act" title="download as .md"><span class="ic">↓</span> Export ▾</summary><div class="menu-pop">
       <button data-act="export" data-scope="view">This view</button>
       <button data-act="export" data-scope="all">Everything</button>
     </div></details>

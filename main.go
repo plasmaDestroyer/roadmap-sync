@@ -73,6 +73,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS bookmarks (
+    user_id    TEXT NOT NULL,
+    problem_id TEXT NOT NULL,
+    PRIMARY KEY (user_id, problem_id)
+)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.Handle("/", noCache(http.FileServer(http.Dir("static"))))
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
@@ -176,6 +185,35 @@ func main() {
 		case http.MethodDelete:
 			if _, err := db.Exec(`DELETE FROM companies WHERE id = ?`, r.URL.Query().Get("id")); err != nil {
 				log.Println("deleteCompany:", err)
+			}
+
+		default:
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	http.HandleFunc("/bookmarks", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			marks, err := getBookmarks(db, userID)
+			if err != nil {
+				http.Error(w, "could not load bookmarks", http.StatusInternalServerError)
+				log.Println("getBookmarks:", err)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(w).Encode(marks); err != nil {
+				log.Println("encode bookmarks:", err)
+			}
+
+		case http.MethodPost:
+			var marks map[string]bool
+			if err := json.NewDecoder(r.Body).Decode(&marks); err != nil {
+				http.Error(w, "bad request body", http.StatusBadRequest)
+				return
+			}
+			if err := saveBookmarks(db, userID, marks); err != nil {
+				log.Println("saving bookmarks:", err)
 			}
 
 		default:
@@ -339,4 +377,41 @@ func upsertCompany(db *sql.DB, c Company) error {
 	_, err := db.Exec(`UPDATE companies SET name = ?, oa_format = ?, rounds = ?, notes = ? WHERE id = ?`,
 		c.Name, c.OAFormat, c.Rounds, c.Notes, c.ID)
 	return err
+}
+
+// bookmarks: same shape as checks but orthogonal (revisit flag, not "done"). No event logging.
+func getBookmarks(db *sql.DB, userID string) (map[string]bool, error) {
+	rows, err := db.Query("SELECT problem_id FROM bookmarks WHERE user_id = ?", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	marks := make(map[string]bool)
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		marks[id] = true
+	}
+	return marks, rows.Err()
+}
+
+func saveBookmarks(db *sql.DB, userID string, marks map[string]bool) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.Exec(`DELETE FROM bookmarks WHERE user_id = ?`, userID); err != nil {
+		return err
+	}
+	for id := range marks {
+		if _, err := tx.Exec(`INSERT INTO bookmarks(user_id, problem_id) VALUES (?, ?)`, userID, id); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
 }

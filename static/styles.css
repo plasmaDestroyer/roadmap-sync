@@ -4,6 +4,7 @@
   --lc:#a96a00; --gfg:#2e7d32; --ncs:#0e7490; --tuf:#be123c; --web:#6d28d9; --lld:#1d4ed8; --py:#92400e;
   --rule:#191611; --glass:rgba(251,248,240,.92);
   --serif:'Fraunces',serif; --mono:'IBM Plex Mono',monospace;
+  --tb-scale:1.2;   /* one knob: scales all toolbar glyphs (search/clear/act buttons) together */
 }
 html[data-theme="dark"]{
   --paper:#15120c; --paper2:#100d08; --card:#1c1812; --ink:#ece4d2; --ink2:#cdc4ae; --faint:#857c69; --hair:#332c1f; --hair2:#473e2c;
@@ -155,10 +156,13 @@ h1 .it{font-style:italic;font-weight:600;color:var(--verm)}
 .toolbar{position:sticky;top:14px;z-index:60;display:flex;gap:9px;align-items:center;flex-wrap:wrap;
   background:var(--glass);backdrop-filter:blur(10px);border:1.5px solid var(--rule);border-radius:12px;
   padding:10px 12px;margin-bottom:34px;box-shadow:4px 4px 0 var(--hair2);animation:fade .7s .2s ease both}
-.search{flex:1;min-width:170px;display:flex;align-items:center;gap:8px;background:var(--paper);
+.search{flex:1;min-width:170px;display:flex;align-items:center;gap:8px;font-size:calc(17px*var(--tb-scale));background:var(--paper);
   border:1px solid var(--hair2);border-radius:8px;padding:8px 12px}
 .search input{background:none;border:none;outline:none;font-family:var(--mono);font-size:12.5px;color:var(--ink);width:100%}
 .search input::placeholder{color:var(--faint)}
+.qclear{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:none;background:none;color:var(--faint);cursor:pointer;font-size:calc(15px*var(--tb-scale));padding:2px;transition:color .15s}
+.qclear:hover{color:var(--verm)}
+#q:placeholder-shown ~ .qclear{display:none}   /* show only when there's a query */
 .ctl{display:flex;align-items:center;gap:8px}
 .ctl-lab{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);font-weight:600}
 .seg{display:inline-flex;border:1.5px solid var(--hair2);border-radius:9px;overflow:hidden;background:var(--paper)}
@@ -174,6 +178,7 @@ h1 .it{font-style:italic;font-weight:600;color:var(--verm)}
 .act{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
   background:none;border:none;color:var(--faint);cursor:pointer;padding:8px 9px;border-radius:7px;transition:.15s;white-space:nowrap}
 .act:hover{color:var(--ink);background:var(--paper2)}
+.act .ic{font-size:calc(12px*var(--tb-scale));display:inline-block;vertical-align:-.12em;line-height:1}   /* scale only the glyph, not the label */
 /* copy/export dropdowns — native <details>; summary styled as an .act button */
 .menu{position:relative}
 .menu>summary{list-style:none}
@@ -248,6 +253,13 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .hint-mark .spark{width:9px;height:9px;display:block;fill:currentColor} /* SVG sparkle — geometrically centred, no font metrics */
 .hint-mark:hover{border-color:var(--verm);color:var(--verm)}
 .hint-mark.on{border-color:var(--verm);color:#fff;background:var(--verm)}
+/* bookmark / revisit star — reuses hint-mark sizing; outline by default, filled vermillion when saved */
+.bmark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:6px;line-height:1;
+  color:var(--hair2);cursor:pointer;user-select:none;vertical-align:1px;transition:color .15s}
+.bmark .star{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.bmark:hover{color:var(--verm)}
+.row.bm .bmark{color:var(--verm)}
+.row.bm .bmark .star{fill:currentColor;stroke:currentColor}
 .hint-note{font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--ink2);padding-left:13px;
   border-left:2px solid var(--verm);max-height:0;opacity:0;overflow:hidden;transition:.3s ease}
 .hint-note.on{max-height:60px;opacity:1;margin-top:6px}
