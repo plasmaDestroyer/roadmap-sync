@@ -334,7 +334,7 @@ boot();
 
 /* streak — additive, read from the server events log */
 fetch('/streak').then(r=>r.ok?r.json():null).then(s=>{
-  if(s&&(s.current||s.today)) document.getElementById('streakChip').textContent=` · ${s.current}-day streak · ${s.today} today`;
+  if(s&&(s.current||s.today)) document.getElementById('streakChip').innerHTML=`Streak — <b>${s.current}</b> ${s.current===1?'day':'days'} · <b>${s.today}</b> today`;
 }).catch(()=>{});
 
 /* countdown stamp */
