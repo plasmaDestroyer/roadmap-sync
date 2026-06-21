@@ -14,6 +14,7 @@ const BMARK_KEY='dsasprint2026_bookmarks';
 const loadBookmarks=()=>{try{return JSON.parse(localStorage.getItem(BMARK_KEY))||{}}catch{return{}}};
 const SECT_KEY='dsasprint2026_sections';
 const loadSect=()=>{try{return JSON.parse(localStorage.getItem(SECT_KEY))||{}}catch{return{}}};
+const istDate=()=>new Date(Date.now()+5.5*36e5).toISOString().slice(0,10);   // YYYY-MM-DD in IST
 const saveBookmarks=b=>{
   localStorage.setItem(BMARK_KEY,JSON.stringify(b));
   fetch('/bookmarks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(err=>console.warn('bookmark sync failed',err));
@@ -325,7 +326,7 @@ function refresh(){
   let pct=0,pcd=0;                                          // pace excludes the post-OA prep track
   DATA.sprints.forEach(sp=>{ if(sp.id==='prep')return;
     sp.topics.forEach(([_,ps])=>ps.forEach(p=>{ if(tierOf(p)==='core'){pct++; if(c[p.id])pcd++;} })); });
-  const dl=Math.ceil((new Date('2026-07-13')-new Date())/86400000);   // same OA date tick() uses
+  const dl=Math.ceil((new Date('2026-07-13T00:00:00+05:30')-new Date())/86400000);   // same OA date tick() uses
   document.getElementById('paceChip').innerHTML = dl<=0 ? 'OA window live'
     : `Pace — <b>${((pct-pcd)/Math.max(dl,1)).toFixed(1)}</b> Core/day to OA`;
 }
@@ -338,7 +339,7 @@ fetch('/streak').then(r=>r.ok?r.json():null).then(s=>{
 
 /* countdown stamp */
 function tick(){
-  const d=Math.ceil((new Date('2026-07-13')-new Date())/86400000);
+  const d=Math.ceil((new Date('2026-07-13T00:00:00+05:30')-new Date())/86400000);
   document.getElementById('tmStamp').textContent=d>0?`T–${d} DAYS TO OA WINDOW`:'OA WINDOW LIVE';
 }
 tick();setInterval(tick,60000);
@@ -448,7 +449,7 @@ function buildMarkdown(){
     else if(tier==='stretch'){st++;if(done)sd++;}
     else{bt++;if(done)bd++;}
   })));
-  const today=new Date().toISOString().slice(0,10);
+  const today=istDate();
   const lines=[
     `DSA sprint progress (${today}) — Core ${cd}/${ct}, Stretch ${sd}/${st}, Bonus ${bd}/${bt}. Go primary, Python fallback. (* = stretch tier)`,''
   ];
@@ -513,7 +514,7 @@ async function copyText(t,btn){
 function downloadText(t,btn){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([t],{type:'text/markdown'}));
-  a.download='dsa-roadmap-'+new Date().toISOString().slice(0,10)+'.md';
+  a.download='dsa-roadmap-'+istDate()+'.md';
   a.click();URL.revokeObjectURL(a.href);flash(btn,'Saved ✓');
 }
 // dropdown options: "This view" = current tab (problems / theory), "Everything" = combined doc

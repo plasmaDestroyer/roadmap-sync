@@ -307,8 +307,10 @@ func saveLayout(db *sql.DB, userID string, raw []byte) error {
 	return err
 }
 
+var ist = time.FixedZone("IST", 5*3600+30*60)
+
 // getStreak returns the run of consecutive days up to today with >=1 event, and
-// today's event count. Dates use the server's local timezone.
+// today's event count. Dates use IST regardless of the server's timezone.
 func getStreak(db *sql.DB, userID string) (int, int, error) {
 	rows, err := db.Query(`SELECT ts FROM events WHERE user_id = ?`, userID)
 	if err != nil {
@@ -317,14 +319,14 @@ func getStreak(db *sql.DB, userID string) (int, int, error) {
 	defer rows.Close()
 
 	days := map[string]bool{}
-	todayStr := time.Now().Format("2006-01-02")
+	todayStr := time.Now().In(ist).Format("2006-01-02")
 	today := 0
 	for rows.Next() {
 		var ts int64
 		if err := rows.Scan(&ts); err != nil {
 			return 0, 0, err
 		}
-		d := time.Unix(ts, 0).Format("2006-01-02")
+		d := time.Unix(ts, 0).In(ist).Format("2006-01-02")
 		days[d] = true
 		if d == todayStr {
 			today++
@@ -335,7 +337,7 @@ func getStreak(db *sql.DB, userID string) (int, int, error) {
 	}
 
 	current := 0
-	for day := time.Now(); days[day.Format("2006-01-02")]; day = day.AddDate(0, 0, -1) {
+	for day := time.Now().In(ist); days[day.Format("2006-01-02")]; day = day.AddDate(0, 0, -1) {
 		current++
 	}
 	return current, today, nil
