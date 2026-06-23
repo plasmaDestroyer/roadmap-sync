@@ -2,7 +2,7 @@
   --paper:#f6f1e6; --paper2:#efe8d8; --card:#fbf8f0; --ink:#191611; --ink2:#3d382e; --faint:#8a8273; --hair:#ddd3bd; --hair2:#cabfa4;
   --verm:#d8401f; --verm-soft:#f6ddd4; --green:#1f7a48; --green-soft:#dcebe0; --amber:#b97b14; --amber-soft:#f3e6cc;
   --lc:#a96a00; --gfg:#2e7d32; --ncs:#0e7490; --tuf:#be123c; --web:#6d28d9; --lld:#1d4ed8; --py:#92400e;
-  --rule:#191611; --glass:rgba(251,248,240,.92);
+  --rule:#191611; --glass:rgba(251,248,240,.92); --floatsh:rgba(25,22,17,.7); --nfloatsh:rgba(25,22,17,.13);
   --serif:'Fraunces',serif; --mono:'IBM Plex Mono',monospace;
   --tb-scale:1.2;   /* one knob: scales all toolbar glyphs (search/clear/act buttons) together */
 }
@@ -10,7 +10,7 @@ html[data-theme="dark"]{
   --paper:#15120c; --paper2:#100d08; --card:#1c1812; --ink:#ece4d2; --ink2:#cdc4ae; --faint:#857c69; --hair:#332c1f; --hair2:#473e2c;
   --verm:#ff6b45; --verm-soft:#3a2018; --green:#4cbd80; --green-soft:#16301f; --amber:#e2a83e; --amber-soft:#332817;
   --lc:#ffb02e; --gfg:#6fcf73; --ncs:#4cc5f0; --tuf:#fb7185; --web:#b79bfc; --lld:#8db0ff; --py:#dca35e;
-  --rule:#4a4131; --glass:rgba(21,18,12,.92);
+  --rule:#4a4131; --glass:rgba(21,18,12,.92); --floatsh:rgba(0,0,0,.7); --nfloatsh:rgba(0,0,0,.26);
 }
 html[data-theme="dark"] body::before{opacity:.3;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.07' fill='white'/%3E%3C/svg%3E")}
@@ -233,9 +233,21 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .tierlab{font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:12px 0 4px;display:flex;align-items:center;gap:8px}
 .tierlab.core{color:var(--verm)} .tierlab.stretch{color:var(--amber)}
 .tierlab .tl-note{color:var(--faint);font-weight:400;letter-spacing:.05em;text-transform:none}
-.row{display:flex;align-items:flex-start;gap:12px;padding:9px 10px;border-radius:9px;cursor:pointer;
-  border:1px solid transparent;transition:.15s}
-.row:hover{background:var(--card);border-color:var(--hair2)}
+.row{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent;transition:.15s;
+  /* 2-section hover-highlight tokens (tuned in the demo) */
+  --nfill:5; --nexp:1.02; --nstrokeA:24; --nstrokeW:1px; --nrad:8px; --npadx:0px; --npady:6.5px;
+  --agap:11px; --exp:1.14;  /* agap: keeps the gap after both boxes hover-scale on wide rows */
+  --hov-ease:linear(0,0.176,0.404,0.646,0.871,1.057,1.192,1.273,1.304,1.293,1.251,1.19,1.122,1.057,1,0.957,0.929,0.916,0.915,0.925,0.94,0.959,0.978,0.995,1.009,1.018,1.023,1.024,1)}
+/* PART 1 — one box behind everything-but-the-arrow (handle, circle, name, badges, star) */
+.rmain{position:relative;flex:1;min-width:0;display:flex;align-items:flex-start;gap:12px;isolation:isolate}
+.rmain::before{content:'';position:absolute;left:calc(-1*var(--npadx));right:calc(-1*var(--npadx));top:calc(-1*var(--npady));bottom:calc(-1*var(--npady));
+  border-radius:var(--nrad);box-sizing:border-box;z-index:-1;
+  background:color-mix(in srgb, var(--ink) calc(var(--nfill)*1%), transparent);
+  border:var(--nstrokeW) solid transparent;opacity:0;transform:scale(.99);box-shadow:0 0 0 0 var(--nfloatsh);
+  transition:opacity .26s,transform .36s cubic-bezier(.33,0,.25,1),box-shadow .32s,border-color .28s}
+.row:hover .rmain::before{opacity:1;transform:scale(var(--nexp));
+  border-color:color-mix(in srgb, var(--ink) calc(var(--nstrokeA)*1%), transparent);box-shadow:0 0 12px 1px var(--nfloatsh);
+  transition:opacity .28s,transform .5s var(--hov-ease),box-shadow .34s,border-color .28s}
 .cir{width:19px;height:19px;border:1.7px solid var(--hair2);border-radius:50%;flex-shrink:0;margin-top:1px;
   display:flex;align-items:center;justify-content:center;transition:.18s;background:var(--paper)}
 .row:hover .cir{border-color:var(--ink2)}
@@ -249,21 +261,27 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .pname{font-size:13px;color:var(--ink);font-weight:500}
 .hint-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:6px;
   border-radius:50%;border:1.3px solid var(--hair2);color:var(--faint);
-  cursor:pointer;user-select:none;vertical-align:1px;transition:.15s}
+  cursor:pointer;user-select:none;vertical-align:middle;transition:.15s}
 .hint-mark .spark{width:9px;height:9px;display:block;fill:currentColor} /* SVG sparkle — geometrically centred, no font metrics */
 .hint-mark:hover{border-color:var(--verm);color:var(--verm)}
 .hint-mark.on{border-color:var(--verm);color:#fff;background:var(--verm)}
 /* bookmark / revisit star — reuses hint-mark sizing; outline by default, filled vermillion when saved */
-.bmark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:6px;line-height:1;
-  color:var(--hair2);cursor:pointer;user-select:none;vertical-align:1px;transition:color .15s}
-.bmark .star{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.bmark{position:relative;display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:6px;line-height:1;
+  color:var(--hair2);cursor:pointer;user-select:none;vertical-align:middle;transition:color .15s}
+.bmark .star{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;transition:fill .2s}
 .bmark:hover{color:var(--verm)}
 .row.bm .bmark{color:var(--verm)}
 .row.bm .bmark .star{fill:currentColor;stroke:currentColor}
+/* save animation: a pop + a ring of burst ticks (spawned in JS) */
+.bmark.pop .star{animation:starPop .42s cubic-bezier(.34,1.7,.5,1)}
+@keyframes starPop{0%{transform:scale(1)}28%{transform:scale(1.4)}100%{transform:scale(1)}}
+.btick{position:absolute;left:50%;top:50%;width:2px;height:6px;background:var(--verm);border-radius:1px;pointer-events:none;
+  transform:translate(-50%,-50%) rotate(var(--a)) translateY(-6px);opacity:.9;animation:btick .42s ease-out forwards}
+@keyframes btick{to{transform:translate(-50%,-50%) rotate(var(--a)) translateY(-15px);opacity:0}}
 .hint-note{font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--ink2);padding-left:13px;
   border-left:2px solid var(--verm);max-height:0;opacity:0;overflow:hidden;transition:.3s ease}
 .hint-note.on{max-height:60px;opacity:1;margin-top:6px}
-.pbadges{display:inline-flex;gap:5px;margin-left:8px;vertical-align:1px}
+.pbadges{display:inline-flex;gap:5px;margin-left:8px;vertical-align:middle}
 .bdg{font-size:8.5px;font-weight:600;letter-spacing:.1em;padding:1.5px 6px;border-radius:999px;border:1px solid}
 .b-NC{color:var(--ncs);border-color:var(--ncs)} .b-ST{color:var(--web);border-color:var(--web)}
 .b-NC\+{color:var(--ncs);border-color:var(--ncs)} /* NeetCode bonus (beyond NC150) */
@@ -272,10 +290,39 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .b-GFG{color:var(--gfg);border-color:var(--gfg)} .b-TUF{color:var(--tuf);border-color:var(--tuf)} .b-WEB{color:var(--web);border-color:var(--web)}
 .b-fire{color:var(--tuf);border-color:var(--tuf)} .b-lock{color:var(--ncs);border-color:var(--ncs);border-style:dashed}
 .plinks{display:flex;gap:4px;flex-shrink:0;justify-content:flex-end}
-/* link arrow: tinted ↗ for judges, lined "read" glyph for articles (colour set inline per destination) */
-.arr{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;line-height:1;font-size:16px;width:24px;height:22px;flex-shrink:0;transition:transform .15s}
-.arr:hover{transform:translateY(-1.5px)}
-.readi{width:14px;height:14px;display:block}
+/* link arrow (tinted ↗ for judges, lined "read" glyph for articles; colour set inline per destination).
+   Interaction: a tile sits behind the glyph — hover "picks it up" (expands toward you with a uniform
+   shadow); a click drops it in and springs back, while a halo (spawned per click, JS) blooms behind. */
+/* PART 2 — arrow button: a SQUARE box, gapped from the row box. The WHOLE button (box+glyph+halo)
+   scales as one unit on row hover and presses on click. */
+.arr{position:relative;display:inline-flex;align-items:center;justify-content:center;width:24px;height:22px;flex-shrink:0;
+  margin-left:var(--agap);font-size:13px;line-height:1;text-decoration:none;cursor:pointer;isolation:isolate;
+  --asz:calc((22px + 2*var(--npady)) * 0.85); /* square side = row-box height (.arr 22px + same pad-y) → both boxes match */
+  --gl:color-mix(in srgb, currentColor 50%, transparent);          /* halo tint (dest colour) */
+  transition:transform .36s cubic-bezier(.33,0,.25,1)}
+.row:hover .arr{transform:scale(var(--exp));transition:transform .55s var(--hov-ease)} /* pick up whole button */
+.arr.go{animation:arrPress .52s cubic-bezier(.4,0,.3,1) forwards}                       /* click: drop whole button */
+@keyframes arrPress{0%{transform:scale(var(--exp))}38%{transform:scale(.84)}100%{transform:scale(var(--exp))}}
+.arr .g{display:inline-flex;align-items:center;justify-content:center;width:100%;height:100%;position:relative;z-index:2}
+.readi{width:.875em;height:.875em;display:block}
+.arrg{width:.95em;height:.95em;display:block}
+/* the box: a centered SQUARE (side --asz = the row-box height), same subtle look as the row box */
+.arr::before{content:'';position:absolute;left:50%;top:50%;width:var(--asz);height:var(--asz);
+  transform:translate(-50%,-50%);border-radius:var(--nrad);box-sizing:border-box;z-index:1;
+  background:color-mix(in srgb, currentColor calc(var(--nfill)*1%), transparent);
+  border:var(--nstrokeW) solid transparent;opacity:0;box-shadow:0 0 0 0 var(--nfloatsh);
+  transition:opacity .26s,box-shadow .32s,border-color .28s}
+.row:hover .arr::before{opacity:1;
+  border-color:color-mix(in srgb, currentColor calc(var(--nstrokeA)*1%), transparent);box-shadow:0 0 10px 1px var(--nfloatsh)}
+/* halo: same square, one spawned element per click (rapid clicks overlap), blooms behind */
+.arr .fhalo{position:absolute;left:50%;top:50%;width:var(--asz);height:var(--asz);
+  transform:translate(-50%,-50%) scale(.96);border-radius:var(--nrad);z-index:0;pointer-events:none;
+  box-shadow:0 0 0 0 var(--gl);animation:arrHalo .8s ease-out forwards}
+@keyframes arrHalo{0%{opacity:1;box-shadow:0 0 0 0 var(--gl)}100%{opacity:1;box-shadow:0 0 calc(var(--asz)*.7) calc(var(--asz)*.3) transparent}}
+@media (prefers-reduced-motion: reduce){
+  .rmain::before,.arr,.arr .g{animation:none!important;transition:opacity .15s!important;transform:none!important}
+  .arr::before,.arr .fhalo{animation:none!important;transition:opacity .15s!important} /* keep their centering transform */
+}
 /* ── drag-to-reorder handle (6-dot, right side, always available) ── */
 .drag-handle{display:inline-flex;align-items:center;justify-content:center;width:18px;align-self:center;flex-shrink:0;
   order:-1;margin-right:6px;color:var(--faint);cursor:grab;user-select:none;transition:color .15s}

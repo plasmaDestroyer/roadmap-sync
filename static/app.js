@@ -72,7 +72,9 @@ const SPARK='<svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="
 // link destinations: [colour var, kind] — j=judge (tinted ↗), a=article (lined "read" glyph)
 const DEST={LC:['--lc','j'],GFG:['--gfg','j'],NC:['--ncs','j'],TUF:['--tuf','a'],WEB:['--web','a']};
 const READ='<svg class="readi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 11h14M5 16h9" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>';
-const arrowFor=(t,u)=>{const d=DEST[t]||['--faint','j'];return `<a class="arr" style="color:var(${d[0]})" href="${u}" target="_blank" rel="noopener" title="${t}">${d[1]==='j'?'↗':READ}</a>`;};
+// judge arrow as an SVG (geometrically centred ~12,12) — the ↗ glyph sits off-centre in the box
+const ARR='<svg class="arrg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5M9 5h10v10" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const arrowFor=(t,u)=>{const d=DEST[t]||['--faint','j'];return `<a class="arr" style="color:var(${d[0]})" href="${u}" target="_blank" rel="noopener" title="${t}"><span class="g">${d[1]==='j'?ARR:READ}</span></a>`;};
 async function loadLayout(){ try{const r=await fetch('/layout');if(r.ok)return await r.json();}catch{} return {}; }
 function saveLayout(){ fetch('/layout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LAYOUT)}).catch(err=>console.warn('layout sync failed',err)); }
 /* reorder + retier each saved topic in DATA; problems missing from a saved order keep their place at the end */
@@ -112,9 +114,8 @@ DATA.sprints.forEach((sp,si)=>{
         if(p.lock)badges.push('<span class="bdg b-lock">🔒</span>');
         const links=p.links.map(([t,u])=>arrowFor(t,u)).join('');
         body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
-          ${HANDLE}
-          <div class="cir"></div>
-          <div class="pmain"><span class="pname">${esc(p.title)}</span><span class="pbadges">${badges.join('')}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}${BMARK}${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div>
+          <div class="rmain">${HANDLE}<div class="cir"></div>
+          <div class="pmain"><span class="pname">${esc(p.title)}</span><span class="pbadges">${badges.join('')}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}${BMARK}${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div></div>
           <div class="plinks">${links}</div></div>`;
       });
     });
@@ -160,10 +161,21 @@ function toggleBookmark(id){
 chWrap.addEventListener('click',e=>{
   const r=e.target.closest('.row');
   if(!r||e.target.closest('a')||e.target.closest('.drag-handle'))return;
-  if(e.target.closest('.bmark')){ toggleBookmark(r.dataset.id); return; }
+  const bm=e.target.closest('.bmark');
+  if(bm){ const saving=!r.classList.contains('bm'); toggleBookmark(r.dataset.id);
+    if(saving) for(let i=0;i<8;i++){const t=document.createElement('span');t.className='btick';t.style.setProperty('--a',(i*45)+'deg');bm.appendChild(t);t.addEventListener('animationend',()=>t.remove());}
+    bm.classList.remove('pop'); void bm.offsetWidth; bm.classList.add('pop'); return; }
   const m=e.target.closest('.hint-mark');
   if(m){ m.classList.toggle('on'); r.querySelector('.hint-note').classList.toggle('on'); return; }
   toggle(r.dataset.id);
+});
+/* link-arrow press: drop the tile + spawn a halo per click (rapid clicks overlap); css in .arr */
+chWrap.addEventListener('pointerdown',e=>{
+  const a=e.target.closest('.arr'); if(!a) return;
+  const h=document.createElement('span'); h.className='fhalo';
+  a.appendChild(h); h.addEventListener('animationend',()=>h.remove());
+  a.classList.remove('go'); void a.offsetWidth; a.classList.add('go');
+  clearTimeout(a._t); a._t=setTimeout(()=>a.classList.remove('go'),560);
 });
 
 /* ── drag-to-reorder (native DnD + FLIP), scoped within a topic ── */
@@ -525,3 +537,9 @@ document.querySelectorAll('.menu [data-act]').forEach(b=>b.addEventListener('cli
   (b.dataset.act==='copy'?copyText:downloadText)(text,menu.querySelector('summary'));
 }));
 document.addEventListener('click',e=>{ if(!e.target.closest('details.menu')) document.querySelectorAll('details.menu[open]').forEach(d=>d.removeAttribute('open')); });
+
+
+
+
+
+
