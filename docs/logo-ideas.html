@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>logo idea archive · DSA Field Manual</title>
+<link id="favlink" rel="icon" href="../static/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f1e6; --paper2:#efe8d8; --card:#fbf8f0; --ink:#191611; --ink2:#3d382e; --faint:#8a8273;
+  --hair:#ddd3bd; --hair2:#cabfa4; --verm:#d8401f; --amber:#b97b14; --web:#6d28d9;
+  --serif:'Fraunces',serif; --mono:'IBM Plex Mono',monospace;
+  --tab-light:#dee1e6; --tab-light-fg:#444; --tab-dark:#2b2d31; --tab-dark-fg:#cfd2d6;
+}
+html[data-theme="dark"]{
+  --paper:#15120c; --paper2:#100d08; --card:#1c1812; --ink:#ece4d2; --ink2:#cdc4ae; --faint:#857c69;
+  --hair:#332c1f; --hair2:#473e2c; --verm:#ff6b45; --amber:#e2a83e; --web:#b79bfc;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:13px;
+  padding:34px 30px 90px;transition:background .25s,color .25s}
+h1.brand{font-family:var(--serif);font-weight:900;font-size:26px;line-height:.98;letter-spacing:-.02em;margin:0}
+h1.brand .it{font-style:italic;font-weight:600}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+  border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:8px}
+.top h2{font-family:var(--serif);font-weight:700;font-size:30px;margin:0;letter-spacing:-.01em}
+.top p{margin:5px 0 0;color:var(--faint);max-width:64ch;line-height:1.5}
+.toggle{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--card);color:var(--ink);
+  border:1.5px solid var(--ink);border-radius:8px;padding:9px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--hair2)}
+.toggle:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--hair2)}
+.sech{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 2px;letter-spacing:-.01em}
+.secn{color:var(--faint);font-size:11.5px;margin:0 0 4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;margin-top:14px}
+.card{background:var(--card);border:1.5px solid var(--ink);border-radius:13px;padding:16px 16px 14px;
+  box-shadow:5px 5px 0 var(--hair2)}
+.card.ship{border-color:var(--verm);box-shadow:5px 5px 0 color-mix(in srgb,var(--verm) 35%,var(--hair2))}
+.ttl{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ttl b{font-family:var(--serif);font-weight:700;font-size:17px}
+.ttl .lab{font-family:var(--serif);font-size:15px;color:var(--ink2)}
+.ttl .ship{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--verm);color:var(--paper);padding:3px 7px;border-radius:999px}
+.ttl .leg{margin-left:auto;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:999px;border:1px solid var(--hair2);color:var(--faint);white-space:nowrap}
+.leg.y{color:var(--verm);border-color:var(--verm)}
+.note{color:var(--faint);font-size:11.5px;line-height:1.5;margin:7px 0 13px;min-height:34px}
+.ico{color:var(--verm);display:inline-flex}
+.ico svg{display:block}
+.mast{display:flex;align-items:center;gap:13px;padding:11px 0 15px;border-top:1px dashed var(--hair2)}
+.favrow{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;padding-top:13px;border-top:1px dashed var(--hair2)}
+.fav{display:flex;flex-direction:column;align-items:center;gap:5px}
+.fav small{font-size:9px;color:var(--faint);letter-spacing:.05em}
+.tabs{display:flex;gap:9px;margin-left:auto}
+.tabchip{display:flex;align-items:center;gap:6px;padding:6px 11px 6px 8px;border-radius:8px 8px 0 0;
+  font-family:Arial,sans-serif;font-size:11px;max-width:128px;overflow:hidden}
+.tabchip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabchip.l{background:var(--tab-light);color:var(--tab-light-fg)}
+.tabchip.d{background:var(--tab-dark);color:var(--tab-dark-fg)}
+.setbtn{margin-top:13px;width:100%;font-family:var(--mono);font-size:11.5px;font-weight:600;
+  background:none;color:var(--ink2);border:1.5px dashed var(--hair2);border-radius:8px;padding:8px;cursor:pointer}
+.setbtn:hover{border-color:var(--verm);color:var(--verm)}
+.setbtn.on{border-style:solid;border-color:var(--verm);color:var(--verm);background:color-mix(in srgb,var(--verm) 8%,transparent)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <h2>Logo idea archive</h2>
+    <p>Every logo direction explored for the Field Manual, parked here for future reference. <b>SHIPPED:</b> C3 Star-seal (masthead) + the B3 constellation as the favicon. Toggle the theme; hit “set as live favicon” to preview any in this tab. Each card: masthead size + 48/32/16px on light & dark fake tabs.</p>
+  </div>
+  <button class="toggle" id="tg">◐ theme</button>
+</div>
+
+<script>
+// ── each candidate returns SVG markup on a 0 0 32 32 viewBox, currentColor = vermillion ──
+const SW='stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+let uid=0;
+
+// ── shared geometry (hybrids) ──
+function spiralPts(r0,rmax,turns,steps=92){
+  const cx=16,cy=16,b=(rmax-r0)/(turns*2*Math.PI),p=[];
+  for(let i=0;i<=steps;i++){const t=i/steps*turns*2*Math.PI,r=r0+b*t;
+    p.push([cx+r*Math.cos(t-Math.PI/2), cy+r*Math.sin(t-Math.PI/2), t]);}
+  return p;
+}
+const pathOf=p=>p.map((q,i)=>(i?'L':'M')+q[0].toFixed(2)+' '+q[1].toFixed(2)).join(' ');
+function spiral(){
+  const p=spiralPts(1.1,12.6,2.55,90);
+  return `<path d="${pathOf(p)}" stroke-width="2.2" ${SW}/><circle cx="16" cy="${(16-1.1).toFixed(2)}" r="1.4" fill="currentColor"/>`;
+}
+function donut(r,sw){
+  const C2=2*Math.PI*r;
+  const a=(col,frac,rot)=>{const len=C2/3*frac;
+    return `<circle cx="16" cy="16" r="${r}" style="stroke:var(${col})" stroke-dasharray="${len.toFixed(1)} ${(C2-len).toFixed(1)}" transform="rotate(${rot} 16 16)"/>`;};
+  return `<circle cx="16" cy="16" r="${r}" fill="none" stroke="currentColor" stroke-width="${sw}" opacity=".16"/>
+   <g fill="none" stroke-width="${sw}" stroke-linecap="round">${a('--verm',.80,-88)}${a('--amber',.62,32)}${a('--web',.42,152)}</g>`;
+}
+function graph(cx,cy,s){
+  const n=[[0,-1],[-.92,.7],[.92,.7]].map(d=>[cx+d[0]*s,cy+d[1]*s]);
+  const P=a=>a[0].toFixed(1)+' '+a[1].toFixed(1);
+  return `<g stroke-width="${(s*.34).toFixed(2)}" ${SW}><path d="M${P(n[0])} L${P(n[1])} M${P(n[0])} L${P(n[2])} M${P(n[1])} L${P(n[2])}"/></g>
+   <g fill="currentColor">${n.map(a=>`<circle cx="${a[0].toFixed(1)}" cy="${a[1].toFixed(1)}" r="${(s*.27).toFixed(2)}"/>`).join('')}</g>`;
+}
+function constel(cx,cy,s){
+  const n=[[-.95,-.65],[.05,-.05],[-.55,.92],[.8,-.55],[.98,.7]].map(d=>[cx+d[0]*s,cy+d[1]*s]);
+  const P=a=>a[0].toFixed(1)+' '+a[1].toFixed(1);
+  return `<g stroke-width="${(s*.2).toFixed(2)}" ${SW}><path d="${[[0,1],[1,3],[1,2],[3,4]].map(e=>'M'+P(n[e[0]])+' L'+P(n[e[1]])).join(' ')}"/>
+   <path d="M${P(n[2])} L${P(n[4])}" stroke-dasharray="1 1.5"/></g>
+   <g fill="currentColor">${n.map(a=>`<circle cx="${a[0].toFixed(1)}" cy="${a[1].toFixed(1)}" r="${(s*.17).toFixed(2)}"/>`).join('')}</g>`;
+}
+function ticks(cx,cy,rIn,rOut,count){let s='';for(let i=0;i<count;i++){const a=i/count*2*Math.PI;
+  s+=`<path d="M${(cx+rIn*Math.cos(a)).toFixed(2)} ${(cy+rIn*Math.sin(a)).toFixed(2)} L${(cx+rOut*Math.cos(a)).toFixed(2)} ${(cy+rOut*Math.sin(a)).toFixed(2)}" stroke-width="1.3" ${SW}/>`;}return s;}
+const HEX="M16 3 L27.3 9.5 L27.3 22.5 L16 29 L4.7 22.5 L4.7 9.5 Z";
+
+// constellation core scaled into a seal (matches the B3 favicon shape)
+const SEALCORE=`<g transform="translate(16 16) scale(0.5) translate(-16.2 -17.2)">
+   <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9 L14 18 L11 26 M14 18 L23 11 L26 22"/>
+   <path d="M11 26 L26 22" stroke-dasharray="2.8 4.8"/></g>
+   <g fill="currentColor"><circle cx="7" cy="9" r="2.7"/><circle cx="14" cy="18" r="2.9"/>
+   <circle cx="11" cy="26" r="2.7"/><circle cx="23" cy="11" r="2.7"/><circle cx="26" cy="22" r="2.7"/></g></g>`;
+const B3=`<g stroke-width="1.5" ${SW}><path d="M7 9 L14 18 L11 26 M14 18 L23 11 L26 22"/>
+   <path d="M11 26 L26 22" stroke-dasharray="1.4 2.4"/></g>
+   <g fill="currentColor"><circle cx="7" cy="9" r="2"/><circle cx="14" cy="18" r="2.1"/>
+   <circle cx="11" cy="26" r="2"/><circle cx="23" cy="11" r="2"/><circle cx="26" cy="22" r="2"/></g>`;
+const sealRing=core=>{const u='r'+(uid++);return `<circle cx="16" cy="16" r="15" stroke-width="1.4" ${SW}/>
+   <circle cx="16" cy="16" r="10.6" stroke-width="1" ${SW}/>
+   <path id="${u}" d="M16 16 m -12.8 0 a 12.8 12.8 0 1 1 25.6 0 a 12.8 12.8 0 1 1 -25.6 0" fill="none"/>
+   <text font-family="IBM Plex Mono,monospace" font-weight="600" font-size="3.25" letter-spacing="0.55" fill="currentColor"><textPath href="#${u}" startOffset="0">DSA · FIELD MANUAL · VOL.1 · DSA · FIELD MANUAL · VOL.1 · </textPath></text>${core}`;};
+
+// ── candidates, grouped by section ──
+const SECTIONS=[
+ {h:'★ Shipped',n:'In production now — seal in the masthead, constellation in the tab.',items:[
+  {id:'C3',lab:'Star-seal',ship:1,leg:'✓',y:1,
+   note:'Two assets: masthead = full wax-seal (ring text + B3 constellation core); favicon = the B3 constellation alone (favrow below shows it). The shipped logo.',
+   svg:()=>sealRing(SEALCORE), fav:()=>B3},
+ ]},
+ {h:'Lettermark / stamp',n:'Austere letterpress; needs the glyph outlined to a path when baked.',items:[
+  {id:'A1',lab:'FM date-stamp',leg:'✓',y:1,
+   note:'Rounded ink-stamp, Fraunces F·M interlocked — sibling of the masthead .stamp.',
+   svg:()=>`<rect x="3" y="3" width="26" height="26" rx="6" stroke-width="2.2" ${SW}/>
+    <text x="16" y="16.5" font-family="Fraunces,serif" font-style="italic" font-weight="700" font-size="15" text-anchor="middle" dominant-baseline="central" fill="currentColor">FM</text>`},
+  {id:'A2',lab:'§ section-seal',leg:'✓',y:1,
+   note:"The document's own section mark, embossed in a disc.",
+   svg:()=>`<circle cx="16" cy="16" r="12.5" stroke-width="2" ${SW}/>
+    <text x="16" y="16.5" font-family="Fraunces,serif" font-weight="600" font-size="18" text-anchor="middle" dominant-baseline="central" fill="currentColor">§</text>`},
+ ]},
+ {h:'DSA-as-object',n:'The data-structure pun; literal "roadmap".',items:[
+  {id:'B1',lab:'Tree-sprout',leg:'✓',y:1,
+   note:'3-node binary tree as a seedling on a soil line — data structure + growth.',
+   svg:()=>`<path d="M6 26 H26" stroke-width="2" opacity=".55" ${SW}/>
+    <path d="M16 23 V16" stroke-width="2" ${SW}/>
+    <path d="M16 16 C13 14 11 12 8.6 9.4" stroke-width="2" ${SW}/>
+    <path d="M16 16 C19 14 21 12 23.4 9.4" stroke-width="2" ${SW}/>
+    <circle cx="16" cy="23.3" r="2.3" fill="currentColor"/><circle cx="8" cy="8.4" r="2.7" fill="currentColor"/><circle cx="24" cy="8.4" r="2.7" fill="currentColor"/>`},
+  {id:'B2',lab:'Linked-list trail',leg:'~',y:0,
+   note:'node→node→node curving like a road, last arrow shooting off the corner.',
+   svg:()=>`<path d="M6.5 23 Q12.5 23 13.5 16.5 Q14.5 10 21 9" stroke-width="2" ${SW}/>
+    <path d="M21 9 L27 4.5 M27 4.5 L22.6 4.9 M27 4.5 L26.7 9" stroke-width="2" ${SW}/>
+    <circle cx="6.5" cy="23" r="2.4" fill="currentColor"/><circle cx="13.5" cy="16.5" r="2.4" fill="currentColor"/><circle cx="21" cy="9" r="2.4" fill="currentColor"/>`},
+  {id:'B3',lab:'Graph constellation',leg:'~',y:0,
+   note:'5 nodes/edges as a star-chart with a dotted survey line. (This is the shipped favicon.)',
+   svg:()=>B3},
+ ]},
+ {h:'Field-manual artifact',n:'The almanac / expedition vibe.',items:[
+  {id:'C1',lab:'Survey benchmark',leg:'✓',y:0,
+   note:'Hexagon medallion like a USGS marker, tiny tree stamped at center.',
+   svg:()=>`<path d="${HEX}" stroke-width="2" ${SW}/>
+    <g stroke-width="1.5" ${SW}><path d="M16 12.5 L11.5 20 M16 12.5 L20.5 20"/></g>
+    <g fill="currentColor"><circle cx="16" cy="11.5" r="2"/><circle cx="11" cy="20.5" r="2"/><circle cx="21" cy="20.5" r="2"/></g>`},
+  {id:'C2',lab:'Wax seal ring',leg:'~',y:0,
+   note:'Ring text around a tiny 3-node graph. Most on-brand letterpress.',
+   svg:()=>sealRing(`<g stroke-width="1.1" ${SW}><path d="M16 13 L13.3 18 M16 13 L18.7 18"/></g>
+    <g fill="currentColor"><circle cx="16" cy="12.5" r="1.5"/><circle cx="12.9" cy="18.5" r="1.5"/><circle cx="19.1" cy="18.5" r="1.5"/></g>`)},
+  {id:'E2',lab:'Pop-up book graph',leg:'~',y:0,
+   note:'Open book whose pages sprout a node-graph like a pop-up.',
+   svg:()=>`<path d="M16 27 C13 24 8 23.5 4 24 V12 C8 11.5 13 12 16 15 C19 12 24 11.5 28 12 V24 C24 23.5 19 24 16 27 Z" stroke-width="2" ${SW}/>
+    <path d="M16 15 V27" stroke-width="1.6" ${SW} opacity=".6"/>
+    <g stroke-width="1.5" ${SW}><path d="M16 13 L11 8 M16 13 L21 8"/></g>
+    <g fill="currentColor"><circle cx="16" cy="13.5" r="1.9"/><circle cx="10.5" cy="7.5" r="1.9"/><circle cx="21.5" cy="7.5" r="1.9"/></g>`},
+ ]},
+ {h:'Progress (donut)',n:'Functional — fills to your real %.',items:[
+  {id:'D1',lab:'Live progress donut',leg:'✓',y:1,
+   note:'Segmented ring "O" — verm/amber/violet arcs (core/stretch/bonus). Tab = live progress.',
+   svg:()=>donut(12,4)},
+  {id:'PR1',lab:'Atlas ring',leg:'✓',y:1,
+   note:'Progress donut with a node-graph nested in the hole. (D1 + B3)',
+   svg:()=>donut(11.4,3.3)+graph(16,16,3.2)},
+  {id:'PR2',lab:'Spiral gauge',leg:'✓',y:1,
+   note:'A fiddlehead spiral that fills with progress — recursion as a meter. (D1 + E1)',
+   svg:()=>{const d=pathOf(spiralPts(1.3,12.6,2.5));
+    return `<path d="${d}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".16"/>
+     <path d="${d}" pathLength="100" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="62 100" style="stroke:var(--verm)"/>`;}},
+ ]},
+ {h:'Recursion (spiral / fern)',n:'Recursion ∩ field-guide botanical.',items:[
+  {id:'E1',lab:'Fiddlehead fern',leg:'✓',y:1,
+   note:'A fern fiddlehead is a recursive spiral AND a botanical specimen.',
+   svg:()=>spiral()},
+  {id:'RE1',lab:'Node fern',leg:'✓',y:1,
+   note:'Fiddlehead drawn as a spiral of graph nodes. (E1 + B3)',
+   svg:()=>{const p=spiralPts(1.6,12.2,2.35);let dots='';
+    for(let i=6;i<p.length;i+=15)dots+=`<circle cx="${p[i][0].toFixed(2)}" cy="${p[i][1].toFixed(2)}" r="1.85" fill="currentColor"/>`;
+    return `<path d="${pathOf(p)}" stroke-width="1.6" ${SW}/>${dots}`;}},
+  {id:'RE2',lab:'Frond',leg:'✓',y:1,
+   note:'Fiddlehead with pinnae unfurling off the outer turn — most botanical.',
+   svg:()=>{const p=spiralPts(1.3,12.6,2.5);let pin='';
+    for(let i=p.length-2;i>p.length*.46;i-=9){const[x,y,t]=p[i],nx=Math.cos(t-Math.PI/2),ny=Math.sin(t-Math.PI/2),L=3;
+      pin+=`<path d="M${x.toFixed(2)} ${y.toFixed(2)} L${(x+nx*L).toFixed(2)} ${(y+ny*L).toFixed(2)}" stroke-width="1.5" ${SW}/>`;}
+    return `<path d="${pathOf(p)}" stroke-width="2.1" ${SW}/>${pin}`;}},
+ ]},
+ {h:'Seal hybrids',n:'Ring + emblem combinations.',items:[
+  {id:'AL2',lab:'Astrolabe',leg:'~',y:0,
+   note:'Tick-marked bezel + a diagonal sight-line over a node-graph. (seal + constellation)',
+   svg:()=>`<circle cx="16" cy="16" r="15" stroke-width="1.4" ${SW}/>
+    ${ticks(16,16,12.8,14.7,24)}
+    <path d="M6.6 25.4 L25.4 6.6" stroke-width="1.3" ${SW} opacity=".75"/>
+    ${graph(16,16,3.7)}`},
+  {id:'CA1',lab:'Survey graph',leg:'~',y:0,
+   note:'Hexagon benchmark with a 5-node constellation stamped inside. (C1 + B3)',
+   svg:()=>`<path d="${HEX}" stroke-width="2" ${SW}/>${constel(16,16.5,6.2)}`},
+  {id:'CA2',lab:'Trail blaze',leg:'✓',y:1,
+   note:'Hexagon whose border IS the 3-tier progress, node at the heart. (C1 + D1)',
+   svg:()=>{const seg=(col,off)=>`<path d="${HEX}" pathLength="78" style="stroke:var(${col})" stroke-dasharray="22 78" stroke-dashoffset="${off}"/>`;
+    return `<path d="${HEX}" stroke="currentColor" fill="none" stroke-width="2.4" opacity=".15"/>
+     <g fill="none" stroke-width="2.4" stroke-linecap="round">${seg('--verm',0)}${seg('--amber',-26)}${seg('--web',-52)}</g>
+     ${graph(16,16,3.4)}`;}},
+ ]},
+];
+
+function svgEl(markup,size,cls){return `<span class="ico ${cls||''}"><svg viewBox="0 0 32 32" width="${size}" height="${size}" aria-hidden="true">${markup}</svg></span>`;}
+
+document.body.insertAdjacentHTML('beforeend','<div id="root"></div>');
+const root=document.getElementById('root');
+SECTIONS.forEach(sec=>{
+  root.insertAdjacentHTML('beforeend',`<div class="sech">${sec.h}</div><div class="secn">${sec.n}</div>`);
+  const grid=document.createElement('div'); grid.className='grid'; root.appendChild(grid);
+  sec.items.forEach(c=>{
+    const fav=(c.fav||c.svg)();
+    const card=document.createElement('div');
+    card.className='card'+(c.ship?' ship':'');
+    card.innerHTML=`
+     <div class="ttl"><b>${c.id}</b>${c.ship?'<span class="ship">shipped</span>':''}<span class="lab">${c.lab}</span>
+       <span class="leg ${c.y?'y':''}">16px ${c.leg}</span></div>
+     <div class="note">${c.note}</div>
+     <div class="mast">${svgEl(c.svg(),46)}<h1 class="brand">The DSA<br><span class="it">Field Manual</span></h1></div>
+     <div class="favrow">
+       <div class="fav">${svgEl(fav,48,'f')}<small>48</small></div>
+       <div class="fav">${svgEl(fav,32)}<small>32</small></div>
+       <div class="fav">${svgEl(fav,16)}<small>16</small></div>
+       <div class="tabs">
+         <div class="tabchip l">${svgEl(fav,16)}<span>The DSA Field…</span></div>
+         <div class="tabchip d">${svgEl(fav,16)}<span>The DSA Field…</span></div>
+       </div>
+     </div>
+     <button class="setbtn">★ set as live favicon</button>`;
+    grid.appendChild(card);
+  });
+});
+
+// ── live favicon: serialize a card's favicon svg, resolve currentColor + css vars to hex ──
+function favURI(svg){
+  const cs=getComputedStyle(document.documentElement);
+  const v=n=>cs.getPropertyValue(n).trim();
+  let s=new XMLSerializer().serializeToString(svg);
+  s=s.replaceAll('currentColor',v('--verm')).replaceAll('var(--verm)',v('--verm'))
+     .replaceAll('var(--amber)',v('--amber')).replaceAll('var(--web)',v('--web'));
+  return 'data:image/svg+xml,'+encodeURIComponent(s);
+}
+let cur=null;
+root.addEventListener('click',e=>{
+  const b=e.target.closest('.setbtn'); if(!b) return;
+  const svg=b.closest('.card').querySelector('.ico.f svg').cloneNode(true);
+  document.getElementById('favlink').href=favURI(svg);
+  document.querySelectorAll('.setbtn.on').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); cur=b;
+});
+const docEl=document.documentElement, tg=document.getElementById('tg');
+tg.onclick=()=>{
+  docEl.dataset.theme = docEl.dataset.theme==='dark'?'light':'dark';
+  if(cur){const svg=cur.closest('.card').querySelector('.ico.f svg').cloneNode(true);
+    document.getElementById('favlink').href=favURI(svg);}
+};
+</script>
+</body>
+</html>
