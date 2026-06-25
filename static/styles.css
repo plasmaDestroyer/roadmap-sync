@@ -12,13 +12,20 @@ html[data-theme="dark"]{
   --lc:#ffb02e; --gfg:#6fcf73; --ncs:#4cc5f0; --tuf:#fb7185; --web:#b79bfc; --lld:#8db0ff; --py:#dca35e;
   --rule:#4a4131; --glass:rgba(21,18,12,.92); --floatsh:rgba(0,0,0,.7); --nfloatsh:rgba(0,0,0,.26);
 }
-html[data-theme="dark"] body::before{opacity:.3;
+/* high-contrast dark: deeper bg + brighter text/lines; warm accents (orange/gold/purple) held, cool ones nudged up */
+html[data-theme="dark-hc"]{
+  --paper:#0a0806; --paper2:#050403; --card:#12100a; --ink:#fbf4e3; --ink2:#e0d6bf; --faint:#988d76; --hair:#3d3526; --hair2:#564a34;
+  --verm:#ff6b45; --verm-soft:#3f2118; --green:#5bd091; --green-soft:#16301f; --amber:#e8ad42; --amber-soft:#332817;
+  --lc:#ffb02e; --gfg:#79d97d; --ncs:#5fd0f7; --tuf:#ff8094; --web:#bea4ff; --lld:#9cbcff; --py:#e0a862;
+  --rule:#5a4f38; --glass:rgba(10,8,6,.92); --floatsh:rgba(0,0,0,.8); --nfloatsh:rgba(0,0,0,.32);
+}
+html[data-theme^="dark"] body::before{opacity:.3;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.07' fill='white'/%3E%3C/svg%3E")}
-html[data-theme="dark"] ::selection{background:var(--verm);color:#15120c}
-html[data-theme="dark"] .band,html[data-theme="dark"] .toolbar{box-shadow:5px 5px 0 rgba(0,0,0,.45)}
-html[data-theme="dark"] .tcard:hover{box-shadow:3px 3px 0 rgba(0,0,0,.45)}
-html[data-theme="dark"] .lk:hover{box-shadow:2px 2px 0 rgba(0,0,0,.45)}
-html[data-theme="dark"] .ch-num{color:var(--paper);-webkit-text-stroke:1.5px var(--ink2)}
+html[data-theme^="dark"] ::selection{background:var(--verm);color:#15120c}
+html[data-theme^="dark"] .band,html[data-theme^="dark"] .toolbar{box-shadow:5px 5px 0 rgba(0,0,0,.45)}
+html[data-theme^="dark"] .tcard:hover{box-shadow:3px 3px 0 rgba(0,0,0,.45)}
+html[data-theme^="dark"] .lk:hover{box-shadow:2px 2px 0 rgba(0,0,0,.45)}
+html[data-theme^="dark"] .ch-num{color:var(--paper);-webkit-text-stroke:1.5px var(--ink2)}
 .theme-anim,.theme-anim *{transition:background-color .25s ease,border-color .25s ease,color .25s ease,box-shadow .25s ease}
 /* ── view tabs ── */
 .tabs{display:flex;gap:4px;border-bottom:2px solid var(--rule);margin-bottom:30px;animation:fade .7s .05s ease both}

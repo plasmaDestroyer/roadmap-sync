@@ -363,11 +363,12 @@ function applyTheme(t,anim){
   if(anim){document.documentElement.classList.add('theme-anim');
     setTimeout(()=>document.documentElement.classList.remove('theme-anim'),400);}
   document.documentElement.dataset.theme=t;
-  modeBtn.textContent=t==='dark'?'☀':'☾';
+  modeBtn.textContent={light:'☀',dark:'☾','dark-hc':'◐'}[t]||'☾';
 }
-applyTheme(localStorage.getItem(THEME_KEY)||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),false);
+const THEME_CYCLE=['dark','dark-hc','light'];   // default dark; click cycles dark → high-contrast → light
+applyTheme(localStorage.getItem(THEME_KEY)||'dark',false);
 modeBtn.addEventListener('click',()=>{
-  const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  const t=THEME_CYCLE[(THEME_CYCLE.indexOf(document.documentElement.dataset.theme)+1)%THEME_CYCLE.length];
   localStorage.setItem(THEME_KEY,t);applyTheme(t,true);
 });
 
