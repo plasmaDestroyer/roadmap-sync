@@ -1,4 +1,4 @@
-let DATA;
+let DATA, DAYS=null;
 const STORAGE_KEY='dsasprint2026_checks';
 const load=()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch{return{}}};
 const save=c=>{
@@ -21,28 +21,37 @@ const saveBookmarks=b=>{
 };
 const STAR='<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.86L14.02 10.08L20.56 10.08L15.27 13.92L17.29 20.14L12 16.3L6.71 20.14L8.73 13.92L3.44 10.08L9.98 10.08Z"/></svg>';
 const BMARK=`<span class="bmark" title="bookmark / revisit">${STAR}</span>`;
+/* revision — Cold/Warm/Solid rotation; own store, synced like bookmarks. shape {id:{s:stage,n:note}} */
+const REV_KEY='dsasprint2026_revision';
+const loadRev=()=>{try{return JSON.parse(localStorage.getItem(REV_KEY))||{}}catch{return{}}};
+function saveRev(r){localStorage.setItem(REV_KEY,JSON.stringify(r));fetch('/revision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)}).catch(err=>console.warn('revision sync failed',err));}
+const REVADD='<span class="revtog" title="add to revision"><svg class="ri i-add" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg><svg class="ri i-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 function paint(){
-  const c=load(),b=loadBookmarks();
-  document.querySelectorAll('.row').forEach(r=>{if(c[r.dataset.id])r.classList.add('ck');if(b[r.dataset.id])r.classList.add('bm');});
+  const c=load(),b=loadBookmarks(),rv=loadRev();
+  document.querySelectorAll('.row').forEach(r=>{if(c[r.dataset.id])r.classList.add('ck');if(b[r.dataset.id])r.classList.add('bm');if(rv[r.dataset.id])r.classList.add('rev');});
   refresh();
 }
 async function syncFromServer(){
   try{
-  const [pr,bm]=await Promise.all([fetch('/progress'),fetch('/bookmarks')]);   // one round-trip, one repaint
+  const [pr,bm,rv]=await Promise.all([fetch('/progress'),fetch('/bookmarks'),fetch('/revision')]);   // one round-trip, one repaint
   if(pr.ok) save({...load(),...await pr.json()});
   if(bm.ok) saveBookmarks({...loadBookmarks(),...await bm.json()});
+  if(rv.ok){ const srv=await rv.json(); if(srv&&typeof srv==='object') localStorage.setItem(REV_KEY,JSON.stringify({...loadRev(),...srv})); }
   paint();
+  if(document.getElementById('view-revision').classList.contains('on')) renderRevBoard();
   }catch{}
 }
 async function boot(){
   try{
-    const [res,layout]=await Promise.all([fetch('/data.json'),loadLayout()]);
+    const [res,layout,days]=await Promise.all([fetch('/data.json'),loadLayout(),loadDays()]);
     if(!res.ok) throw new Error('data.json: '+res.status);
     DATA=await res.json();
     LAYOUT=layout; applyLayout();
     buildChapters();
+    DAYS=days; if(DAYS){ applyDayLayout(); buildDays(); }   // additive: the roadmap still boots if days.json is missing
     buildHeroRing();
     paint();
+    if(document.getElementById('view-revision').classList.contains('on')) renderRevBoard();
     syncFromServer();
   }catch(e){
     console.error('boot failed:',e);
@@ -115,7 +124,7 @@ DATA.sprints.forEach((sp,si)=>{
         const links=p.links.map(([t,u])=>arrowFor(t,u)).join('');
         body+=`<div class="row ${tier}" data-id="${p.id}" data-tier="${tier}" data-tp="${tid}" data-q="${esc((p.title+' '+tname).toLowerCase())}">
           <div class="rmain">${HANDLE}<div class="cir"></div>
-          <div class="pmain"><span class="pname">${esc(p.title)}</span><span class="pbadges">${badges.join('')}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}${BMARK}${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div></div>
+          <div class="pmain"><span class="pname">${esc(p.title)}</span><span class="pbadges">${badges.join('')}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}${BMARK}${REVADD}${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div></div>
           <div class="plinks">${links}</div></div>`;
       });
     });
@@ -158,25 +167,33 @@ function toggleBookmark(id){
   document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.toggle('bm',!was));
   applyFilters();
 }
-chWrap.addEventListener('click',e=>{
+function rowClick(e){
   const r=e.target.closest('.row');
   if(!r||e.target.closest('a')||e.target.closest('.drag-handle'))return;
   const bm=e.target.closest('.bmark');
   if(bm){ const saving=!r.classList.contains('bm'); toggleBookmark(r.dataset.id);
     if(saving) for(let i=0;i<8;i++){const t=document.createElement('span');t.className='btick';t.style.setProperty('--a',(i*45)+'deg');bm.appendChild(t);t.addEventListener('animationend',()=>t.remove());}
     bm.classList.remove('pop'); void bm.offsetWidth; bm.classList.add('pop'); return; }
+  const rt=e.target.closest('.revtog');
+  if(rt){ const adding=!r.classList.contains('rev'); toggleRev(r.dataset.id);
+    if(adding){ const h=document.createElement('span'); h.className='rhalo'; rt.appendChild(h);
+      h.addEventListener('animationend',()=>h.remove()); setTimeout(()=>h.remove(),900);   // belt+braces: never strand a halo
+      bumpRevTab(); }
+    return; }
   const m=e.target.closest('.hint-mark');
   if(m){ m.classList.toggle('on'); r.querySelector('.hint-note').classList.toggle('on'); return; }
   toggle(r.dataset.id);
-});
+}
+chWrap.addEventListener('click',rowClick);
 /* link-arrow press: drop the tile + spawn a halo per click (rapid clicks overlap); css in .arr */
-chWrap.addEventListener('pointerdown',e=>{
+function arrPress(e){
   const a=e.target.closest('.arr'); if(!a) return;
   const h=document.createElement('span'); h.className='fhalo';
   a.appendChild(h); h.addEventListener('animationend',()=>h.remove());
   a.classList.remove('go'); void a.offsetWidth; a.classList.add('go');
   clearTimeout(a._t); a._t=setTimeout(()=>a.classList.remove('go'),560);
-});
+}
+chWrap.addEventListener('pointerdown',arrPress);
 
 /* ── drag-to-reorder (native DnD + FLIP), scoped within a topic ── */
 let dragged=null, lastAfter;
@@ -335,6 +352,8 @@ function refresh(){
   const total=ct+st+bt;                                    // drive the hardcoded counts off real data
   document.getElementById('dekCount').textContent=total+' problems';
   document.getElementById('tabCount').textContent=total;
+  const rvc=document.getElementById('revCount'); if(rvc) rvc.textContent=Object.keys(loadRev()).length;
+  refreshDays();
   let pct=0,pcd=0;                                          // pace excludes the post-OA prep track
   DATA.sprints.forEach(sp=>{ if(sp.id==='prep')return;
     sp.topics.forEach(([_,ps])=>ps.forEach(p=>{ if(tierOf(p)==='core'){pct++; if(c[p.id])pcd++;} })); });
@@ -375,7 +394,7 @@ modeBtn.addEventListener('click',()=>{
 /* filters */
 let tier='all',status='all',q='';
 function applyFilters(){
-  document.querySelectorAll('.row').forEach(r=>{
+  document.querySelectorAll('#view-probs .row').forEach(r=>{   // toolbar belongs to the Problems view only
     const okT=tier==='all'||r.dataset.tier===tier;
     const done=r.classList.contains('ck');
     const okS=status==='all'?true:status==='saved'?r.classList.contains('bm'):status==='done'?done:!done;
@@ -419,16 +438,15 @@ document.getElementById('toggleAll').addEventListener('click',e=>{
 const VIEW_KEY='dsasprint2026_view';
 function setView(v){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
-  document.getElementById('view-probs').classList.toggle('on',v==='probs');
-  document.getElementById('view-theory').classList.toggle('on',v==='theory');
-  document.getElementById('view-companies').classList.toggle('on',v==='companies');
+  ['probs','days','theory','companies','revision'].forEach(k=>document.getElementById('view-'+k).classList.toggle('on',v===k));
   document.querySelector('.toolbar').style.display = v==='probs' ? '' : 'none';
   if(v==='companies') refreshCompanies();
+  if(v==='revision') renderRevBoard();
   localStorage.setItem(VIEW_KEY,v);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>setView(t.dataset.view)));
-{const sv=localStorage.getItem(VIEW_KEY); if(sv==='theory'||sv==='companies') setView(sv);}
+{const sv=localStorage.getItem(VIEW_KEY); if(sv&&sv!=='probs'&&document.getElementById('view-'+sv)) setView(sv);}
 
 /* ── companies tab (additive; backed by /companies) ── */
 async function loadCompanies(){ try{const r=await fetch('/companies');return r.ok?await r.json():[];}catch{return[];} }
@@ -539,8 +557,245 @@ document.querySelectorAll('.menu [data-act]').forEach(b=>b.addEventListener('cli
 }));
 document.addEventListener('click',e=>{ if(!e.target.closest('details.menu')) document.querySelectorAll('details.menu[open]').forEach(d=>d.removeAttribute('open')); });
 
+/* ══ revision list view (Cold/Warm/Solid) — additive; state {id:{s,n}} in dsasprint2026_revision ══ */
+const REV_ORDER=['cold','warm','solid'];
+let PROBIDX=null;
+function probIdx(){ if(PROBIDX)return PROBIDX; PROBIDX=new Map();
+  DATA.sprints.forEach(sp=>sp.topics.forEach(([tname,ps])=>ps.forEach(p=>PROBIDX.set(p.id,{...p,tp:tname}))));
+  if(DAYS) DAYS.days.forEach(d=>d.probs.forEach(p=>PROBIDX.set(p.id,      // day-plan problems are filable too
+    {id:p.id,title:p.title,srcs:[p.tag],links:[[p.host,p.url]],lc:p.lc,tp:'Day '+d.n})));
+  return PROBIDX; }
+const REVLINKC={LC:'--lc',GFG:'--gfg',NC:'--ncs',TUF:'--tuf',WEB:'--web'};
+function revLink(l){ if(!l)return ''; const [t,u]=l,c=REVLINKC[t]||'--faint',g=(t==='TUF'||t==='WEB')?READ:ARR;
+  return `<a class="rlink" style="color:var(${c})" href="${u}" target="_blank" rel="noopener" title="open ${esc(t)}">${g}</a>`; }
+function revBadge(p){ if(p.lc)return `<span class="bdg b-LCnum">LC ${p.lc}</span>`;
+  const s=p.srcs&&p.srcs[0]; return s?`<span class="bdg b-${s}">${esc(s)}</span>`:''; }
+function revCard(p,note){
+  const el=document.createElement('div'); el.className='lrow'; el.dataset.id=p.id;
+  el.innerHTML=HANDLE+`<div class="lhead-c"><span class="ltitle" title="${esc(p.title)}">${esc(p.title)}</span>${revBadge(p)}${revLink(p.links&&p.links[0])}</div>`
+    +`<span class="lnote" contenteditable="plaintext-only">${esc(note||'')}</span>`
+    +`<div class="lacts"><button class="lact lprom" title="promote (Cold→Warm→Solid)">✓</button><button class="lact lreset" title="reset to Cold">↺</button><button class="lact lrem" title="remove from board">✕</button></div>`;
+  return el; }
+const revBody=s=>document.querySelector(`#view-revision .lbody[data-stage="${s}"]`);
+function renderRevBoard(){
+  if(!DATA)return; const st=loadRev(), idx=probIdx();
+  REV_ORDER.forEach(s=>revBody(s).replaceChildren());
+  for(const [id,v] of Object.entries(st)){ const p=idx.get(id); if(!p)continue;
+    (revBody((v&&v.s)||'cold')||revBody('cold')).appendChild(revCard(p,(v&&v.n)||'')); }
+  revRecount(); }
+function revRecount(){
+  REV_ORDER.forEach(s=>{ const b=revBody(s); if(!b)return; const rows=b.querySelectorAll('.lrow'), n=rows.length;
+    const cel=document.querySelector(`#view-revision [data-n="${s}"]`); if(cel)cel.textContent=n;
+    let ph=b.querySelector('.lempty');
+    if(!n){ if(!ph){ph=document.createElement('div');ph.className='lempty';ph.textContent=s==='cold'?"queue clear — nothing to re-solve":'nothing here yet';b.appendChild(ph);} } else if(ph)ph.remove();
+    rows.forEach(r=>{ r.querySelector('.lprom').classList.toggle('off',s==='solid'); r.querySelector('.lreset').classList.toggle('off',s==='cold'); });
+  });
+  const rvc=document.getElementById('revCount'); if(rvc)rvc.textContent=Object.keys(loadRev()).length; }
+function revPersist(){                                    // rebuild whole state from the DOM (stage + order + note stick)
+  const st={};
+  document.querySelectorAll('#view-revision .lbody').forEach(b=>b.querySelectorAll('.lrow').forEach(r=>{ st[r.dataset.id]={s:b.dataset.stage,n:r.querySelector('.lnote').textContent.trim()}; }));
+  saveRev(st); revRecount(); }
+function addRev(id){ const st=loadRev(); if(st[id])return; st[id]={s:'cold',n:''}; saveRev(st);
+  document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.add('rev')); renderRevBoard(); }
+function toggleRev(id){ const st=loadRev(), on=!!st[id]; if(on)delete st[id]; else st[id]={s:'cold',n:''}; saveRev(st);
+  document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.toggle('rev',!on));
+  if(document.getElementById('view-revision').classList.contains('on')) renderRevBoard(); else revRecount(); }
+function bumpRevTab(){ const t=document.getElementById('revCount'); if(!t)return;
+  t.classList.remove('bump'); void t.offsetWidth; t.classList.add('bump'); }
+/* FLIP: measure every card, mutate, then play each one back from where it was — cards glide
+   between groups instead of teleporting. Same trick the roadmap drag-reorder uses. */
+function revFlip(mutate){
+  const rows=[...revView.querySelectorAll('.lrow')];
+  const before=new Map(rows.map(r=>[r,r.getBoundingClientRect()]));
+  mutate();
+  rows.forEach(r=>{
+    if(!r.isConnected)return;                                  // removed by the mutation
+    const f=before.get(r), l=r.getBoundingClientRect(), dx=f.left-l.left, dy=f.top-l.top;
+    if(!dx&&!dy)return;
+    r.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],
+      {duration:430,easing:'cubic-bezier(.22,1,.36,1)'});
+  });
+}
+function revFlashRow(row,cls){ row.classList.remove('flash','flashup'); void row.offsetWidth; row.classList.add(cls); }
+/* board taps: ✓ promote, ↺ reset-to-Cold (the fail action), ✕ remove */
+const revView=document.getElementById('view-revision');
+revView.addEventListener('click',e=>{
+  const row=e.target.closest('.lrow'); if(!row)return; const cur=row.parentElement.dataset.stage;
+  if(e.target.closest('.lprom')){ const nx=REV_ORDER[REV_ORDER.indexOf(cur)+1]; if(!nx)return;
+    revFlip(()=>{ revBody(nx).appendChild(row); revPersist(); }); revFlashRow(row,'flashup'); return; }
+  if(e.target.closest('.lreset')){ if(cur==='cold')return;
+    revFlip(()=>{ revBody('cold').appendChild(row); revPersist(); }); revFlashRow(row,'flash'); return; }
+  if(e.target.closest('.lrem')){ const id=row.dataset.id;
+    row.classList.add('going');
+    row.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateX(-18px) scale(.93)'}],
+      {duration:190,easing:'ease-in',fill:'forwards'});
+    // timer, not the animation's onfinish: a cancelled or never-finishing animation
+    // must not strand the card on the board with its state unsaved
+    setTimeout(()=>{
+      revFlip(()=>{ row.remove(); revPersist(); });            // the survivors close the gap
+      document.querySelectorAll(`.row[data-id="${id}"]`).forEach(x=>x.classList.remove('rev'));
+    },190);
+    return; }
+});
+/* drag between groups — handle-armed (like the roadmap) so it doesn't fight inline note editing */
+let revDragged=null;
+function revAfter(body,y){ const els=[...body.querySelectorAll('.lrow:not(.dragging)')];
+  return els.reduce((best,el)=>{const b=el.getBoundingClientRect(),off=y-b.top-b.height/2;return(off<0&&off>best.off)?{off,el}:best;},{off:-Infinity,el:null}).el; }
+revView.addEventListener('mousedown',e=>{ const h=e.target.closest('.drag-handle'); if(h) h.closest('.lrow').setAttribute('draggable','true'); });
+revView.addEventListener('mouseup',e=>{ if(revDragged)return; const r=e.target.closest('.lrow[draggable="true"]'); if(r) r.removeAttribute('draggable'); });
+revView.addEventListener('dragstart',e=>{ const r=e.target.closest('.lrow'); if(!r||r.getAttribute('draggable')!=='true')return;
+  revDragged=r; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',''); requestAnimationFrame(()=>r.classList.add('dragging')); });
+revView.addEventListener('dragover',e=>{ if(!revDragged)return; e.preventDefault();
+  const g=e.target.closest('.lgroup'); if(!g)return; const body=g.querySelector('.lbody');
+  const ph=body.querySelector('.lempty'); if(ph)ph.remove();
+  const after=revAfter(body,e.clientY); if(after)body.insertBefore(revDragged,after); else body.appendChild(revDragged); });
+revView.addEventListener('dragend',()=>{ if(!revDragged)return; revDragged.classList.remove('dragging'); revDragged.removeAttribute('draggable'); revDragged=null; revPersist(); });
+revView.addEventListener('focusout',e=>{ if(e.target.classList&&e.target.classList.contains('lnote')) revPersist(); });   // save note on blur
+revView.addEventListener('keydown',e=>{ if(e.target.classList&&e.target.classList.contains('lnote')&&e.key==='Enter'){ e.preventDefault(); e.target.blur(); } });
+/* add-search picker (manual add from the fixed pool) */
+const revAddIn=document.getElementById('revAdd'), revListEl=document.getElementById('revList');
+function revMatches(q){ q=q.trim().toLowerCase(); if(!q){revListEl.innerHTML='';return;}
+  const st=loadRev(), idx=probIdx();
+  const hits=[...idx.values()].filter(p=>!st[p.id]&&(p.title.toLowerCase().includes(q)||(p.tp||'').toLowerCase().includes(q))).slice(0,8);
+  revListEl.innerHTML=hits.length?hits.map(p=>`<div class="ritem" data-id="${p.id}"><span class="ritem-t">${esc(p.title)}</span><span class="ritem-tp">${esc(p.tp||'')}</span></div>`).join(''):`<div class="rlist-empty">no match in the pool</div>`; }
+revAddIn.addEventListener('input',()=>revMatches(revAddIn.value));
+revListEl.addEventListener('mousedown',e=>{ const it=e.target.closest('.ritem'); if(!it)return; e.preventDefault(); addRev(it.dataset.id); revAddIn.value=''; revListEl.innerHTML=''; revAddIn.focus(); });
+revAddIn.addEventListener('blur',()=>setTimeout(()=>{revListEl.innerHTML='';},150));
 
 
 
 
 
+
+
+/* ══ day plan — 18 critical days, five patterns a day. Rows reuse the roadmap's own
+      markup + handlers, so check / bookmark / +revision all behave identically. ══ */
+const dayWrap=document.getElementById('dayChapters');
+async function loadDays(){ try{const r=await fetch('/days.json'); if(r.ok)return await r.json();}catch{} return null; }
+const DAY_TAGC={DSU:'--ncs',GRD:'--amber',SP:'--lld',DP1:'--verm',DP2:'--tuf',SW:'--green',MS:'--web',
+                BS:'--lc',LL:'--py',STR:'--gfg',MTH:'--ink2',TRI:'--ncs',PFX:'--amber'};
+/* saved plan wins; anything it doesn't mention (a newly added problem) keeps its home day */
+function applyDayLayout(){
+  const plan=LAYOUT.dayplan; if(!plan)return;
+  const byId=new Map(), home=new Map(), out={};
+  DAYS.days.forEach(d=>{ out[d.id]=[]; d.probs.forEach(p=>{byId.set(p.id,p); home.set(p.id,d.id);}); });
+  const placed=new Set();
+  DAYS.days.forEach(d=>(plan[d.id]||[]).forEach(id=>{
+    const p=byId.get(id); if(p&&!placed.has(id)){ out[d.id].push(p); placed.add(id); } }));
+  byId.forEach((p,id)=>{ if(!placed.has(id)) out[home.get(id)].push(p); });
+  DAYS.days.forEach(d=>{ d.probs=out[d.id]; });
+}
+function dayRow(p){
+  const c=DAY_TAGC[p.tag]||'--faint';
+  const badges=[`<span class="bdg dtag" style="color:var(${c});border-color:var(${c})">${esc(p.tag)}</span>`];
+  badges.push(p.lc?`<span class="bdg b-LCnum">LC ${p.lc}</span>`:`<span class="bdg b-${p.host}">${esc(p.host)}</span>`);
+  if(p.lock) badges.push('<span class="bdg b-lock">🔒</span>');
+  return `<div class="row core" data-id="${p.id}" data-tier="core" data-tag="${esc(p.tag)}" data-q="${esc((p.title+' '+p.tag).toLowerCase())}">
+    <div class="rmain">${HANDLE}<div class="cir"></div>
+    <div class="pmain"><span class="pname">${esc(p.title)}</span><span class="pbadges">${badges.join('')}</span>${BMARK}${REVADD}</div></div>
+    <div class="plinks">${arrowFor(p.host,p.url)}</div></div>`;
+}
+function buildDays(){
+  dayWrap.replaceChildren();
+  const op=loadSect();
+  DAYS.days.forEach(d=>{
+    const det=document.createElement('details');
+    det.className='chapter'; det.id='sec-'+d.id;
+    det.open = d.id in op ? op[d.id] : d.n<=2;             // first two days open, rest folded
+    det.addEventListener('toggle',()=>{const o=loadSect();o[d.id]=det.open;localStorage.setItem(SECT_KEY,JSON.stringify(o));});
+    det.innerHTML=`<summary class="ch-head">
+      <span class="ch-num">${d.n}</span>
+      <div class="ch-mid">
+        <div class="ch-title">Day ${d.n}</div>
+        <div class="ch-sub"><span class="daytags" data-daytags="${d.id}"></span><span data-daycount="${d.id}"></span></div>
+      </div>
+      <span class="ch-ring"><svg width="54" height="54" viewBox="0 0 54 54">
+        <circle class="chr-track" cx="27" cy="27" r="22"/>
+        <circle class="chr-arc" data-dayarc="${d.id}" cx="27" cy="27" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+      </svg><span class="chr-txt" data-daypct="${d.id}">0%</span></span>
+      <span class="ch-chev">▾</span></summary>
+      <div class="ch-body" data-day="${d.id}">${d.probs.map(dayRow).join('')}</div>`;
+    dayWrap.appendChild(det);
+  });
+  const lg=document.getElementById('dayLegend');
+  if(lg) lg.innerHTML='Five problems a day, one per pattern — clear the day, not the tag. '+
+    Object.entries(DAYS.tags).map(([k,v])=>`<b style="color:var(${DAY_TAGC[k]||'--faint'})">${k}</b> ${esc(v)}`).join(' · ');
+}
+function refreshDays(){
+  if(!DAYS||!dayWrap||!dayWrap.children.length)return;
+  const c=load(); let done=0,total=0;
+  DAYS.days.forEach(d=>{
+    const rows=[...dayWrap.querySelectorAll(`.ch-body[data-day="${d.id}"] .row`)];
+    const t=rows.length, dn=rows.filter(r=>c[r.dataset.id]).length;
+    total+=t; done+=dn;
+    const arc=dayWrap.querySelector(`[data-dayarc="${d.id}"]`);
+    if(arc) arc.style.strokeDashoffset=138.2*(1-(t?dn/t:0));
+    const pct=dayWrap.querySelector(`[data-daypct="${d.id}"]`);
+    if(pct) pct.textContent=Math.round(t?100*dn/t:0)+'%';
+    const tg=dayWrap.querySelector(`[data-daytags="${d.id}"]`);
+    if(tg) tg.textContent=rows.map(r=>r.dataset.tag).join(' · ')||'empty';
+    const cn=dayWrap.querySelector(`[data-daycount="${d.id}"]`);
+    if(cn) cn.textContent=dn+' / '+t;
+  });
+  const tc=document.getElementById('dayCount'); if(tc) tc.textContent=done+' / '+total;
+}
+/* keep DAYS in step with the screen after a drag, so a later rebuild matches what's shown */
+function syncDaysFromDom(){
+  const byId=new Map(); DAYS.days.forEach(d=>d.probs.forEach(p=>byId.set(p.id,p)));
+  DAYS.days.forEach(d=>{
+    const b=dayWrap.querySelector(`.ch-body[data-day="${d.id}"]`); if(!b)return;
+    d.probs=[...b.querySelectorAll('.row')].map(r=>byId.get(r.dataset.id)).filter(Boolean);
+  });
+}
+function persistDays(){
+  const plan={};
+  dayWrap.querySelectorAll('.ch-body[data-day]').forEach(b=>{
+    plan[b.dataset.day]=[...b.querySelectorAll('.row')].map(r=>r.dataset.id); });
+  LAYOUT.dayplan=plan; saveLayout(); syncDaysFromDom(); refreshDays();
+}
+/* rows behave exactly as they do on the roadmap */
+dayWrap.addEventListener('click',rowClick);
+dayWrap.addEventListener('pointerdown',arrPress);
+/* ── drag, across days ── */
+let dayDragged=null, lastDayAfter;
+function dayAfter(body,y){
+  const els=[...body.querySelectorAll('.row:not(.dragging)')];
+  return els.reduce((best,el)=>{const b=el.getBoundingClientRect(),off=y-b.top-b.height/2;
+    return (off<0&&off>best.off)?{off,el}:best;},{off:-Infinity,el:null}).el;
+}
+function dayFlip(mutate){                       // slide the neighbours instead of snapping them
+  const rows=[...dayWrap.querySelectorAll('.row')];
+  const before=new Map(rows.map(r=>[r,r.getBoundingClientRect()]));
+  mutate();
+  rows.forEach(r=>{
+    if(r===dayDragged)return;
+    const f=before.get(r), l=r.getBoundingClientRect(), dy=f.top-l.top;
+    if(!dy)return;
+    r.animate([{transform:`translateY(${dy}px)`},{transform:'none'}],{duration:230,easing:'cubic-bezier(.22,1,.36,1)'});
+  });
+}
+dayWrap.addEventListener('mousedown',e=>{
+  const h=e.target.closest('.drag-handle'); if(h) h.closest('.row').setAttribute('draggable','true'); });
+dayWrap.addEventListener('mouseup',e=>{
+  if(dayDragged)return; const r=e.target.closest('.row[draggable="true"]'); if(r) r.removeAttribute('draggable'); });
+dayWrap.addEventListener('dragstart',e=>{
+  const r=e.target.closest('.row'); if(!r||r.getAttribute('draggable')!=='true')return;
+  dayDragged=r; lastDayAfter=undefined; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain','');
+  requestAnimationFrame(()=>r.classList.add('dragging'));
+});
+dayWrap.addEventListener('dragover',e=>{
+  if(!dayDragged)return; e.preventDefault();
+  const det=e.target.closest('details.chapter'); if(!det)return;
+  if(!det.open) det.open=true;                              // hover a folded day to drop into it
+  const body=det.querySelector('.ch-body'), after=dayAfter(body,e.clientY);
+  if(after===lastDayAfter && dayDragged.parentElement===body) return;   // nothing would move
+  lastDayAfter=after;
+  dayFlip(()=>{ if(after) body.insertBefore(dayDragged,after); else body.appendChild(dayDragged); });
+  dayWrap.querySelectorAll('details.chapter').forEach(x=>x.classList.toggle('dayover',x===det));
+});
+dayWrap.addEventListener('dragend',()=>{
+  if(!dayDragged)return;
+  dayDragged.classList.remove('dragging'); dayDragged.removeAttribute('draggable');
+  dayWrap.querySelectorAll('.dayover').forEach(x=>x.classList.remove('dayover'));
+  dayDragged=null; lastDayAfter=undefined; persistDays();
+});

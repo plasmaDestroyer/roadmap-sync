@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revision board — demo</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<!-- reuse production tokens/fonts/reset so the demo reads exactly like the app -->
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ── demo-only board CSS (r-prefixed to avoid colliding with app rules) ── */
+.rwrap{max-width:1180px;margin:0 auto;padding:38px 26px 90px}
+.rhead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:6px}
+.rhead h1{font-family:var(--serif);font-weight:900;font-size:clamp(30px,5vw,46px);line-height:1;letter-spacing:-.02em}
+.rhead h1 .it{font-style:italic;color:var(--verm)}
+.rdek{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink2);max-width:640px;margin:12px 0 26px;line-height:1.6}
+.rdek b{font-style:normal;font-weight:700;color:var(--verm)}
+.rdemo-tag{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);border:1px solid var(--hair2);border-radius:5px;padding:4px 9px}
+
+/* add bar */
+.raddbar{position:relative;max-width:460px;margin-bottom:30px}
+.rsearch{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--rule);border-radius:11px;padding:11px 15px;box-shadow:4px 4px 0 var(--hair2)}
+.rsearch span{color:var(--verm);font-size:17px}
+.rsearch input{flex:1;background:none;border:none;outline:none;font-family:var(--mono);font-size:13px;color:var(--ink)}
+.rlist{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;background:var(--card);border:1.5px solid var(--rule);border-radius:11px;box-shadow:4px 4px 0 var(--hair2);overflow:hidden;max-height:340px;overflow-y:auto}
+.rlist:empty{display:none}
+.ritem{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--hair)}
+.ritem:last-child{border-bottom:none}
+.ritem:hover{background:var(--paper2)}
+.ritem-t{flex:1;font-size:12.5px;color:var(--ink);font-weight:500}
+.ritem-tp{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+.rlist-empty{padding:12px 14px;font-family:var(--serif);font-style:italic;color:var(--faint);font-size:13px}
+
+/* board */
+.rboard{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rcol{display:flex;flex-direction:column;background:var(--card);border:1.5px solid var(--rule);border-top-width:4px;border-radius:13px;box-shadow:4px 4px 0 var(--hair2);min-height:320px;transition:box-shadow .15s,border-color .15s}
+.rcol[data-stage="cold"]{border-top-color:var(--ncs)}
+.rcol[data-stage="warm"]{border-top-color:var(--amber)}
+.rcol[data-stage="solid"]{border-top-color:var(--green)}
+.rcol.over{box-shadow:4px 4px 0 var(--verm);border-color:var(--verm)}
+.rcol-head{display:flex;align-items:baseline;gap:9px;padding:14px 15px 10px}
+.rcol-name{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.rcol[data-stage="cold"] .rcol-name{color:var(--ncs)}
+.rcol[data-stage="warm"] .rcol-name{color:var(--amber)}
+.rcol[data-stage="solid"] .rcol-name{color:var(--green)}
+.rcol-n{font-family:var(--mono);font-size:11px;color:var(--faint);font-weight:400}
+.rcol-sub{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--faint);padding:0 15px 6px;text-transform:uppercase;opacity:.8}
+.rcol-body{flex:1;display:flex;flex-direction:column;gap:8px;padding:6px 11px 16px;min-height:60px}
+.rempty{margin:auto;padding:24px 8px;text-align:center;font-family:var(--serif);font-style:italic;font-size:13px;color:var(--faint);opacity:.7}
+
+/* card */
+.rcard{position:relative;background:var(--paper);border:1px solid var(--hair2);border-radius:9px;padding:10px 11px;cursor:grab;box-shadow:2px 2px 0 var(--hair2);transition:transform .12s,box-shadow .12s,border-color .12s;animation:rpop .2s ease both}
+.rcard:hover{border-color:var(--ink2);transform:translateY(-1px);box-shadow:3px 3px 0 var(--hair2)}
+.rcard.dragging{opacity:.4;cursor:grabbing}
+.rcard.flash{animation:rflash .5s ease}
+.rcard-top{display:flex;align-items:flex-start;gap:8px}
+.rcard-t{flex:1;min-width:0;font-size:12.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.rcard-bot{display:flex;align-items:center;gap:6px;margin-top:8px}
+.rbadge{font-size:8.5px;font-weight:600;letter-spacing:.1em;padding:1.5px 6px;border-radius:999px;border:1px solid}
+.b-NC{color:var(--ncs);border-color:var(--ncs)} .b-ST{color:var(--web);border-color:var(--web)}
+.b-LC,.b-LCnum{color:var(--lc);border-color:var(--lc)} .b-GFG{color:var(--gfg);border-color:var(--gfg)}
+.b-TUF{color:var(--tuf);border-color:var(--tuf)} .b-WEB{color:var(--web);border-color:var(--web)} .b-NCp{color:var(--ncs);border-color:var(--ncs)}
+.rcard-tp{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--faint);text-transform:uppercase;margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44%}
+.rlink{display:inline-flex;align-items:center;justify-content:center;width:22px;height:20px;border-radius:6px;border:1px solid var(--hair2);color:var(--faint)}
+.rlink:hover{border-color:currentColor}
+.rlink svg{width:12px;height:12px}
+.ract{margin-left:4px;display:inline-flex;align-items:center;justify-content:center;width:22px;height:20px;border:none;background:none;cursor:pointer;border-radius:6px;font-size:13px;color:var(--faint);line-height:1}
+.ract:hover{background:var(--paper2);color:var(--ink)}
+.rmiss:hover{color:var(--ncs)}
+.rdel:hover{color:var(--verm)}
+
+@keyframes rpop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes rflash{0%{box-shadow:0 0 0 2px var(--ncs)}100%{box-shadow:2px 2px 0 var(--hair2)}}
+@media(max-width:720px){.rboard{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="rwrap">
+  <div class="rhead">
+    <div>
+      <h1>Revision <span class="it">board</span></h1>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:12px">
+      <span class="rdemo-tag">throwaway demo</span>
+      <button class="modebtn" id="modeBtn" title="cycle theme" aria-label="cycle theme">☾</button>
+    </span>
+  </div>
+  <p class="rdek">Park problems to re-solve. Drag right as they harden — <b>Cold</b> → <b>Warm</b> → <b>Solid</b>.
+    One rule: hit <b>↺</b> on a card you botched cold and it snaps straight back to Cold, whatever column it was in.</p>
+
+  <div class="raddbar">
+    <div class="rsearch"><span>⌕</span><input id="radd" type="text" placeholder="add a problem to revise…" autocomplete="off"></div>
+    <div class="rlist" id="rlist"></div>
+  </div>
+
+  <div class="rboard" id="rboard">
+    <div class="rcol" data-stage="cold">
+      <div class="rcol-head"><span class="rcol-name">Cold</span><span class="rcol-n" data-n="cold">0</span></div>
+      <div class="rcol-sub">re-solve now</div>
+      <div class="rcol-body" data-stage="cold"></div>
+    </div>
+    <div class="rcol" data-stage="warm">
+      <div class="rcol-head"><span class="rcol-name">Warm</span><span class="rcol-n" data-n="warm">0</span></div>
+      <div class="rcol-sub">reproduced once · on watch</div>
+      <div class="rcol-body" data-stage="warm"></div>
+    </div>
+    <div class="rcol" data-stage="solid">
+      <div class="rcol-head"><span class="rcol-name">Solid</span><span class="rcol-n" data-n="solid">0</span></div>
+      <div class="rcol-sub">clean ≥2× · spot-check</div>
+      <div class="rcol-body" data-stage="solid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RKEY='dsasprint2026_revision';
+const load=()=>{try{return JSON.parse(localStorage.getItem(RKEY))||{}}catch{return{}}};
+const save=s=>localStorage.setItem(RKEY,JSON.stringify(s));   // demo: localStorage only, no backend
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ARR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5M9 5h10v10" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const READ='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 11h14M5 16h9" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
+const DEST={LC:['--lc','j'],GFG:['--gfg','j'],NC:['--ncs','j'],TUF:['--tuf','a'],WEB:['--web','a']};
+
+let POOL={};   // id -> {id,title,srcs,links,lc,tp}
+const board=document.getElementById('rboard');
+const bodyOf=s=>board.querySelector(`.rcol-body[data-stage="${s}"]`);
+
+/* ── theme: share the app's key + 3-way cycle so the demo matches the app ── */
+const TKEY='dsasprint2026_theme', modeBtn=document.getElementById('modeBtn'), CYCLE=['dark','dark-hc','light'];
+function applyTheme(t){document.documentElement.dataset.theme=t;modeBtn.textContent={light:'☀',dark:'☾','dark-hc':'◐'}[t]||'☾';}
+applyTheme(localStorage.getItem(TKEY)||'dark');
+modeBtn.addEventListener('click',()=>{const t=CYCLE[(CYCLE.indexOf(document.documentElement.dataset.theme)+1)%CYCLE.length];localStorage.setItem(TKEY,t);applyTheme(t);});
+
+/* ── card render ── */
+function badgeOf(p){
+  const s=(p.srcs&&p.srcs[0])||''; const cls=s==='NC+'?'NCp':s;
+  if(p.lc) return `<span class="rbadge b-LCnum">LC ${p.lc}</span>`;
+  return s?`<span class="rbadge b-${cls}">${esc(s)}</span>`:'';
+}
+function linkOf(p){
+  const l=p.links&&p.links[0]; if(!l) return '';
+  const [t,u]=l, d=DEST[t]||['--faint','j'];
+  return `<a class="rlink" style="color:var(${d[0]})" href="${u}" target="_blank" rel="noopener" title="open ${esc(t)}">${d[1]==='j'?ARR:READ}</a>`;
+}
+function makeCard(p){
+  const el=document.createElement('div');
+  el.className='rcard'; el.dataset.id=p.id; el.draggable=true;
+  el.innerHTML=`<div class="rcard-top"><span class="rcard-t">${esc(p.title)}</span></div>
+    <div class="rcard-bot">${badgeOf(p)}${linkOf(p)}
+      <button class="ract rmiss" title="missed it cold → back to Cold">↺</button>
+      <button class="ract rdel" title="remove from board">✕</button>
+      <span class="rcard-tp">${esc(p.tp||'')}</span></div>`;
+  return el;
+}
+
+/* ── state <-> DOM ── */
+function persist(){                              // rebuild whole state from DOM (column + order both stick)
+  const st={};
+  board.querySelectorAll('.rcol-body').forEach(b=>b.querySelectorAll('.rcard').forEach(c=>st[c.dataset.id]=b.dataset.stage));
+  save(st); recount();
+}
+function recount(){
+  ['cold','warm','solid'].forEach(s=>{
+    const b=bodyOf(s), n=b.querySelectorAll('.rcard').length;
+    board.querySelector(`[data-n="${s}"]`).textContent=n;
+    let ph=b.querySelector('.rempty');
+    if(!n){ if(!ph){ph=document.createElement('div');ph.className='rempty';ph.textContent=s==='cold'?'nothing to re-solve':'drag cards here';b.appendChild(ph);} }
+    else if(ph) ph.remove();
+  });
+}
+function addToBoard(id){
+  if(document.querySelector(`.rcard[data-id="${id}"]`)) return;   // already on board
+  const p=POOL[id]; if(!p) return;
+  bodyOf('cold').appendChild(makeCard(p)); persist();
+}
+
+/* card button clicks (delegated) */
+board.addEventListener('click',e=>{
+  const card=e.target.closest('.rcard'); if(!card) return;
+  if(e.target.closest('.rdel')){ card.remove(); persist(); return; }
+  if(e.target.closest('.rmiss')){                                  // the retention rule: snap to Cold
+    bodyOf('cold').appendChild(card);
+    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
+    persist(); return;
+  }
+});
+
+/* ── drag between columns (native DnD + live insert) ── */
+let dragged=null;
+function afterEl(b,y){
+  const els=[...b.querySelectorAll('.rcard:not(.dragging)')];
+  return els.reduce((best,el)=>{const box=el.getBoundingClientRect();const off=y-box.top-box.height/2;
+    return (off<0&&off>best.off)?{off,el}:best;},{off:-Infinity,el:null}).el;
+}
+board.addEventListener('dragstart',e=>{const c=e.target.closest('.rcard');if(!c)return;dragged=c;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','');requestAnimationFrame(()=>c.classList.add('dragging'));});
+board.addEventListener('dragover',e=>{
+  if(!dragged)return; e.preventDefault();
+  const col=e.target.closest('.rcol'); if(!col)return;
+  board.querySelectorAll('.rcol').forEach(x=>x.classList.toggle('over',x===col));
+  const b=col.querySelector('.rcol-body'), after=afterEl(b,e.clientY);
+  const ph=b.querySelector('.rempty'); if(ph)ph.remove();
+  if(after) b.insertBefore(dragged,after); else b.appendChild(dragged);
+});
+board.addEventListener('dragend',()=>{
+  if(!dragged)return; dragged.classList.remove('dragging'); dragged=null;
+  board.querySelectorAll('.rcol.over').forEach(x=>x.classList.remove('over'));
+  persist();
+});
+
+/* ── add-search ── */
+const addIn=document.getElementById('radd'), rlist=document.getElementById('rlist');
+function renderMatches(q){
+  q=q.trim().toLowerCase();
+  if(!q){rlist.innerHTML='';return;}
+  const on=new Set([...document.querySelectorAll('.rcard')].map(c=>c.dataset.id));
+  const hits=Object.values(POOL).filter(p=>!on.has(p.id)&&(p.title.toLowerCase().includes(q)||(p.tp||'').toLowerCase().includes(q))).slice(0,8);
+  rlist.innerHTML = hits.length
+    ? hits.map(p=>`<div class="ritem" data-id="${p.id}"><span class="ritem-t">${esc(p.title)}</span><span class="ritem-tp">${esc(p.tp||'')}</span></div>`).join('')
+    : `<div class="rlist-empty">no match in the pool</div>`;
+}
+addIn.addEventListener('input',()=>renderMatches(addIn.value));
+rlist.addEventListener('mousedown',e=>{const it=e.target.closest('.ritem');if(!it)return;e.preventDefault();addToBoard(it.dataset.id);addIn.value='';rlist.innerHTML='';addIn.focus();});
+addIn.addEventListener('blur',()=>setTimeout(()=>{rlist.innerHTML='';},150));
+
+/* ── boot: pool from the real data, then restore saved board ── */
+(async function(){
+  try{
+    const r=await fetch('/data.json'); const data=await r.json();
+    data.sprints.forEach(sp=>sp.topics.forEach(([tname,probs])=>probs.forEach(p=>{POOL[p.id]={id:p.id,title:p.title,srcs:p.srcs||[],links:p.links||[],lc:p.lc,tp:tname};})));
+  }catch(e){ console.error('pool load failed',e); }
+  const st=load();
+  for(const [id,stage] of Object.entries(st)){ const p=POOL[id]; if(!p)continue; (bodyOf(stage)||bodyOf('cold')).appendChild(makeCard(p)); }
+  recount();
+})();
+</script>
+</body>
+</html>

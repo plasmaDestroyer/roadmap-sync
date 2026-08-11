@@ -82,6 +82,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// revision holds a per-user JSON blob {problemID: {s: stage, n: note}} — a
+	// blob rather than a row per problem because the value is a record, not a flag.
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS revision (
+    user_id TEXT PRIMARY KEY,
+    json    TEXT NOT NULL
+)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.Handle("/", noCache(http.FileServer(http.Dir("static"))))
 
 	http.HandleFunc("/progress", func(w http.ResponseWriter, r *http.Request) {
@@ -214,6 +224,35 @@ func main() {
 			}
 			if err := saveBookmarks(db, userID, marks); err != nil {
 				log.Println("saving bookmarks:", err)
+			}
+
+		default:
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	http.HandleFunc("/revision", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			raw, err := getRevision(db, userID)
+			if err != nil {
+				http.Error(w, "could not load revision", http.StatusInternalServerError)
+				log.Println("getRevision:", err)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			if _, err := w.Write(raw); err != nil {
+				log.Println("write revision:", err)
+			}
+
+		case http.MethodPost:
+			raw, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
+			if err != nil || !json.Valid(raw) {
+				http.Error(w, "bad request body", http.StatusBadRequest)
+				return
+			}
+			if err := saveRevision(db, userID, raw); err != nil {
+				log.Println("saving revision:", err)
 			}
 
 		default:
@@ -398,6 +437,27 @@ func getBookmarks(db *sql.DB, userID string) (map[string]bool, error) {
 		marks[id] = true
 	}
 	return marks, rows.Err()
+}
+
+// revision: opaque JSON blob per user, same storage shape as layout.
+func getRevision(db *sql.DB, userID string) ([]byte, error) {
+	var raw string
+	switch err := db.QueryRow("SELECT json FROM revision WHERE user_id = ?", userID).Scan(&raw); err {
+	case nil:
+		return []byte(raw), nil
+	case sql.ErrNoRows:
+		return []byte("{}"), nil
+	default:
+		return nil, err
+	}
+}
+
+func saveRevision(db *sql.DB, userID string, raw []byte) error {
+	_, err := db.Exec(
+		`INSERT INTO revision(user_id, json) VALUES (?, ?)
+		 ON CONFLICT(user_id) DO UPDATE SET json = excluded.json`,
+		userID, string(raw))
+	return err
 }
 
 func saveBookmarks(db *sql.DB, userID string, marks map[string]bool) error {

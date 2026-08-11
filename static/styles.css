@@ -369,3 +369,87 @@ details[open] .ch-chev{transform:rotate(180deg)}
 @media (min-width:1500px){
   .wrap{max-width:1330px}
 }
+
+/* ── day plan view ── */
+.dtag{font-weight:700}
+.daytags{letter-spacing:.04em}
+#view-days .ch-sub{gap:12px}
+#view-days .chapter.dayover{border-color:var(--verm)}
+#view-days .row.dragging{opacity:.35}
+#dayLegend b{font-weight:700}
+
+/* ── revision list view (Cold/Warm/Solid) ── */
+.raddbar{position:relative;margin-bottom:30px}
+.rsearch{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--rule);border-radius:11px;padding:11px 15px;box-shadow:4px 4px 0 var(--hair2)}
+.rsearch span{color:var(--verm);font-size:17px}
+.rsearch input{flex:1;background:none;border:none;outline:none;font-family:var(--mono);font-size:13px;color:var(--ink)}
+.rlist{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;background:var(--card);border:1.5px solid var(--rule);border-radius:11px;box-shadow:4px 4px 0 var(--hair2);overflow:hidden;max-height:340px;overflow-y:auto}
+.rlist:empty{display:none}
+.ritem{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--hair)}
+.ritem:last-child{border-bottom:none}
+.ritem:hover{background:var(--paper2)}
+.ritem-t{flex:1;font-size:12.5px;color:var(--ink);font-weight:500}
+.ritem-tp{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+.rlist-empty{padding:12px 14px;font-family:var(--serif);font-style:italic;color:var(--faint);font-size:13px}
+.lgroup{margin-bottom:22px}
+.lgh{display:flex;align-items:baseline;gap:8px;padding:0 2px 9px;border-bottom:2px solid var(--rule);margin-bottom:10px}
+.lgh-name{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.01em}
+.lgh-dot{font-size:13px;color:var(--faint)}
+.lgh-n{font-family:var(--mono);font-size:13px;font-weight:600}
+.lgh-sub{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-left:auto;opacity:.8}
+.lgroup[data-stage="cold"] .lgh-name,.lgroup[data-stage="cold"] .lgh-n{color:var(--ncs)}
+.lgroup[data-stage="warm"] .lgh-name,.lgroup[data-stage="warm"] .lgh-n{color:var(--amber)}
+.lgroup[data-stage="solid"] .lgh-name,.lgroup[data-stage="solid"] .lgh-n{color:var(--green)}
+.lbody{display:flex;flex-direction:column;gap:7px}
+.lempty{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--faint);opacity:.65;padding:4px 2px}
+.lrow{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--hair2);border-radius:9px;padding:9px 12px;box-shadow:2px 2px 0 var(--hair2);animation:fade .2s ease both}
+.lrow:hover{border-color:var(--ink2)}
+.lrow.flash{animation:revflash .55s ease}
+.lrow.dragging{opacity:.4}
+.lrow .drag-handle{flex-shrink:0;cursor:grab}
+.lrow[draggable="true"] .drag-handle{cursor:grabbing}
+.lhead-c{display:flex;align-items:center;gap:8px;min-width:0;flex:0 1 auto}
+.ltitle{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+.lnote{flex:1 1 auto;min-width:60px;font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--ink2);outline:none;padding:2px 4px;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lnote:focus{background:var(--paper2);color:var(--ink);white-space:normal;overflow:visible}
+.lnote:empty::before{content:'+ note';color:var(--faint);opacity:.55}
+.lnote:focus:empty::before{content:'what did you miss?'}
+.lacts{display:flex;gap:3px;flex-shrink:0;margin-left:auto}
+.lact{display:inline-flex;align-items:center;justify-content:center;width:24px;height:22px;border:none;background:none;cursor:pointer;border-radius:6px;font-size:13px;color:var(--faint);line-height:1}
+.lact:hover{background:var(--paper2)}
+.lprom:hover{color:var(--green)}
+.lreset:hover{color:var(--ncs)}
+.lrem:hover{color:var(--verm)}
+.lact.off{opacity:.22;pointer-events:none}
+.rlink{display:inline-flex;align-items:center;justify-content:center;width:27px;height:24px;border-radius:7px;flex-shrink:0;transition:transform .16s ease,background .16s ease}
+.rlink svg{width:14px;height:14px}
+.rlink:hover{background:color-mix(in srgb,currentColor 15%,transparent);transform:scale(1.12)}
+.rlink:active{transform:scale(.94)}
+/* per-row +revision toggle (independent of the bookmark star) — plus morphs into a drawn check */
+.revtog{position:relative;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;vertical-align:middle;margin-left:3px;color:var(--faint);cursor:pointer;border-radius:5px}
+.revtog:hover{color:var(--verm);background:var(--verm-soft)}
+.revtog:active{transform:scale(.86)}
+.revtog .ri{position:absolute;width:13px;height:13px;transition:transform .34s cubic-bezier(.22,1,.36,1),opacity .2s ease}
+.revtog .i-on{opacity:0;transform:scale(.35) rotate(-110deg)}
+.row.rev .revtog{color:var(--verm)}
+.row.rev .revtog .i-add{opacity:0;transform:scale(.35) rotate(110deg)}
+.row.rev .revtog .i-on{opacity:1;transform:none}
+.row.rev .revtog .i-on path{stroke-dasharray:24;animation:revdraw .38s .07s cubic-bezier(.22,1,.36,1) both}
+@keyframes revdraw{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+/* ring that pings outward when a problem is filed into the revision queue */
+.rhalo{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;
+  border:1.5px solid var(--verm);pointer-events:none;animation:rhalo .58s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes rhalo{from{opacity:.85;transform:scale(.5)}to{opacity:0;transform:scale(2.7)}}
+/* the Revision tab count kicks so you see where the problem landed */
+.tcount.bump{animation:revbump .55s cubic-bezier(.22,1,.36,1)}
+@keyframes revbump{0%{transform:scale(1)}22%{transform:scale(1.75);color:var(--verm)}100%{transform:scale(1)}}
+.tab .tcount{display:inline-block}
+@keyframes revflash{0%{box-shadow:0 0 0 2px var(--ncs)}100%{box-shadow:2px 2px 0 var(--hair2)}}
+@keyframes revflashup{0%{box-shadow:0 0 0 2px var(--green)}100%{box-shadow:2px 2px 0 var(--hair2)}}
+.lrow.flashup{animation:revflashup .55s ease}
+.lrow.going{pointer-events:none}
+@media (prefers-reduced-motion:reduce){
+  .revtog .ri,.rhalo,.tcount.bump,.lrow.flash,.lrow.flashup{animation:none!important;transition:none!important}
+  .row.rev .revtog .i-on path{animation:none!important;stroke-dasharray:none}
+}
+@media(max-width:540px){.lrow{flex-wrap:wrap}.lnote{flex-basis:100%;order:3}.ltitle{max-width:150px}}

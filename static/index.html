@@ -42,8 +42,10 @@
 
 <nav class="tabs">
   <button class="tab on" data-view="probs">The Problems <span class="tcount" id="tabCount">252</span></button>
+  <button class="tab" data-view="days">Day Plan <span class="tcount" id="dayCount">0 / 90</span></button>
   <button class="tab" data-view="theory">CS Theory <span class="tcount">7 subjects</span></button>
   <button class="tab" data-view="companies">Companies <span class="tcount" id="cmpCount">0</span></button>
+  <button class="tab" data-view="revision">Revision <span class="tcount" id="revCount">0</span></button>
 </nav>
 
 <div class="view on" id="view-probs">
@@ -224,6 +226,34 @@
     <input id="cRounds" placeholder="Rounds">
     <input id="cNotes" placeholder="Notes">
     <button class="act" id="cAdd">+ Add</button>
+  </div>
+</div>
+
+<div class="view" id="view-days">
+  <p class="th-intro"><strong>The critical track.</strong> Eighteen days, five problems a day, one per pattern so no technique goes cold. Same controls as the roadmap: click a row to tick it, star to bookmark, <b style="color:var(--verm)">+</b> to file it into revision. Drag a row by its handle to move it <b style="color:var(--verm)">across days</b> when a day runs long.</p>
+  <div class="legend" id="dayLegend"></div>
+  <div id="dayChapters"></div>
+</div>
+
+<div class="view" id="view-revision">
+  <p class="th-intro"><strong>Cold is today's queue.</strong> <b style="color:var(--verm)">✓</b> promotes a problem up the ladder (Cold → Warm → Solid); <b style="color:var(--verm)">↺</b> resets it to Cold from anywhere, the fail action that keeps a botched re-solve honest. Add problems with the <b style="color:var(--verm)">+</b> on any roadmap row, or search below. Notes are inline: tap to jot what you missed, blur to save.</p>
+  <div class="revcol">
+    <div class="raddbar">
+      <div class="rsearch"><span>⌕</span><input id="revAdd" type="text" placeholder="add a problem to revise…" autocomplete="off"></div>
+      <div class="rlist" id="revList"></div>
+    </div>
+    <div class="lgroup" data-stage="cold">
+      <div class="lgh"><span class="lgh-name">Cold</span><span class="lgh-dot">·</span><span class="lgh-n" data-n="cold">0</span><span class="lgh-sub">today's queue</span></div>
+      <div class="lbody" data-stage="cold"></div>
+    </div>
+    <div class="lgroup" data-stage="warm">
+      <div class="lgh"><span class="lgh-name">Warm</span><span class="lgh-dot">·</span><span class="lgh-n" data-n="warm">0</span><span class="lgh-sub">on watch</span></div>
+      <div class="lbody" data-stage="warm"></div>
+    </div>
+    <div class="lgroup" data-stage="solid">
+      <div class="lgh"><span class="lgh-name">Solid</span><span class="lgh-dot">·</span><span class="lgh-n" data-n="solid">0</span><span class="lgh-sub">spot-check</span></div>
+      <div class="lbody" data-stage="solid"></div>
+    </div>
   </div>
 </div>
 </div>
