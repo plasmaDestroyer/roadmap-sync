@@ -44,7 +44,7 @@
   <button class="tab on" data-view="probs">The Problems <span class="tcount" id="tabCount">252</span></button>
   <button class="tab" data-view="days">Day Plan <span class="tcount" id="dayCount">0 / 90</span></button>
   <button class="tab" data-view="theory">CS Theory <span class="tcount">7 subjects</span></button>
-  <button class="tab" data-view="companies">Companies <span class="tcount" id="cmpCount">0</span></button>
+  <button class="tab" data-view="graviton">Graviton <span class="tcount" id="gvCount">0 / 0</span></button>
   <button class="tab" data-view="revision">Revision <span class="tcount" id="revCount">0</span></button>
 </nav>
 
@@ -214,19 +214,10 @@
   </div>
 </div>
 
-<div class="view" id="view-companies">
-  <p class="th-intro">Companies you're targeting — OA format, rounds, and notes. Saved to the server.</p>
-  <table class="cmp-table">
-    <thead><tr><th>Company</th><th>OA format</th><th>Rounds</th><th>Notes</th><th></th></tr></thead>
-    <tbody id="cmpRows"></tbody>
-  </table>
-  <div class="cmp-add">
-    <input id="cName" placeholder="Company">
-    <input id="cOA" placeholder="OA format">
-    <input id="cRounds" placeholder="Rounds">
-    <input id="cNotes" placeholder="Notes">
-    <button class="act" id="cAdd">+ Add</button>
-  </div>
+<div class="view" id="view-graviton">
+  <p class="th-intro"><strong>Three days to the Graviton OA.</strong> Twenty-one Codeforces problems in a rising band, plus an overflow pile if the OA slips. Rows behave like the roadmap: click to tick, star to bookmark, <b style="color:var(--verm)">+</b> to file into revision. Each day carries an <b>alongside</b> drill; that block is what the interview asks about, so write the code, don't read about it.</p>
+  <div class="legend" id="gvLegend"></div>
+  <div id="gvChapters"></div>
 </div>
 
 <div class="view" id="view-days">

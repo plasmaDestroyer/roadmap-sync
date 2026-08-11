@@ -1,4 +1,4 @@
-let DATA, DAYS=null;
+let DATA, DAYS=null, GRAV=null;
 const STORAGE_KEY='dsasprint2026_checks';
 const load=()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch{return{}}};
 const save=c=>{
@@ -43,12 +43,13 @@ async function syncFromServer(){
 }
 async function boot(){
   try{
-    const [res,layout,days]=await Promise.all([fetch('/data.json'),loadLayout(),loadDays()]);
+    const [res,layout,days,grav]=await Promise.all([fetch('/data.json'),loadLayout(),loadDays(),loadGrav()]);
     if(!res.ok) throw new Error('data.json: '+res.status);
     DATA=await res.json();
     LAYOUT=layout; applyLayout();
     buildChapters();
     DAYS=days; if(DAYS){ applyDayLayout(); buildDays(); }   // additive: the roadmap still boots if days.json is missing
+    GRAV=grav; if(GRAV) buildGrav();
     buildHeroRing();
     paint();
     if(document.getElementById('view-revision').classList.contains('on')) renderRevBoard();
@@ -79,7 +80,7 @@ const TIERS=['core','stretch','bonus'];
 const HANDLE='<span class="drag-handle" aria-hidden="true"><span class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>';
 const SPARK='<svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2Q12 12 22 12Q12 12 12 22Q12 12 2 12Q12 12 12 2Z"/></svg>';
 // link destinations: [colour var, kind] — j=judge (tinted ↗), a=article (lined "read" glyph)
-const DEST={LC:['--lc','j'],GFG:['--gfg','j'],NC:['--ncs','j'],TUF:['--tuf','a'],WEB:['--web','a']};
+const DEST={LC:['--lc','j'],GFG:['--gfg','j'],NC:['--ncs','j'],TUF:['--tuf','a'],WEB:['--web','a'],CF:['--lld','j']};
 const READ='<svg class="readi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 11h14M5 16h9" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>';
 // judge arrow as an SVG (geometrically centred ~12,12) — the ↗ glyph sits off-centre in the box
 const ARR='<svg class="arrg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5M9 5h10v10" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -354,7 +355,8 @@ function refresh(){
   document.getElementById('tabCount').textContent=total;
   const rvc=document.getElementById('revCount'); if(rvc) rvc.textContent=Object.keys(loadRev()).length;
   refreshDays();
-  let pct=0,pcd=0;                                          // pace excludes the post-OA prep track
+  refreshGrav();
+  let pct=0,pcd=0;                                        // pace excludes the post-OA prep track
   DATA.sprints.forEach(sp=>{ if(sp.id==='prep')return;
     sp.topics.forEach(([_,ps])=>ps.forEach(p=>{ if(tierOf(p)==='core'){pct++; if(c[p.id])pcd++;} })); });
   const dl=Math.ceil((new Date('2026-07-13T00:00:00+05:30')-new Date())/86400000);   // same OA date tick() uses
@@ -438,9 +440,8 @@ document.getElementById('toggleAll').addEventListener('click',e=>{
 const VIEW_KEY='dsasprint2026_view';
 function setView(v){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
-  ['probs','days','theory','companies','revision'].forEach(k=>document.getElementById('view-'+k).classList.toggle('on',v===k));
+  ['probs','days','theory','graviton','revision'].forEach(k=>document.getElementById('view-'+k).classList.toggle('on',v===k));
   document.querySelector('.toolbar').style.display = v==='probs' ? '' : 'none';
-  if(v==='companies') refreshCompanies();
   if(v==='revision') renderRevBoard();
   localStorage.setItem(VIEW_KEY,v);
   window.scrollTo({top:0,behavior:'smooth'});
@@ -448,27 +449,83 @@ function setView(v){
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>setView(t.dataset.view)));
 {const sv=localStorage.getItem(VIEW_KEY); if(sv&&sv!=='probs'&&document.getElementById('view-'+sv)) setView(sv);}
 
-/* ── companies tab (additive; backed by /companies) ── */
-async function loadCompanies(){ try{const r=await fetch('/companies');return r.ok?await r.json():[];}catch{return[];} }
-function renderCompanies(list){
-  document.getElementById('cmpRows').innerHTML = list.length
-    ? list.map(c=>`<tr data-id="${c.id}"><td>${esc(c.name)}</td><td>${esc(c.oa_format||'')}</td><td>${esc(c.rounds||'')}</td><td>${esc(c.notes||'')}</td><td><button class="cmp-del" title="remove">✕</button></td></tr>`).join('')
-    : `<tr><td colspan="5" class="cmp-empty">No companies yet — add one below.</td></tr>`;
-  document.getElementById('cmpCount').textContent=list.length;
+/* ══ Graviton OA track — three dated days of Codeforces plus an overflow pile. Rows reuse
+      the roadmap's markup + handlers, so check / bookmark / +revision behave identically.
+      No drag: the days are a fixed prescription, not a plan to reshuffle. ══ */
+const gvWrap=document.getElementById('gvChapters');
+async function loadGrav(){ try{const r=await fetch('/graviton.json'); if(r.ok)return await r.json();}catch{} return null; }
+const cfUrl=cf=>{const m=/^(\d+)([A-Z]\d*)$/.exec(cf);
+  return m?`https://codeforces.com/problemset/problem/${m[1]}/${m[2]}`:'https://codeforces.com/problemset';};
+const gvId=p=>'gv'+p.cf;
+/* Codeforces' own difficulty ramp, mapped onto the palette */
+const gvRatC=r=>r<1200?'--faint':r<1400?'--green':r<1600?'--ncs':r<1900?'--lld':'--web';
+/* `backticks` → <code>, applied after escaping — the drill copy is dense with identifiers */
+const gvTick=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>');
+function gvRow(p){
+  const rc=gvRatC(p.r), tc=(GRAV.themes||{})[p.th]||'--faint';
+  return `<div class="row core" data-id="${gvId(p)}" data-q="${esc((p.t+' '+p.th+' '+p.cf).toLowerCase())}">
+    <div class="rmain"><div class="cir"></div>
+    <div class="pmain"><span class="pname">${esc(p.t)}</span><span class="pbadges"><span class="bdg" style="color:var(${tc});border-color:var(${tc})">${esc(p.th)}</span><span class="bdg" style="color:var(${rc});border-color:var(${rc})">${p.r}</span><span class="bdg b-CF">${esc(p.cf)}</span></span>${BMARK}${REVADD}</div></div>
+    <div class="plinks">${arrowFor('CF',cfUrl(p.cf))}</div></div>`;
 }
-async function refreshCompanies(){ renderCompanies(await loadCompanies()); }
-document.getElementById('cAdd').addEventListener('click',async()=>{
-  const name=document.getElementById('cName').value.trim(); if(!name)return;
-  await fetch('/companies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    name, oa_format:document.getElementById('cOA').value.trim(), rounds:document.getElementById('cRounds').value.trim(), notes:document.getElementById('cNotes').value.trim()})});
-  ['cName','cOA','cRounds','cNotes'].forEach(id=>document.getElementById(id).value='');
-  refreshCompanies();
-});
-document.getElementById('cmpRows').addEventListener('click',async e=>{
-  if(!e.target.closest('.cmp-del'))return;
-  await fetch('/companies?id='+e.target.closest('tr').dataset.id,{method:'DELETE'});
-  refreshCompanies();
-});
+function gvAside(a){
+  if(!a)return '';
+  const blocks=a.blocks.map(b=>{
+    let h=`<p class="gva-lead">${gvTick(b.lead)}</p>`;
+    if(b.code) h+=`<pre class="gva-code">${esc(b.code)}</pre>`;
+    if(b.items&&b.items.length){ const t=b.ord?'ol':'ul';
+      h+=`<${t} class="gva-list">${b.items.map(i=>`<li>${gvTick(i)}</li>`).join('')}</${t}>`; }
+    return h;
+  }).join('');
+  return `<div class="gva"><div class="gva-h"><span class="gva-kick">Alongside</span>
+    <span class="gva-name">${esc(a.name)}</span><span class="gva-min">${a.mins} min</span></div>${blocks}</div>`;
+}
+function buildGrav(){
+  gvWrap.replaceChildren();
+  const op=loadSect();
+  GRAV.days.forEach(d=>{
+    const over=d.id==='gdx';
+    const det=document.createElement('details');
+    det.className='chapter'; det.id='sec-'+d.id;
+    det.open = d.id in op ? op[d.id] : d.n<=1;            // day one open, the rest folded
+    det.addEventListener('toggle',()=>{const o=loadSect();o[d.id]=det.open;localStorage.setItem(SECT_KEY,JSON.stringify(o));});
+    det.innerHTML=`<summary class="ch-head">
+      <span class="ch-num">${over?'✦':d.n}</span>
+      <div class="ch-mid">
+        <div class="ch-title">${over?'Overflow':'Day '+d.n}</div>
+        <div class="ch-sub"><span>${esc(d.name)}</span><span data-gvcount="${d.id}"></span></div>
+      </div>
+      <span class="ch-ring"><svg width="54" height="54" viewBox="0 0 54 54">
+        <circle class="chr-track" cx="27" cy="27" r="22"/>
+        <circle class="chr-arc" data-gvarc="${d.id}" cx="27" cy="27" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+      </svg><span class="chr-txt" data-gvpct="${d.id}">0%</span></span>
+      <span class="ch-chev">▾</span></summary>
+      <div class="ch-body">${d.note?`<div class="gva-note">${gvTick(d.note)}</div>`:''}${d.probs.map(gvRow).join('')}${gvAside(d.aside)}</div>`;
+    gvWrap.appendChild(det);
+  });
+  const lg=document.getElementById('gvLegend');
+  if(lg) lg.innerHTML='Rating badges follow the Codeforces ramp. '+
+    [['≤1199','--faint'],['1200–1399','--green'],['1400–1599','--ncs'],['1600–1899','--lld'],['1900+','--web']]
+      .map(([k,c])=>`<b style="color:var(${c})">${k}</b>`).join(' · ')+
+    ' · the three days are the plan, the overflow pile is only for slack.';
+}
+function refreshGrav(){
+  if(!GRAV||!gvWrap.children.length)return;
+  const c=load(); let done=0,total=0;
+  GRAV.days.forEach(d=>{
+    const t=d.probs.length, dn=d.probs.filter(p=>c[gvId(p)]).length;
+    if(d.id!=='gdx'){ total+=t; done+=dn; }               // tab count tracks the three real days
+    const arc=gvWrap.querySelector(`[data-gvarc="${d.id}"]`);
+    if(arc) arc.style.strokeDashoffset=138.2*(1-(t?dn/t:0));
+    const pct=gvWrap.querySelector(`[data-gvpct="${d.id}"]`);
+    if(pct) pct.textContent=Math.round(t?100*dn/t:0)+'%';
+    const cn=gvWrap.querySelector(`[data-gvcount="${d.id}"]`);
+    if(cn) cn.textContent=dn+' / '+t;
+  });
+  const tc=document.getElementById('gvCount'); if(tc) tc.textContent=done+' / '+total;
+}
+gvWrap.addEventListener('click',rowClick);
+gvWrap.addEventListener('pointerdown',arrPress);
 
 /* ── Markdown export (concise, for pasting to an AI) ── */
 function buildMarkdown(){
@@ -564,8 +621,10 @@ function probIdx(){ if(PROBIDX)return PROBIDX; PROBIDX=new Map();
   DATA.sprints.forEach(sp=>sp.topics.forEach(([tname,ps])=>ps.forEach(p=>PROBIDX.set(p.id,{...p,tp:tname}))));
   if(DAYS) DAYS.days.forEach(d=>d.probs.forEach(p=>PROBIDX.set(p.id,      // day-plan problems are filable too
     {id:p.id,title:p.title,srcs:[p.tag],links:[[p.host,p.url]],lc:p.lc,tp:'Day '+d.n})));
+  if(GRAV) GRAV.days.forEach(d=>d.probs.forEach(p=>PROBIDX.set(gvId(p),   // so are the Graviton ones
+    {id:gvId(p),title:p.t,srcs:['CF'],links:[['CF',cfUrl(p.cf)]],tp:'Graviton · '+d.name})));
   return PROBIDX; }
-const REVLINKC={LC:'--lc',GFG:'--gfg',NC:'--ncs',TUF:'--tuf',WEB:'--web'};
+const REVLINKC={LC:'--lc',GFG:'--gfg',NC:'--ncs',TUF:'--tuf',WEB:'--web',CF:'--lld'};
 function revLink(l){ if(!l)return ''; const [t,u]=l,c=REVLINKC[t]||'--faint',g=(t==='TUF'||t==='WEB')?READ:ARR;
   return `<a class="rlink" style="color:var(${c})" href="${u}" target="_blank" rel="noopener" title="open ${esc(t)}">${g}</a>`; }
 function revBadge(p){ if(p.lc)return `<span class="bdg b-LCnum">LC ${p.lc}</span>`;

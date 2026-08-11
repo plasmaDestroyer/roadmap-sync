@@ -199,20 +199,6 @@ h1 .it{font-style:italic;font-weight:600;color:var(--verm)}
   background:none;border:none;color:var(--ink2);cursor:pointer;padding:9px 12px;white-space:nowrap}
 .menu-pop button+button{border-top:1px solid var(--hair)}
 .menu-pop button:hover{background:var(--paper2);color:var(--ink)}
-/* ── companies tab ── */
-.cmp-table{width:100%;border-collapse:collapse;font-size:13px;margin:18px 0 24px}
-.cmp-table th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:700;padding:0 12px 9px;border-bottom:2px solid var(--rule)}
-.cmp-table td{padding:11px 12px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink)}
-.cmp-table tr:hover td{background:var(--card)}
-.cmp-empty{color:var(--faint);font-style:italic;font-family:var(--serif)}
-.cmp-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:13px;transition:color .15s}
-.cmp-del:hover{color:var(--verm)}
-.cmp-add{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--card);border:1.5px solid var(--rule);border-radius:12px;padding:12px 14px;box-shadow:4px 4px 0 var(--hair2)}
-.cmp-add input{font-family:var(--mono);font-size:12.5px;background:var(--paper);border:1px solid var(--hair2);border-radius:8px;padding:8px 10px;color:var(--ink);flex:1;min-width:130px}
-.cmp-add input::placeholder{color:var(--faint)}
-.cmp-add input:focus{outline:none;border-color:var(--verm)}
-.cmp-add .act{flex-shrink:0;border:1.5px solid var(--rule);background:var(--paper)}
-
 /* ───────── chapters ───────── */
 .chapter{margin-bottom:40px;animation:fade .6s ease both;scroll-margin-top:110px}
 .ch-head{display:flex;align-items:center;gap:16px;cursor:pointer;user-select:none;padding:6px 0;
@@ -453,3 +439,21 @@ details[open] .ch-chev{transform:rotate(180deg)}
   .row.rev .revtog .i-on path{animation:none!important;stroke-dasharray:none}
 }
 @media(max-width:540px){.lrow{flex-wrap:wrap}.lnote{flex-basis:100%;order:3}.ltitle{max-width:150px}}
+
+/* ── graviton OA track ── */
+.b-CF{color:var(--lld);border-color:var(--lld)}
+#view-graviton .ch-sub{gap:12px}
+/* the alongside drill — a field note pinned under the day's problems */
+.gva{margin:20px 2px 4px;padding:16px 18px;background:var(--paper2);border:1.5px solid var(--rule);border-radius:12px;box-shadow:4px 4px 0 var(--hair2)}
+.gva-h{display:flex;align-items:baseline;gap:10px;padding-bottom:10px;margin-bottom:13px;border-bottom:2px solid var(--rule)}
+.gva-kick{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--verm);font-weight:700}
+.gva-name{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.gva-min{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.gva-lead{font-size:13px;line-height:1.75;color:var(--ink2);margin:0 0 11px}
+.gva > :not(.gva-h) + .gva-lead{margin-top:17px}
+.gva-code{font-family:var(--mono);font-size:12px;background:var(--card);border:1px solid var(--hair2);border-radius:8px;padding:10px 12px;margin:0 0 12px;overflow-x:auto;color:var(--ink)}
+.gva-list{margin:0 0 12px;padding-left:23px}
+.gva-list li{font-size:13px;line-height:1.7;color:var(--ink2);margin-bottom:7px}
+.gva-list li::marker{color:var(--verm);font-weight:700}
+.gva code{font-family:var(--mono);font-size:.9em;background:var(--card);border:1px solid var(--hair);border-radius:5px;padding:1px 5px;color:var(--ink)}
+.gva-note{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--faint);padding:2px 2px 12px}
