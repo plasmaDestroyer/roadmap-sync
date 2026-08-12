@@ -456,19 +456,31 @@ const gvWrap=document.getElementById('gvChapters');
 async function loadGrav(){ try{const r=await fetch('/graviton.json'); if(r.ok)return await r.json();}catch{} return null; }
 const cfUrl=cf=>{const m=/^(\d+)([A-Z]\d*)$/.exec(cf);
   return m?`https://codeforces.com/problemset/problem/${m[1]}/${m[2]}`:'https://codeforces.com/problemset';};
-const gvId=p=>'gv'+p.cf;
+/* a problem is a CF id, a LeetCode number, or neither (a past OA, which carries its own id) */
+const gvId=p=>p.id||('gv'+(p.cf||'lc'+p.lc));
+const gvLink=p=>p.cf?['CF',cfUrl(p.cf)]:p.lc?['LC',`https://leetcode.com/problems/${p.slug}/`]:null;
 /* Codeforces' own difficulty ramp, mapped onto the palette */
 const gvRatC=r=>r<1200?'--faint':r<1400?'--green':r<1600?'--ncs':r<1900?'--lld':'--web';
 /* `backticks` → <code>, applied after escaping — the drill copy is dense with identifiers */
 const gvTick=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>');
 function gvRow(p){
-  const rc=gvRatC(p.r), tc=(GRAV.themes||{})[p.th]||'--faint';
-  return `<div class="row core" data-id="${gvId(p)}" data-q="${esc((p.t+' '+p.th+' '+p.cf).toLowerCase())}">
+  const tc=(GRAV.themes||{})[p.th]||'--faint', l=gvLink(p);
+  const bdg=[`<span class="bdg" style="color:var(${tc});border-color:var(${tc})">${esc(p.th)}</span>`];
+  if(p.r){ const rc=gvRatC(p.r); bdg.push(`<span class="bdg" style="color:var(${rc});border-color:var(${rc})">${p.r}</span>`); }
+  if(p.cf) bdg.push(`<span class="bdg b-CF">${esc(p.cf)}</span>`);
+  if(p.lc) bdg.push(`<span class="bdg b-LCnum">LC ${p.lc}</span>`);
+  if(p.mins) bdg.push(`<span class="bdg b-time">${p.mins} min</span>`);
+  const q=[p.t,p.th,p.cf,p.lc?'lc'+p.lc:''].join(' ').toLowerCase();
+  return `<div class="row core" data-id="${gvId(p)}" data-q="${esc(q)}">
     <div class="rmain"><div class="cir"></div>
-    <div class="pmain"><span class="pname">${esc(p.t)}</span><span class="pbadges"><span class="bdg" style="color:var(${tc});border-color:var(${tc})">${esc(p.th)}</span><span class="bdg" style="color:var(${rc});border-color:var(${rc})">${p.r}</span><span class="bdg b-CF">${esc(p.cf)}</span></span>${BMARK}${REVADD}</div></div>
-    <div class="plinks">${arrowFor('CF',cfUrl(p.cf))}</div></div>`;
+    <div class="pmain"><span class="pname">${esc(p.t)}</span><span class="pbadges">${bdg.join('')}</span>${BMARK}${REVADD}</div></div>
+    <div class="plinks">${l?arrowFor(l[0],l[1]):''}</div></div>`;
 }
-function gvAside(a){
+/* a tier label is emitted whenever the tier changes, so a day can group Past OAs apart */
+const gvRows=probs=>probs.map((p,i)=>
+  (p.tier&&p.tier!==(probs[i-1]||{}).tier?`<div class="tierlab core">${esc(p.tier)}</div>`:'')+gvRow(p)).join('');
+/* collapsible: the drills are long, and most of the time you want the problems, not the prose */
+function gvAside(a,dayId,open){
   if(!a)return '';
   const blocks=a.blocks.map(b=>{
     let h=`<p class="gva-lead">${gvTick(b.lead)}</p>`;
@@ -477,8 +489,10 @@ function gvAside(a){
       h+=`<${t} class="gva-list">${b.items.map(i=>`<li>${gvTick(i)}</li>`).join('')}</${t}>`; }
     return h;
   }).join('');
-  return `<div class="gva"><div class="gva-h"><span class="gva-kick">Alongside</span>
-    <span class="gva-name">${esc(a.name)}</span><span class="gva-min">${a.mins} min</span></div>${blocks}</div>`;
+  return `<details class="gva" data-sect="${dayId}-aside"${open?' open':''}>
+    <summary class="gva-h"><span class="gva-kick">Alongside</span>
+    <span class="gva-name">${esc(a.name)}</span><span class="gva-min">${a.mins} min</span>
+    <span class="gva-chev">▾</span></summary><div class="gva-body">${blocks}</div></details>`;
 }
 function buildGrav(){
   gvWrap.replaceChildren();
@@ -500,8 +514,10 @@ function buildGrav(){
         <circle class="chr-arc" data-gvarc="${d.id}" cx="27" cy="27" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
       </svg><span class="chr-txt" data-gvpct="${d.id}">0%</span></span>
       <span class="ch-chev">▾</span></summary>
-      <div class="ch-body">${d.note?`<div class="gva-note">${gvTick(d.note)}</div>`:''}${d.probs.map(gvRow).join('')}${gvAside(d.aside)}</div>`;
+      <div class="ch-body">${d.note?`<div class="gva-note">${gvTick(d.note)}</div>`:''}${gvRows(d.probs)}${gvAside(d.aside,d.id,op[d.id+'-aside'])}</div>`;
     gvWrap.appendChild(det);
+    det.querySelectorAll('details.gva').forEach(g=>g.addEventListener('toggle',()=>{   // toggle doesn't bubble
+      const o=loadSect(); o[g.dataset.sect]=g.open; localStorage.setItem(SECT_KEY,JSON.stringify(o)); }));
   });
   const lg=document.getElementById('gvLegend');
   if(lg) lg.innerHTML='Rating badges follow the Codeforces ramp. '+
@@ -621,8 +637,8 @@ function probIdx(){ if(PROBIDX)return PROBIDX; PROBIDX=new Map();
   DATA.sprints.forEach(sp=>sp.topics.forEach(([tname,ps])=>ps.forEach(p=>PROBIDX.set(p.id,{...p,tp:tname}))));
   if(DAYS) DAYS.days.forEach(d=>d.probs.forEach(p=>PROBIDX.set(p.id,      // day-plan problems are filable too
     {id:p.id,title:p.title,srcs:[p.tag],links:[[p.host,p.url]],lc:p.lc,tp:'Day '+d.n})));
-  if(GRAV) GRAV.days.forEach(d=>d.probs.forEach(p=>PROBIDX.set(gvId(p),   // so are the Graviton ones
-    {id:gvId(p),title:p.t,srcs:['CF'],links:[['CF',cfUrl(p.cf)]],tp:'Graviton · '+d.name})));
+  if(GRAV) GRAV.days.forEach(d=>d.probs.forEach(p=>{ const l=gvLink(p);   // so are the Graviton ones
+    PROBIDX.set(gvId(p),{id:gvId(p),title:p.t,srcs:[l?l[0]:'OA'],links:l?[l]:[],lc:p.lc,tp:'Graviton · '+d.name}); }));
   return PROBIDX; }
 const REVLINKC={LC:'--lc',GFG:'--gfg',NC:'--ncs',TUF:'--tuf',WEB:'--web',CF:'--lld'};
 function revLink(l){ if(!l)return ''; const [t,u]=l,c=REVLINKC[t]||'--faint',g=(t==='TUF'||t==='WEB')?READ:ARR;

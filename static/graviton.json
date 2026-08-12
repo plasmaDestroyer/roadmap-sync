@@ -6,13 +6,9 @@
   "constructive": "--web",
   "game theory": "--amber",
   "observation": "--lld",
-  "bits": "--tuf",
-  "combinatorics": "--py",
-  "sieve": "--gfg",
-  "two pointers": "--lc",
-  "sorting": "--faint",
-  "graph": "--lld",
-  "tree": "--gfg"
+  "DSU": "--gfg",
+  "binary search": "--lc",
+  "implement": "--verm"
  },
  "days": [
   {
@@ -55,13 +51,15 @@
    "n": 2,
    "name": "the working band",
    "probs": [
-    {"cf": "1462D",  "t": "Add to Neighbour",   "th": "observation",   "r": 1400},
-    {"cf": "1516B",  "t": "AGAGA XOOORRR",      "th": "XOR",           "r": 1500},
-    {"cf": "1458A",  "t": "Row GCD",            "th": "number theory", "r": 1500},
-    {"cf": "1385D",  "t": "a-Good String",      "th": "constructive",  "r": 1500},
-    {"cf": "1454D",  "t": "Number into Sequence","th": "number theory","r": 1500},
-    {"cf": "1526C1", "t": "Potions (easy)",     "th": "greedy",        "r": 1500},
-    {"cf": "1490E",  "t": "Accidental Victory", "th": "greedy",        "r": 1500}
+    {"id": "gvoa-valid-equations", "t": "Valid Equations", "th": "implement", "tier": "Past OAs"},
+    {"id": "gvoa-squid-game",      "t": "Squid Game",      "th": "implement", "tier": "Past OAs"},
+
+    {"cf": "1462D", "t": "Add to Neighbour",   "th": "observation",   "r": 1400, "tier": "Today's queue"},
+    {"cf": "1516B", "t": "AGAGA XOOORRR",      "th": "XOR",           "r": 1500, "tier": "Today's queue"},
+    {"cf": "1458A", "t": "Row GCD",            "th": "number theory", "r": 1500, "tier": "Today's queue"},
+    {"lc": 399, "slug": "evaluate-division", "t": "Evaluate Division", "th": "DSU", "tier": "Today's queue"},
+    {"cf": "1385D", "t": "a-Good String",      "th": "constructive",  "r": 1500, "tier": "Today's queue"},
+    {"cf": "1367D", "t": "Task On The Board",  "th": "constructive",  "r": 1800, "mins": 40, "tier": "Today's queue"}
    ],
    "aside": {
     "name": "Branchless",
@@ -84,13 +82,14 @@
    "n": 3,
    "name": "target band",
    "probs": [
-    {"cf": "1325D",  "t": "Ehab the Xorcist",       "th": "XOR",           "r": 1600},
-    {"cf": "1526C2", "t": "Potions (hard)",         "th": "greedy",        "r": 1600},
-    {"cf": "1349A",  "t": "Orac and LCM",           "th": "number theory", "r": 1600},
-    {"cf": "1364C",  "t": "Ehab and Prefix MEXs",   "th": "constructive",  "r": 1500},
-    {"cf": "1451D",  "t": "Circle Game",            "th": "game theory",   "r": 1600},
-    {"cf": "1512D",  "t": "Corrupted Array",        "th": "observation",   "r": 1500},
-    {"cf": "1461C",  "t": "Random Events",          "th": "constructive",  "r": 1600}
+    {"cf": "1594D",  "t": "The Number of Imposters", "th": "DSU",           "r": 1700},
+    {"lc": 1552, "slug": "magnetic-force-between-two-balls", "t": "Magnetic Force Between Two Balls", "th": "binary search"},
+    {"cf": "1526C1", "t": "Potions (easy)",          "th": "greedy",        "r": 1500},
+    {"cf": "1526C2", "t": "Potions (hard)",          "th": "greedy",        "r": 1600},
+    {"cf": "1490E",  "t": "Accidental Victory",      "th": "greedy",        "r": 1500},
+    {"cf": "1325D",  "t": "Ehab the Xorcist",        "th": "XOR",           "r": 1600},
+    {"cf": "1364C",  "t": "Ehab and Prefix MEXs",    "th": "constructive",  "r": 1500},
+    {"cf": "1174D",  "t": "Ehab and the Expected XOR Problem", "th": "XOR", "r": 1900, "mins": 40}
    ],
    "aside": {
     "name": "C++ internals and architecture",
@@ -119,35 +118,15 @@
   {
    "id": "gdx",
    "n": 4,
-   "name": "overflow — if you finish early or the OA slips",
-   "note": "Top-down, ordered by value.",
+   "name": "overflow — if time",
    "probs": [
-    {"cf": "1614B",  "t": "Divan and a New Project",          "th": "greedy",         "r": 1200},
-    {"cf": "1362C",  "t": "Johnny and Another Rating Drop",   "th": "bits",           "r": 1200},
-    {"cf": "1372B",  "t": "Omkar and Last Class of Math",     "th": "number theory",  "r": 1300},
-    {"cf": "1348B",  "t": "Phoenix and Beauty",               "th": "constructive",   "r": 1400},
-    {"cf": "1471B",  "t": "Strange List",                     "th": "greedy",         "r": 1400},
-    {"cf": "1454C",  "t": "Sequence Transformation",          "th": "constructive",   "r": 1500},
-    {"cf": "1417B",  "t": "Two Arrays",                       "th": "greedy",         "r": 1500},
-    {"cf": "1409D",  "t": "Decrease the Sum of Digits",       "th": "greedy",         "r": 1500},
-    {"cf": "1372C",  "t": "Omkar and Baseball",               "th": "observation",    "r": 1500},
-    {"cf": "1462E1", "t": "Close Tuples (easy)",              "th": "combinatorics",  "r": 1500},
-    {"cf": "1114C",  "t": "Trailing Loves",                   "th": "number theory",  "r": 1600},
-    {"cf": "1512G",  "t": "Short Task",                       "th": "sieve",          "r": 1600},
-    {"cf": "1352G",  "t": "Special Permutation",              "th": "constructive",   "r": 1600},
-    {"cf": "1358D",  "t": "The Best Vacation",                "th": "two pointers",   "r": 1600},
-    {"cf": "1462F",  "t": "The Treasure of The Segments",     "th": "sorting",        "r": 1600},
-    {"cf": "1367D",  "t": "Task On The Board",                "th": "constructive",   "r": 1800},
-    {"cf": "1556D",  "t": "Take a Guess",                     "th": "bits",           "r": 1800},
-    {"cf": "1366D",  "t": "Two Divisors",                     "th": "number theory",  "r": 1800},
-    {"cf": "1225D",  "t": "Power Products",                   "th": "number theory",  "r": 1800},
-    {"cf": "1537D",  "t": "Deleting Divisors",                "th": "game theory",    "r": 1800},
-    {"cf": "1401D",  "t": "Maximum Distributed Tree",         "th": "tree",           "r": 1800},
-    {"cf": "1174D",  "t": "Ehab and the Expected XOR Problem","th": "XOR",            "r": 1900},
-    {"cf": "1499D",  "t": "The Number of Pairs",              "th": "number theory",  "r": 1900},
-    {"cf": "1194D",  "t": "1-2-K Game",                       "th": "game theory",    "r": 1900},
-    {"cf": "1454E",  "t": "Number of Simple Paths",           "th": "graph",          "r": 1900},
-    {"cf": "1560E",  "t": "Polycarp and String Transformation","th": "constructive",  "r": 1900}
+    {"cf": "1512D", "t": "Corrupted Array",           "th": "observation",   "r": 1500},
+    {"cf": "1454D", "t": "Number into Sequence",      "th": "number theory", "r": 1500},
+    {"cf": "1349A", "t": "Orac and LCM",              "th": "number theory", "r": 1600},
+    {"cf": "1613C", "t": "Poisoned Dagger",           "th": "binary search", "r": 1300},
+    {"cf": "1372B", "t": "Omkar and Last Class of Math", "th": "number theory", "r": 1300},
+    {"cf": "1417B", "t": "Two Arrays",                "th": "greedy",        "r": 1500},
+    {"cf": "1409D", "t": "Decrease the Sum of Digits","th": "greedy",        "r": 1500}
    ]
   }
  ]

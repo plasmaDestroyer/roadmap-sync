@@ -442,10 +442,21 @@ details[open] .ch-chev{transform:rotate(180deg)}
 
 /* ── graviton OA track ── */
 .b-CF{color:var(--lld);border-color:var(--lld)}
+.b-OA{color:var(--verm);border-color:var(--verm)}
+.b-time{color:var(--faint);border-color:var(--hair2);border-style:dashed}
 #view-graviton .ch-sub{gap:12px}
+#view-graviton .tierlab{margin:16px 0 6px}
+#view-graviton .tierlab:first-child{margin-top:2px}
 /* the alongside drill — a field note pinned under the day's problems */
 .gva{margin:20px 2px 4px;padding:16px 18px;background:var(--paper2);border:1.5px solid var(--rule);border-radius:12px;box-shadow:4px 4px 0 var(--hair2)}
-.gva-h{display:flex;align-items:baseline;gap:10px;padding-bottom:10px;margin-bottom:13px;border-bottom:2px solid var(--rule)}
+.gva-h{display:flex;align-items:baseline;gap:10px;padding-bottom:10px;margin-bottom:13px;border-bottom:2px solid var(--rule);
+  cursor:pointer;user-select:none;list-style:none}
+.gva-h::-webkit-details-marker{display:none}
+.gva:not([open]) .gva-h{padding-bottom:0;margin-bottom:0;border-bottom:none}
+.gva:not([open]):hover{border-color:var(--verm)}
+.gva-chev{margin-left:2px;font-size:12px;color:var(--faint);transition:transform .25s}
+.gva[open] .gva-chev{transform:rotate(180deg)}
+.gva-body{animation:fade .35s ease both}
 .gva-kick{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--verm);font-weight:700}
 .gva-name{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
 .gva-min{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
