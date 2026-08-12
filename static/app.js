@@ -498,15 +498,14 @@ function buildGrav(){
   gvWrap.replaceChildren();
   const op=loadSect();
   GRAV.days.forEach(d=>{
-    const over=d.id==='gdx';
     const det=document.createElement('details');
     det.className='chapter'; det.id='sec-'+d.id;
-    det.open = d.id in op ? op[d.id] : d.n<=1;            // day one open, the rest folded
+    det.open = d.id in op ? op[d.id] : d.n<=1;            // past OAs + day one open, the rest folded
     det.addEventListener('toggle',()=>{const o=loadSect();o[d.id]=det.open;localStorage.setItem(SECT_KEY,JSON.stringify(o));});
     det.innerHTML=`<summary class="ch-head">
-      <span class="ch-num">${over?'✦':d.n}</span>
+      <span class="ch-num">${esc(d.glyph||String(d.n))}</span>
       <div class="ch-mid">
-        <div class="ch-title">${over?'Overflow':'Day '+d.n}</div>
+        <div class="ch-title">${esc(d.title||'Day '+d.n)}</div>
         <div class="ch-sub"><span>${esc(d.name)}</span><span data-gvcount="${d.id}"></span></div>
       </div>
       <span class="ch-ring"><svg width="54" height="54" viewBox="0 0 54 54">

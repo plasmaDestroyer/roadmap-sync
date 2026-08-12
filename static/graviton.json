@@ -12,6 +12,17 @@
  },
  "days": [
   {
+   "id": "gvoa",
+   "n": 0,
+   "title": "Past OAs",
+   "glyph": "◈",
+   "name": "implement both, from scratch",
+   "probs": [
+    {"id": "gvoa-valid-equations", "t": "Valid Equations", "th": "implement"},
+    {"id": "gvoa-squid-game",      "t": "Squid Game",      "th": "implement"}
+   ]
+  },
+  {
    "id": "gd1",
    "n": 1,
    "name": "reflex + foundations",
@@ -51,15 +62,12 @@
    "n": 2,
    "name": "the working band",
    "probs": [
-    {"id": "gvoa-valid-equations", "t": "Valid Equations", "th": "implement", "tier": "Past OAs"},
-    {"id": "gvoa-squid-game",      "t": "Squid Game",      "th": "implement", "tier": "Past OAs"},
-
-    {"cf": "1462D", "t": "Add to Neighbour",   "th": "observation",   "r": 1400, "tier": "Today's queue"},
-    {"cf": "1516B", "t": "AGAGA XOOORRR",      "th": "XOR",           "r": 1500, "tier": "Today's queue"},
-    {"cf": "1458A", "t": "Row GCD",            "th": "number theory", "r": 1500, "tier": "Today's queue"},
-    {"lc": 399, "slug": "evaluate-division", "t": "Evaluate Division", "th": "DSU", "tier": "Today's queue"},
-    {"cf": "1385D", "t": "a-Good String",      "th": "constructive",  "r": 1500, "tier": "Today's queue"},
-    {"cf": "1367D", "t": "Task On The Board",  "th": "constructive",  "r": 1800, "mins": 40, "tier": "Today's queue"}
+    {"cf": "1462D", "t": "Add to Neighbour",   "th": "observation",   "r": 1400},
+    {"cf": "1516B", "t": "AGAGA XOOORRR",      "th": "XOR",           "r": 1500},
+    {"cf": "1458A", "t": "Row GCD",            "th": "number theory", "r": 1500},
+    {"lc": 399, "slug": "evaluate-division", "t": "Evaluate Division", "th": "DSU"},
+    {"cf": "1385D", "t": "a-Good String",      "th": "constructive",  "r": 1500},
+    {"cf": "1367D", "t": "Task On The Board",  "th": "constructive",  "r": 1800, "mins": 40}
    ],
    "aside": {
     "name": "Branchless",
@@ -118,7 +126,9 @@
   {
    "id": "gdx",
    "n": 4,
-   "name": "overflow — if time",
+   "title": "Overflow",
+   "glyph": "✦",
+   "name": "if time",
    "probs": [
     {"cf": "1512D", "t": "Corrupted Array",           "th": "observation",   "r": 1500},
     {"cf": "1454D", "t": "Number into Sequence",      "th": "number theory", "r": 1500},
