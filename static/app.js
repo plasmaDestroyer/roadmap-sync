@@ -469,11 +469,13 @@ function gvRow(p){
   if(p.r){ const rc=gvRatC(p.r); bdg.push(`<span class="bdg" style="color:var(${rc});border-color:var(${rc})">${p.r}</span>`); }
   if(p.cf) bdg.push(`<span class="bdg b-CF">${esc(p.cf)}</span>`);
   if(p.lc) bdg.push(`<span class="bdg b-LCnum">LC ${p.lc}</span>`);
+  if(p.src) bdg.push(`<span class="bdg b-src">${esc(p.src)}</span>`);
+  if(p.fire) bdg.push('<span class="bdg b-fire">🔥</span>');
   if(p.mins) bdg.push(`<span class="bdg b-time">${p.mins} min</span>`);
-  const q=[p.t,p.th,p.cf,p.lc?'lc'+p.lc:''].join(' ').toLowerCase();
+  const q=[p.t,p.th,p.cf,p.lc&&'lc'+p.lc,p.src].filter(Boolean).join(' ').toLowerCase();
   return `<div class="row core" data-id="${gvId(p)}" data-q="${esc(q)}">
     <div class="rmain"><div class="cir"></div>
-    <div class="pmain"><span class="pname">${esc(p.t)}</span><span class="pbadges">${bdg.join('')}</span>${BMARK}${REVADD}</div></div>
+    <div class="pmain"><span class="pname">${esc(p.t)}</span><span class="pbadges">${bdg.join('')}</span>${p.note?`<span class="hint-mark">${SPARK}</span>`:''}${BMARK}${REVADD}${p.note?`<div class="hint-note">${esc(p.note)}</div>`:''}</div></div>
     <div class="plinks">${l?arrowFor(l[0],l[1]):''}</div></div>`;
 }
 /* a tier label is emitted whenever the tier changes, so a day can group Past OAs apart */

@@ -444,7 +444,9 @@ details[open] .ch-chev{transform:rotate(180deg)}
 .b-CF{color:var(--lld);border-color:var(--lld)}
 .b-OA{color:var(--verm);border-color:var(--verm)}
 .b-time{color:var(--faint);border-color:var(--hair2);border-style:dashed}
+.b-src{color:var(--ink2);border-color:var(--hair2)}
 #view-graviton .ch-sub{gap:12px}
+#view-graviton .hint-note.on{max-height:120px}   /* these notes carry a technique, not a one-liner */
 #view-graviton .tierlab{margin:16px 0 6px}
 #view-graviton .tierlab:first-child{margin-top:2px}
 /* the alongside drill — a field note pinned under the day's problems */

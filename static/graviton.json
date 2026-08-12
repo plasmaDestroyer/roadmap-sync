@@ -7,8 +7,10 @@
   "game theory": "--amber",
   "observation": "--lld",
   "DSU": "--gfg",
+  "weighted DSU": "--gfg",
   "binary search": "--lc",
-  "implement": "--verm"
+  "greedy bitwise": "--verm",
+  "unknown": "--faint"
  },
  "days": [
   {
@@ -16,10 +18,16 @@
    "n": 0,
    "title": "Past OAs",
    "glyph": "◈",
-   "name": "implement both, from scratch",
+   "name": "confirmed publicly — write them from scratch",
    "probs": [
-    {"id": "gvoa-valid-equations", "t": "Valid Equations", "th": "implement"},
-    {"id": "gvoa-squid-game",      "t": "Squid Game",      "th": "implement"}
+    {"id": "gvoa-valid-equations", "t": "Valid Equations", "th": "weighted DSU", "src": "IIT-BHU / IIT-K '22",
+     "note": "Weighted DSU — union-find carrying an offset to the parent, so each find resolves a relative value as well as a root."},
+    {"id": "gvoa-squid-game", "t": "Squid Game", "th": "binary search", "src": "IIT-BHU / IIT-K '22",
+     "note": "Binary search on the answer, with a greedy counting predicate inside the check."},
+    {"id": "gvoa-beauty-of-an-array", "t": "Beauty of an Array", "th": "greedy bitwise", "src": "IIT-D '23",
+     "note": "Greedy bitwise maximisation, high bit to low. Same pattern as LC 421 on Day 2."},
+    {"id": "gvoa-xor-sort-operations", "t": "XOR sort Operations", "th": "unknown", "src": "IIT-D '25",
+     "note": "Title only — the statement is not public. Nothing to implement until it surfaces."}
    ]
   },
   {
@@ -66,6 +74,8 @@
     {"cf": "1516B", "t": "AGAGA XOOORRR",      "th": "XOR",           "r": 1500},
     {"cf": "1458A", "t": "Row GCD",            "th": "number theory", "r": 1500},
     {"lc": 399, "slug": "evaluate-division", "t": "Evaluate Division", "th": "DSU"},
+    {"lc": 421, "slug": "maximum-xor-of-two-numbers-in-an-array", "t": "Maximum XOR of Two Numbers in an Array", "th": "greedy bitwise",
+     "note": "The greedy bit-by-bit pattern from Beauty of an Array (IIT-D '23), and already on your DSA track."},
     {"cf": "1385D", "t": "a-Good String",      "th": "constructive",  "r": 1500},
     {"cf": "1367D", "t": "Task On The Board",  "th": "constructive",  "r": 1800, "mins": 40}
    ],
@@ -95,7 +105,7 @@
     {"cf": "1526C1", "t": "Potions (easy)",          "th": "greedy",        "r": 1500},
     {"cf": "1526C2", "t": "Potions (hard)",          "th": "greedy",        "r": 1600},
     {"cf": "1490E",  "t": "Accidental Victory",      "th": "greedy",        "r": 1500},
-    {"cf": "1325D",  "t": "Ehab the Xorcist",        "th": "XOR",           "r": 1600},
+    {"cf": "1325D",  "t": "Ehab the Xorcist",        "th": "XOR",           "r": 1600, "fire": true},
     {"cf": "1364C",  "t": "Ehab and Prefix MEXs",    "th": "constructive",  "r": 1500},
     {"cf": "1174D",  "t": "Ehab and the Expected XOR Problem", "th": "XOR", "r": 1900, "mins": 40}
    ],
