@@ -14,7 +14,7 @@
   "TRI": "trie / bits",
   "PFX": "prefix2D / intervals",
   "HEAP": "heap / priority queue",
-  "HM": "hash map / counting"
+  "HM": "hash map / array"
  },
  "days": [
   {
@@ -237,6 +237,26 @@
      "host": "GFG",
      "url": "https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1",
      "lock": false
+    },
+    {
+     "id": "d4-6",
+     "title": "Maximum XOR of Two Numbers",
+     "tag": "TRI",
+     "lc": 421,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+     "lock": false
+    },
+    {
+     "id": "d4-7",
+     "title": "Count Primes",
+     "tag": "MTH",
+     "lc": 204,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/count-primes/",
+     "lock": false
     }
    ],
    "aside": {
@@ -307,6 +327,26 @@
      "host": "LC",
      "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
      "lock": false
+    },
+    {
+     "id": "d5-6",
+     "title": "Path with Minimum Effort",
+     "tag": "SP",
+     "lc": 1631,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/path-with-minimum-effort/",
+     "lock": false
+    },
+    {
+     "id": "d5-7",
+     "title": "Car Fleet",
+     "tag": "MS",
+     "lc": 853,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/car-fleet/",
+     "lock": false
     }
    ],
    "aside": {
@@ -350,7 +390,7 @@
     },
     {
      "id": "d6-3",
-     "title": "Best Time to Buy and Sell Stock III",
+     "title": "Buy and Sell Stock III",
      "tag": "DP1",
      "lc": 123,
      "src": "LC",
@@ -376,6 +416,26 @@
      "src": "LC",
      "host": "LC",
      "url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+     "lock": false
+    },
+    {
+     "id": "d6-6",
+     "title": "Alien Dictionary",
+     "tag": "SP",
+     "lc": 269,
+     "src": "NC",
+     "host": "NC",
+     "url": "https://neetcode.io/problems/foreign-dictionary",
+     "lock": true
+    },
+    {
+     "id": "d6-7",
+     "title": "Spiral Matrix",
+     "tag": "STR",
+     "lc": 54,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/spiral-matrix/",
      "lock": false
     }
    ],
@@ -447,6 +507,26 @@
      "host": "LC",
      "url": "https://leetcode.com/problems/minimum-swaps-to-group-all-1s-together/",
      "lock": true
+    },
+    {
+     "id": "d7-6",
+     "title": "Word Search II",
+     "tag": "TRI",
+     "lc": 212,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/word-search-ii/",
+     "lock": false
+    },
+    {
+     "id": "d7-7",
+     "title": "Swim in Rising Water",
+     "tag": "SP",
+     "lc": 778,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/swim-in-rising-water/",
+     "lock": false
     }
    ],
    "aside": {
@@ -489,7 +569,7 @@
     },
     {
      "id": "d8-3",
-     "title": "Best Time to Buy and Sell Stock with Cooldown",
+     "title": "Buy and Sell Stock with Cooldown",
      "tag": "DP1",
      "lc": 309,
      "src": "LC",
@@ -515,6 +595,26 @@
      "src": "LC",
      "host": "LC",
      "url": "https://leetcode.com/problems/least-number-of-unique-integers-after-k-removals/",
+     "lock": false
+    },
+    {
+     "id": "d8-6",
+     "title": "Min Cost to Connect All Points",
+     "tag": "DSU",
+     "lc": 1584,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/min-cost-to-connect-all-points/",
+     "lock": false
+    },
+    {
+     "id": "d8-7",
+     "title": "Range Sum Query 2D — Immutable",
+     "tag": "PFX",
+     "lc": 304,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/range-sum-query-2d-immutable/",
      "lock": false
     }
    ],
@@ -586,6 +686,26 @@
      "host": "LC",
      "url": "https://leetcode.com/problems/first-missing-positive/",
      "lock": false
+    },
+    {
+     "id": "d9-6",
+     "title": "Hand of Straights",
+     "tag": "GRD",
+     "lc": 846,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/hand-of-straights/",
+     "lock": false
+    },
+    {
+     "id": "d9-7",
+     "title": "Fruit Into Baskets",
+     "tag": "SW",
+     "lc": 904,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/fruit-into-baskets/",
+     "lock": false
     }
    ],
    "aside": {
@@ -627,7 +747,7 @@
     },
     {
      "id": "d10-3",
-     "title": "Minimum Number of Arrows to Burst Balloons",
+     "title": "Min Arrows to Burst Balloons",
      "tag": "GRD",
      "lc": 452,
      "src": "LC",
@@ -637,7 +757,7 @@
     },
     {
      "id": "d10-4",
-     "title": "Longest Substring with At Most K Distinct Characters",
+     "title": "Longest Substring with At Most K Distinct",
      "tag": "SW",
      "lc": 340,
      "src": "NC",
@@ -653,6 +773,26 @@
      "src": "LC",
      "host": "LC",
      "url": "https://leetcode.com/problems/string-compression/",
+     "lock": false
+    },
+    {
+     "id": "d10-6",
+     "title": "Single Element in a Sorted Array",
+     "tag": "BS",
+     "lc": 540,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/single-element-in-a-sorted-array/",
+     "lock": false
+    },
+    {
+     "id": "d10-7",
+     "title": "Sum of Subarray Minimums",
+     "tag": "MS",
+     "lc": 907,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/sum-of-subarray-minimums/",
      "lock": false
     }
    ],
@@ -674,6 +814,105 @@
   {
    "id": "d11",
    "n": 11,
+   "probs": [
+    {
+     "id": "d11-1",
+     "title": "Longest Palindromic Subsequence",
+     "tag": "DP2",
+     "lc": 516,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/longest-palindromic-subsequence/",
+     "lock": false
+    },
+    {
+     "id": "d11-2",
+     "title": "Painter's Partition Problem",
+     "tag": "BS",
+     "src": "GFG",
+     "host": "GFG",
+     "url": "https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1",
+     "lock": false
+    },
+    {
+     "id": "d11-3",
+     "title": "Find the Duplicate Number",
+     "tag": "LL",
+     "lc": 287,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/find-the-duplicate-number/",
+     "lock": false
+    },
+    {
+     "id": "d11-4",
+     "title": "Reconstruct Itinerary",
+     "tag": "SP",
+     "lc": 332,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/reconstruct-itinerary/",
+     "lock": false
+    },
+    {
+     "id": "d11-5",
+     "title": "Valid Parenthesis String",
+     "tag": "GRD",
+     "lc": 678,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/valid-parenthesis-string/",
+     "lock": false
+    },
+    {
+     "id": "d11-6",
+     "title": "Minimum Interval to Include Each Query",
+     "tag": "HEAP",
+     "lc": 1851,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/minimum-interval-to-include-each-query/",
+     "lock": false
+    },
+    {
+     "id": "d11-7",
+     "title": "Buy and Sell Stock IV",
+     "tag": "DP1",
+     "lc": 188,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/",
+     "lock": false
+    },
+    {
+     "id": "d11-8",
+     "title": "Distinct Subsequences",
+     "tag": "DP2",
+     "lc": 115,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/distinct-subsequences/",
+     "lock": false
+    }
+   ],
+   "aside": {
+    "name": "ML 4",
+    "blocks": [
+     {
+      "items": [
+       "gradient descent variants",
+       "learning rate",
+       "batch norm",
+       "dropout",
+       "embeddings"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "d12",
+   "n": 12,
    "probs": [],
    "aside": {
     "name": "ML coding from scratch",
@@ -692,13 +931,14 @@
    }
   },
   {
-   "id": "d12",
-   "n": 12,
+   "id": "d13",
+   "n": 13,
    "probs": [],
    "aside": {
     "name": "Probability and statistics",
     "blocks": [
      {
+      "lead": "No DSA today.",
       "items": [
        "Bayes, conditional probability, expectation",
        "Bernoulli, binomial, normal, Poisson",
@@ -706,56 +946,18 @@
        "A/B test design",
        "Ten probability puzzles"
       ]
+     },
+     {
+      "lead": "Then ninety minutes on one working thing:",
+      "items": [
+       "Parking lot",
+       "Splitwise",
+       "In-memory KV store with TTL"
+      ]
      }
     ],
     "open": true
    }
-  },
-  {
-   "id": "d13",
-   "n": 13,
-   "probs": [
-    {
-     "id": "d13-1",
-     "title": "Shortest Common Supersequence",
-     "tag": "DP2",
-     "lc": 1092,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/shortest-common-supersequence/",
-     "lock": false
-    },
-    {
-     "id": "d13-2",
-     "title": "Sort List",
-     "tag": "LL",
-     "lc": 148,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/sort-list/",
-     "lock": false
-    },
-    {
-     "id": "d13-3",
-     "title": "Multiply Strings",
-     "tag": "STR",
-     "lc": 43,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/multiply-strings/",
-     "lock": false
-    },
-    {
-     "id": "d13-5",
-     "title": "Sqrt(x)",
-     "tag": "MTH",
-     "lc": 69,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/sqrtx/",
-     "lock": false
-    }
-   ]
   },
   {
    "id": "d14",
