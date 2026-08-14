@@ -12,7 +12,9 @@
   "STR": "strings / simulation",
   "MTH": "math",
   "TRI": "trie / bits",
-  "PFX": "prefix2D / intervals"
+  "PFX": "prefix2D / intervals",
+  "HEAP": "heap / priority queue",
+  "HM": "hash map / counting"
  },
  "days": [
   {
@@ -231,13 +233,26 @@
      "id": "d4-5",
      "title": "0-1 Knapsack",
      "tag": "DP1",
-     "lc": null,
      "src": "GFG",
      "host": "GFG",
      "url": "https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1",
      "lock": false
     }
-   ]
+   ],
+   "aside": {
+    "name": "OS",
+    "blocks": [
+     {
+      "items": [
+       "processes vs threads",
+       "scheduling",
+       "deadlock",
+       "virtual memory",
+       "paging"
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "d5",
@@ -256,7 +271,7 @@
     {
      "id": "d5-2",
      "title": "Merge k Sorted Lists",
-     "tag": "LL",
+     "tag": "HEAP",
      "lc": 23,
      "src": "LC",
      "host": "LC",
@@ -265,35 +280,49 @@
     },
     {
      "id": "d5-3",
-     "title": "Word Search II",
-     "tag": "TRI",
-     "lc": 212,
-     "src": "LC",
+     "title": "Task Scheduler",
+     "tag": "GRD",
+     "lc": 621,
+     "src": "NC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/word-search-ii/",
+     "url": "https://leetcode.com/problems/task-scheduler/",
      "lock": false
     },
     {
      "id": "d5-4",
-     "title": "Range Sum Query 2D — Immutable",
-     "tag": "PFX",
-     "lc": 304,
+     "title": "Split Array Largest Sum",
+     "tag": "BS",
+     "lc": 410,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/range-sum-query-2d-immutable/",
+     "url": "https://leetcode.com/problems/split-array-largest-sum/",
      "lock": false
     },
     {
      "id": "d5-5",
-     "title": "Count Primes",
-     "tag": "MTH",
-     "lc": 204,
+     "title": "Find All Duplicates in an Array",
+     "tag": "HM",
+     "lc": 442,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/count-primes/",
+     "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
      "lock": false
     }
-   ]
+   ],
+   "aside": {
+    "name": "ML 1",
+    "blocks": [
+     {
+      "items": [
+       "bias / variance",
+       "over- and underfitting",
+       "L1 vs L2",
+       "cross-validation",
+       "class imbalance"
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "d6",
@@ -321,16 +350,6 @@
     },
     {
      "id": "d6-3",
-     "title": "Path with Minimum Effort",
-     "tag": "SP",
-     "lc": 1631,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/path-with-minimum-effort/",
-     "lock": false
-    },
-    {
-     "id": "d6-4",
      "title": "Best Time to Buy and Sell Stock III",
      "tag": "DP1",
      "lc": 123,
@@ -340,7 +359,7 @@
      "lock": false
     },
     {
-     "id": "d6-5",
+     "id": "d6-4",
      "title": "Remove K Digits",
      "tag": "MS",
      "lc": 402,
@@ -348,8 +367,32 @@
      "host": "LC",
      "url": "https://leetcode.com/problems/remove-k-digits/",
      "lock": false
+    },
+    {
+     "id": "d6-5",
+     "title": "Max Consecutive Ones III",
+     "tag": "SW",
+     "lc": 1004,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+     "lock": false
     }
-   ]
+   ],
+   "aside": {
+    "name": "DBMS",
+    "blocks": [
+     {
+      "items": [
+       "normalisation",
+       "indexes",
+       "ACID",
+       "joins",
+       "isolation levels"
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "d7",
@@ -387,25 +430,37 @@
     },
     {
      "id": "d7-4",
-     "title": "Max Consecutive Ones III",
-     "tag": "SW",
-     "lc": 1004,
+     "title": "Min Days to Make m Bouquets",
+     "tag": "BS",
+     "lc": 1482,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+     "url": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/",
      "lock": false
     },
     {
      "id": "d7-5",
-     "title": "Single Element in a Sorted Array",
-     "tag": "BS",
-     "lc": 540,
+     "title": "Min Swaps to Group All 1's Together",
+     "tag": "HM",
+     "lc": 1151,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/single-element-in-a-sorted-array/",
-     "lock": false
+     "url": "https://leetcode.com/problems/minimum-swaps-to-group-all-1s-together/",
+     "lock": true
     }
-   ]
+   ],
+   "aside": {
+    "name": "ML 2",
+    "blocks": [
+     {
+      "items": [
+       "precision / recall / F1",
+       "ROC-AUC vs PR-AUC",
+       "when accuracy lies"
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "d8",
@@ -413,46 +468,37 @@
    "probs": [
     {
      "id": "d8-1",
-     "title": "Min Cost to Connect All Points",
-     "tag": "DSU",
-     "lc": 1584,
-     "src": "LC",
+     "title": "Course Schedule II",
+     "tag": "SP",
+     "lc": 210,
+     "src": "NC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/min-cost-to-connect-all-points/",
-     "lock": false
+     "url": "https://leetcode.com/problems/course-schedule-ii/",
+     "lock": false,
+     "note": "Solve it cold: no hints, no lookups, no peeking at the old solution."
     },
     {
      "id": "d8-2",
-     "title": "Hand of Straights",
+     "title": "Reorganize String",
      "tag": "GRD",
-     "lc": 846,
+     "lc": 767,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/hand-of-straights/",
+     "url": "https://leetcode.com/problems/reorganize-string/",
      "lock": false
     },
     {
      "id": "d8-3",
-     "title": "Swim in Rising Water",
-     "tag": "SP",
-     "lc": 778,
+     "title": "Best Time to Buy and Sell Stock with Cooldown",
+     "tag": "DP1",
+     "lc": 309,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/swim-in-rising-water/",
+     "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/",
      "lock": false
     },
     {
      "id": "d8-4",
-     "title": "Best Time to Buy and Sell Stock IV",
-     "tag": "DP1",
-     "lc": 188,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/",
-     "lock": false
-    },
-    {
-     "id": "d8-5",
      "title": "Asteroid Collision",
      "tag": "MS",
      "lc": 735,
@@ -460,8 +506,32 @@
      "host": "LC",
      "url": "https://leetcode.com/problems/asteroid-collision/",
      "lock": false
+    },
+    {
+     "id": "d8-5",
+     "title": "Least Number of Unique Integers after K Removals",
+     "tag": "HEAP",
+     "lc": 1481,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/least-number-of-unique-integers-after-k-removals/",
+     "lock": false
     }
-   ]
+   ],
+   "aside": {
+    "name": "SQL",
+    "blocks": [
+     {
+      "items": [
+       "joins",
+       "group by",
+       "having",
+       "window functions",
+       "rank vs dense_rank"
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "d9",
@@ -469,12 +539,12 @@
    "probs": [
     {
      "id": "d9-1",
-     "title": "Longest Palindromic Subsequence",
+     "title": "Unique Paths II",
      "tag": "DP2",
-     "lc": 516,
+     "lc": 63,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/longest-palindromic-subsequence/",
+     "url": "https://leetcode.com/problems/unique-paths-ii/",
      "lock": false
     },
     {
@@ -489,35 +559,48 @@
     },
     {
      "id": "d9-3",
-     "title": "Spiral Matrix",
+     "title": "Find All Anagrams in a String",
      "tag": "STR",
-     "lc": 54,
+     "lc": 438,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/spiral-matrix/",
+     "url": "https://leetcode.com/problems/find-all-anagrams-in-a-string/",
      "lock": false
     },
     {
      "id": "d9-4",
-     "title": "Maximum XOR of Two Numbers in an Array",
-     "tag": "TRI",
-     "lc": 421,
+     "title": "Max Candies Allocated to K Children",
+     "tag": "BS",
+     "lc": 2226,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+     "url": "https://leetcode.com/problems/maximum-candies-allocated-to-k-children/",
      "lock": false
     },
     {
      "id": "d9-5",
-     "title": "Minimum Interval to Include Each Query",
-     "tag": "PFX",
-     "lc": 1851,
+     "title": "First Missing Positive",
+     "tag": "HM",
+     "lc": 41,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/minimum-interval-to-include-each-query/",
+     "url": "https://leetcode.com/problems/first-missing-positive/",
      "lock": false
     }
-   ]
+   ],
+   "aside": {
+    "name": "ML 3",
+    "blocks": [
+     {
+      "items": [
+       "decision trees",
+       "random forest vs gradient boosting",
+       "XGBoost",
+       "feature importance"
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "d10",
@@ -525,148 +608,15 @@
    "probs": [
     {
      "id": "d10-1",
-     "title": "Alien Dictionary",
-     "tag": "SP",
-     "lc": 269,
-     "src": "NC",
-     "host": "NC",
-     "url": "https://neetcode.io/problems/foreign-dictionary",
-     "lock": true
-    },
-    {
-     "id": "d10-2",
-     "title": "Valid Parenthesis String",
-     "tag": "GRD",
-     "lc": 678,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/valid-parenthesis-string/",
-     "lock": false
-    },
-    {
-     "id": "d10-3",
      "title": "Unbounded Knapsack",
      "tag": "DP1",
-     "lc": null,
      "src": "GFG",
      "host": "GFG",
      "url": "https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1",
      "lock": false
     },
     {
-     "id": "d10-4",
-     "title": "Unique Paths II",
-     "tag": "DP2",
-     "lc": 63,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/unique-paths-ii/",
-     "lock": false
-    },
-    {
-     "id": "d10-5",
-     "title": "Sum of Subarray Minimums",
-     "tag": "MS",
-     "lc": 907,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/sum-of-subarray-minimums/",
-     "lock": false
-    }
-   ]
-  },
-  {
-   "id": "d11",
-   "n": 11,
-   "probs": [
-    {
-     "id": "d11-1",
-     "title": "Distinct Subsequences",
-     "tag": "DP2",
-     "lc": 115,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/distinct-subsequences/",
-     "lock": false
-    },
-    {
-     "id": "d11-2",
-     "title": "Find the Duplicate Number",
-     "tag": "LL",
-     "lc": 287,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/find-the-duplicate-number/",
-     "lock": false
-    },
-    {
-     "id": "d11-3",
-     "title": "String Compression",
-     "tag": "STR",
-     "lc": 443,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/string-compression/",
-     "lock": false
-    },
-    {
-     "id": "d11-4",
-     "title": "Fruit Into Baskets",
-     "tag": "SW",
-     "lc": 904,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/fruit-into-baskets/",
-     "lock": false
-    },
-    {
-     "id": "d11-5",
-     "title": "Painter's Partition Problem",
-     "tag": "BS",
-     "lc": null,
-     "src": "GFG",
-     "host": "GFG",
-     "url": "https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1",
-     "lock": false
-    }
-   ]
-  },
-  {
-   "id": "d12",
-   "n": 12,
-   "probs": [
-    {
-     "id": "d12-1",
-     "title": "Reconstruct Itinerary",
-     "tag": "SP",
-     "lc": 332,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/reconstruct-itinerary/",
-     "lock": false
-    },
-    {
-     "id": "d12-2",
-     "title": "Minimum Number of Arrows to Burst Balloons",
-     "tag": "GRD",
-     "lc": 452,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",
-     "lock": false
-    },
-    {
-     "id": "d12-3",
-     "title": "Best Time to Buy and Sell Stock with Cooldown",
-     "tag": "DP1",
-     "lc": 309,
-     "src": "LC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/",
-     "lock": false
-    },
-    {
-     "id": "d12-4",
+     "id": "d10-2",
      "title": "Triangle",
      "tag": "DP2",
      "lc": 120,
@@ -676,16 +626,90 @@
      "lock": false
     },
     {
-     "id": "d12-5",
-     "title": "Car Fleet",
-     "tag": "MS",
-     "lc": 853,
+     "id": "d10-3",
+     "title": "Minimum Number of Arrows to Burst Balloons",
+     "tag": "GRD",
+     "lc": 452,
      "src": "LC",
      "host": "LC",
-     "url": "https://leetcode.com/problems/car-fleet/",
+     "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",
+     "lock": false
+    },
+    {
+     "id": "d10-4",
+     "title": "Longest Substring with At Most K Distinct Characters",
+     "tag": "SW",
+     "lc": 340,
+     "src": "NC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
+     "lock": true
+    },
+    {
+     "id": "d10-5",
+     "title": "String Compression",
+     "tag": "STR",
+     "lc": 443,
+     "src": "LC",
+     "host": "LC",
+     "url": "https://leetcode.com/problems/string-compression/",
      "lock": false
     }
-   ]
+   ],
+   "aside": {
+    "name": "CN + OOP",
+    "blocks": [
+     {
+      "items": [
+       "TCP vs UDP",
+       "HTTP",
+       "REST",
+       "SOLID",
+       "inheritance vs composition"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "d11",
+   "n": 11,
+   "probs": [],
+   "aside": {
+    "name": "ML coding from scratch",
+    "blocks": [
+     {
+      "lead": "No DSA today.",
+      "items": [
+       "Logistic regression: forward, BCE, gradient, training loop. NumPy only.",
+       "K-means",
+       "Linear regression with gradient descent",
+       "Derive the BCE gradient on paper."
+      ]
+     }
+    ],
+    "open": true
+   }
+  },
+  {
+   "id": "d12",
+   "n": 12,
+   "probs": [],
+   "aside": {
+    "name": "Probability and statistics",
+    "blocks": [
+     {
+      "items": [
+       "Bayes, conditional probability, expectation",
+       "Bernoulli, binomial, normal, Poisson",
+       "Hypothesis testing, p-values, confidence intervals, Type I / II",
+       "A/B test design",
+       "Ten probability puzzles"
+      ]
+     }
+    ],
+    "open": true
+   }
   },
   {
    "id": "d13",
@@ -720,16 +744,6 @@
      "host": "LC",
      "url": "https://leetcode.com/problems/multiply-strings/",
      "lock": false
-    },
-    {
-     "id": "d13-4",
-     "title": "Longest Substring with At Most K Distinct Characters",
-     "tag": "SW",
-     "lc": 340,
-     "src": "NC",
-     "host": "LC",
-     "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
-     "lock": true
     },
     {
      "id": "d13-5",
